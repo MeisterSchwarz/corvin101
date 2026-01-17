@@ -1,0 +1,27 @@
+{
+	"meta": {
+		"world": "Muhong",
+		"image": "mooshu"
+	},
+	"zones": {
+		"MooShu/Interiors/MS_RockDojoT2": {
+			"name": "Jadepalast",
+            "sub": "Felsen-Dojo"
+		},
+		"MooShu/Interiors/MS_ShopJewelry": {
+			"name": "Jadepalast",
+            "sub": "Händler - Ringe & Schuhe"
+		},
+		"MooShu/Interiors/MS_Teleport_Chamber": {
+			"name": "Jadepalast",
+            "sub": "Spiralkammer"
+		},
+		"MooShu/MS_Death/MS_Death_Hub_RuinedTemple": {
+			"name": "Yoshihito-Tempel"
+		},
+		"MooShu/MS_Hub": {
+			"name": "Jadepalast"
+		}
+
+	}
+}

@@ -1,0 +1,44 @@
+{
+	"meta": {
+		"world": "Wallaru",
+		"image": "wallaru"
+	},
+	"zones": {
+        "Wallaru/Interiors/WL_Z02_I10_OutbackDungeon_Easy": {
+            "name": "Malus (Standard)"
+        },
+        "Wallaru/Interiors/WL_Z04_I02_JudgeVegDream": {
+            "name": "Traumzeit (Richter Veggies Traum)"
+        },
+        "Wallaru/Interiors/WL_Z04_I04_FurryosasDream": {
+            "name": "Traumzeit (Furryosas Traum)"
+        },
+        "Wallaru/Interiors/WL_Z04_I05_FreddiesDomain": {
+            "name": "Traumzeit",
+            "sub": "Freddies Domäne"
+        },
+        "Wallaru/Interiors/WL_Z06_I06_CollieHomestead": {
+            "name": "Collie Farm",
+            "sub" : "Collie-Wohnhaus"
+        },
+	   "Wallaru/WL_Z01_Hub": {
+            "name": "Hope Springs"
+        },
+        "Wallaru/WL_Z02_Outback": {
+            "name": "Outback"
+        },
+        "Wallaru/WL_Z04_TheDreaming": {
+            "name": "Traumzeit"
+        },
+        "Wallaru/WL_Z06_CollieRanch": {
+            "name": "Collie Farm"
+        },
+        "Wallaru/WL_Z07_EucalyptusForest": {
+            "name": "Eukalyptuswald"
+        },
+        "WL_Z06_I03_JudgeJudisOffice": {
+            "name": "Collie Farm",
+            "sub": "Richter Judis Büro"
+        }
+	}
+}

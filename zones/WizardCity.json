@@ -1,0 +1,131 @@
+{
+	"meta": {
+		"world": "Wizard City",
+		"image": "wizardcity"
+	},
+	"zones": {
+		"WizardCity/Gauntlets/WC_Triton_Gauntlet1/WC_Triton_Gauntlet_01": {
+			"name": "Wasserwerk",
+			"sub": "Eingang"
+		},
+		"WizardCity/Gauntlets/WC_Triton_Gauntlet1/WC_Triton_Gauntlet_01a": {
+			"name": "Wasserwerk",
+			"sub": "1. Turm (1/2)"
+		},
+		"WizardCity/Gauntlets/WC_Triton_Gauntlet1/WC_Triton_Gauntlet_02": {
+			"name": "Wasserwerk",
+			"sub": "1. Turm (2/2)"
+		},
+		"WizardCity/Gauntlets/WC_Triton_Gauntlet1/WC_Triton_Gauntlet_03": {
+			"name": "Wasserwerk",
+			"sub": "2. Turm (Muscheln)"
+		},
+		"WizardCity/Gauntlets/WC_Triton_Gauntlet1/WC_Triton_Gauntlet_04": {
+			"name": "Wasserwerk",
+			"sub": "Luska Talismund"
+		},
+		"WizardCity/Gauntlets/WC_Triton_Gauntlet1/WC_Triton_Gauntlet_05": {
+			"name": "Wasserwerk",
+			"sub": "3. Turm (1/2)"
+		},
+		"WizardCity/Gauntlets/WC_Triton_Gauntlet1/WC_Triton_Gauntlet_06": {
+			"name": "Wasserwerk",
+			"sub": "3. Turm (2/2)"
+		},
+		"WizardCity/Gauntlets/WC_Triton_Gauntlet1/WC_Triton_Gauntlet_07": {
+			"name": "Wasserwerk",
+			"sub": "4. Turm (1/2)"
+		},
+		"WizardCity/Gauntlets/WC_Triton_Gauntlet1/WC_Triton_Gauntlet_08": {
+			"name": "Wasserwerk",
+			"sub": "4. Turm (2/2)"
+		},
+		"WizardCity/Interiors/WC_Hatchery": {
+			"name": "Der Brutplatz"
+		},
+		"WizardCity/Interiors/WC_Housing_Dorm_Interior": {
+			"name": "Rabenhain",
+			"sub": "Schlaftrakt"
+		},
+		"WizardCity/Interiors/WC_Library": {
+			"name": "Die Bibliothek"
+		},
+		"WizardCity/Interiors/WC_Park_Petshop": {
+			"name": "Platz der Tiere",
+			"sub": "Haustierladen"
+		},
+		"WizardCity/Interiors/WC_SchoolFire": {
+			"name": "Rabenhain",
+			"sub": "Schule des Feuers"
+		},
+		"WizardCity/Interiors/WC_SchoolFrost": {
+			"name": "Rabenhain",
+			"sub": "Schule des Eises"
+		},
+		"WizardCity/Interiors/WC_SchoolStorm": {
+			"name": "Rabenhain",
+			"sub": "Schule des Sturms"
+		},
+		"WizardCity/Interiors/WC_ShopDye": {
+			"name": "Kaufmannsviertel",
+			"sub": "Färberei"
+		},
+		"WizardCity/Interiors/WC_TowerFire": {
+			"name": "Rabenhain",
+			"sub": "Turm des Feuers"
+		},
+		"WizardCity/Interiors/WC_TowerIce": {
+			"name": "Rabenhain",
+			"sub": "Turm des Eises"
+		},
+		"WizardCity/WC_Golem_Tower": {
+			"name": "Golemturm"
+		},
+		"WizardCity/WC_Hub": {
+			"name": "Stadtmitte"
+		},
+		"WizardCity/WC_NightSide": {
+			"name": "Schattenbruch"
+		},
+		"WizardCity/WC_Ravenwood": {
+			"name": "Rabenhain"
+		},
+		"WizardCity/WC_Ravenwood_Teleporter": {
+			"name": "Der Weltenbaum"
+		},
+		"WizardCity/WC_Shop_Area": {
+			"name": "Kaufmannsviertel"
+		},
+		"WizardCity/WC_Streets/Interiors/WC_Cyclops_T1": {
+			"name": "Zyklopenweg",
+			"sub": "Visus Maximus"
+		},
+		"WizardCity/WC_Streets/Interiors/WC_Cyclops_T2": {
+			"name": "Zyklopenweg",
+			"sub": "General Akilles"
+		},
+		"WizardCity/WC_Streets/Interiors/WC_OldeTown_AuctionHouse": {
+			"name": "Altes Viertel",
+			"sub": "Basar"
+		},
+		"WizardCity/WC_Streets/Interiors/WC_Unicorn_T1": {
+			"name": "Einhornweg",
+			"sub": "Lady Blackhope"
+		},
+		"WizardCity/WC_Streets/Interiors/WC_PET_Park": {
+			"name": "Platz der Tiere"
+		},
+		"WizardCity/WC_Streets/WC_Cyclops": {
+			"name": "Zyklopenweg"
+		},
+		"WizardCity/WC_Streets/WC_Firecat": {
+			"name": "Feuerkatzenallee"
+		},
+		"WizardCity/WC_Streets/WC_OldeTown": {
+			"name": "Altes Viertel"
+		},
+		"WizardCity/WC_Streets/WC_Unicorn": {
+			"name": "Einhornweg"
+		}
+	}
+}

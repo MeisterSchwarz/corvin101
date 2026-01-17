@@ -1,0 +1,67 @@
+   {
+	"meta": {
+		"world": "Marleybone",
+		"image": "marleybone"
+	},
+	"zones": {
+        "Marleybone/Interiors/MB_PostOffice1": {
+            "name": "Regent's Square",
+            "sub": "Postbüro"
+        },
+        "Marleybone/Interiors/MB_Pubs": {
+            "name": "Regent's Square",
+            "sub": "Pub"
+        },
+        "Marleybone/Interiors/MB_ScotlandYard": {
+            "name": "Scotland Yard"
+        },
+        "Marleybone/Interiors/MB_SecretClub": {
+            "name": "Regent's Square",
+            "sub": "Geheimclub"
+        },
+        "Marleybone/Interiors/MB_Shop_Decks": {
+            "name": "Regent's Square",
+            "sub": "Kartenspielhändler"
+        },
+        "Marleybone/Interiors/MB_Shop_House": {
+            "name": "Regent's Square",
+            "sub": "Schlossmakler"
+        },
+        "Marleybone/Interiors/MB_Shop_Rings": {
+            "name": "Regent's Square",
+            "sub": "Amulett- & Ringhändler"
+        },
+        "Marleybone/Interiors/MB_Shop_Robes": {
+            "name": "Regent's Square",
+            "sub": "Robenhändler"
+        },
+        "Marleybone/Interiors/MB_Shop_Shoes": {
+            "name": "Regent's Square",
+            "sub": "Schuhhändler"
+        },
+        "Marleybone/Interiors/MB_WolfminsterAbbey": {
+            "name": "Wolfminster Abbey"
+        },
+        "Marleybone/Interiors/MB_QuatermaneTower": {
+            "name": "Regent's Square",
+            "sub": "Schurkischer Ingenieur"
+        },
+		"Marleybone/MB_BigBen/MB_Museum": {
+            "name": "Royal Museum"
+        },
+        "Marleybone/MB_Hub": {
+            "name": "Regent's Square"
+        },
+        "Marleybone/MB_ScotlandYard/MB_Roof": {
+            "name": "Dach v. Scotland Yard"
+        },
+        "Marleybone/MB_Station/MB_FlightToHydePark": {
+            "name": "Ballonwagen z. Hyde Park"
+        },
+        "Marleybone/MB_Station/MB_Station_Hub": {
+            "name": "Digmoore Station"
+        }
+	}
+}
+   
+   

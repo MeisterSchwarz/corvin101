@@ -1,0 +1,35 @@
+{
+	"meta": {
+		"world": "Zuhause",
+		"image": "housing"
+	},
+	"zones": {
+        "Housing/Mooshu/MS_Tier2_Exterior": {
+            "name": "Zarenpalast (Außenbereich)"
+        },
+        "Housing/Mooshu/MS_Tier2_Interior": {
+            "name": "Zarenpalast"
+        },
+        "Housing/School/Life_Exterior": {
+            "name": "Haus des Lebens (Außenbereich)"
+        },
+        "Housing_FarmHouse/Exterior": {
+            "name": "Bauernhof (Außenbereich)"
+        },
+        "Housing_FarmHouse/Interior": {
+            "name": "Bauernhof"
+        },
+        "Housing_Polaris_Ship/House_Polaris_Ship_EXT": {
+            "name": "Polarisches Schiffswrack (Außenbereich)"
+        },
+        "Housing_Polaris_Ship/House_Polaris_Ship_INT": {
+            "name": "Polarisches Schiffswrack"
+        },
+        "Housing_Villa_Gardens/Exterior": {
+            "name": "Gartenvilla (Außenbereich)"
+        },
+        "Housing_Villa_Gardens/Interior": {
+            "name": "Gartenvilla"
+        }
+	}
+}

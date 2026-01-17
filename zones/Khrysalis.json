@@ -1,0 +1,486 @@
+{
+	"meta": {
+		"world": "Khrysalis",
+		"image": "khrysalis"
+	},
+	"zones": {
+        "Khrysalis/Interiors/KR_Z00_I08_ThroneRoom": {
+            "name": "Bastei (Thronsaal)"
+        },
+        "Khrysalis/Interiors/KR_Z00_TwoFaced": {
+            "name": "Bastei",
+            "sub": "Razele Zweigesichtig"
+        },
+        "Khrysalis/Interiors/KR_Z000_Tymen_WhiteFlame": {
+            "name": "Bastei ",
+            "sub": "Thymen Weißflamme"
+        },
+        "Khrysalis/Interiors/KR_Z00_I05_Bastion_BrokenTower": {
+            "name": "Bastei (Bruchturm)"
+        },
+        "Khrysalis/Interiors/KR_Z00_I00_BenightedBurrow": {
+            "name": "Bastei (Verwaister Bau)"
+        },
+        "Khrysalis/Interiors/KR_Z00_I04_Bastion_BlindTower": {
+            "name": "Der Stille Markt (Blinder Turm)"
+        },
+        "Khrysalis/Interiors/KR_Z00_I07_Mausoleum": {
+            "name": "Bastei",
+            "sub": "Mausoleum"
+        },
+        "Khrysalis/Interiors/KR_Z00_I07_Mausoleum_Room03": {
+            "name": "Bastei",
+            "sub": "Kreem Käsebruch"
+        },
+        "Khrysalis/Interiors/KR_Z01_WarRoom": {
+            "name": "Der Stille Markt (Kriegsraum)"
+        },
+        "Khrysalis/Interiors/KR_Z01_LimeBright": {
+            "name": "Der Stille Markt (Sauerpests Nest)"
+        },
+        "Khrysalis/Interiors/KR_Z01_QuietOne": {
+            "name": "Der Stille Markt",
+            "sub": "Zandra Schweigestill"
+        },
+        "Khrysalis/Interiors/KR_Z01_DoomMask": {
+            "name": "Der Stille Markt (Schreckensmaskes Behausung)"
+        },
+        "Khrysalis/Interiors/KR_Z01_ZanzaQuarters": {
+            "name": "Der Stille Markt (Baubrecherins Quartier)"
+        },
+        "Khrysalis/Interiors/KR_Z02_Honeymill": {
+            "name": "Mondklippen",
+            "sub": "Honigmühle"
+        },
+        "Khrysalis/Interiors/KR_Z03_UlleksTent": {
+            "name": "Der Letzte Hain",
+            "sub": "Ullek Glutzunge"
+        },
+        "Khrysalis/Interiors/KR_Z03_WorldRazer_Tent": {
+            "name": "Der Letzte Hain",
+            "sub": "Galek Weltenschleifer"
+        },
+        "Khrysalis/Interiors/KR_Z04_I10_UgorCave": {
+            "name": "Purpurschlucht",
+            "sub": "Ugors Höhle"
+        },
+        "Khrysalis/Interiors/KR_Z05_I10_CentralKeep": {
+            "name": "Rakkiasfestung - Zentraler Turm"
+        },
+        "Khrysalis/Interiors/KR_Z05_Keep_04": {
+            "name": "Rakkiasfestung - Zentraler Turm",
+            "sub": "Turm der Hornwächter"
+        },
+        "Khrysalis/Interiors/KR_Z05_SaqqaraBird": {
+            "name": "Rakkiasfestung",
+            "sub": "Wazz"
+        },
+        "Khrysalis/Interiors/KR_Z05_I11_Keep_03": {
+            "name": "Rakkiasfestung",
+            "sub": "Salicar Würgeranke"
+        },
+        "Khrysalis/Interiors/KR_Z06_I01_BeastControl": {
+            "name": "Mondsichelstrand",
+            "sub": "Großes Biest"
+        },
+        "Khrysalis/Interiors/KR_Z06_I01_BeastTopside_01": {
+            "name": "Mondsichelstrand",
+            "sub": "Großes Biest (1/3)"
+        },
+        "Khrysalis/Interiors/KR_Z06_I01_BeastTopside_02": {
+            "name": "Mondsichelstrand",
+            "sub": "Großes Biest (2/3)"
+        },
+        "Khrysalis/Interiors/KR_Z06_I01_BeastTopside_03": {
+            "name": "Mondsichelstrand",
+            "sub": "Großes Biest (3/3 - Tiefenbrut)"
+        },
+        "Khrysalis/Interiors/KR_Z06_I01_Hermitcave": {
+            "name": "Mondsichelstrand",
+            "sub": "Schädelfelsen"
+        },
+        "Khrysalis/Interiors/KR_Z06_I01_Hermitcave02": {
+            "name": "Mondsichelstrand",
+            "sub": "Taylor Coleridge"
+        },
+        "Khrysalis/Interiors/KR_Z06_I02_AntLionWarren": {
+            "name": "Mondsichelstrand",
+            "sub": "Ameisenlöwe"
+        },
+        "Khrysalis/Interiors/KR_Z06_I02_AntLionWarren02": {
+            "name": "Mondsichelstrand",
+            "sub": "Ameisengreif"
+        },
+        "Khrysalis/Interiors/KR_Z06_I03_UmbraTentLarge": {
+            "name": "Mondsichelstrand",
+            "sub": "Großes Zelt"
+        },
+        "Khrysalis/Interiors/KR_Z06_I04_UmbraGuardTent": {
+            "name": "Mondsichelstrand",
+            "sub": "Damdin'Bazar"
+        },
+        "Khrysalis/Interiors/KR_Z06_I05_UmbraTentSm01": {
+            "name": "Mondsichelstrand",
+            "sub": "Bewachtes Zelt"
+        },
+        "Khrysalis/Interiors/KR_Z06_I06_UmbraTentSm02": {
+            "name": "Mondsichelstrand",
+            "sub": "Alte Jungfer"
+        },
+        "Khrysalis/Interiors/KR_Z06_I09_BeachCave01": {
+            "name": "Mondsichelstrand",
+            "sub": "Stieg Treibsand"
+        },
+        "Khrysalis/Interiors/KR_Z06_I10_BeachCave02": {
+            "name": "Mondsichelstrand",
+            "sub": "Garstiger Ameisenlöwe"
+        },
+        "Khrysalis/Interiors/KR_Z07_I01_ZodiacCave": {
+            "name": "Alcazar-Ruine",
+            "sub": "Hanzo Gelbauge"
+        },
+        "Khrysalis/Interiors/KR_Z07_I06_PhoenixBot": {
+            "name": "Alcazar-Ruine",
+            "sub": "Phönixturm (1/2)"
+        },
+        "Khrysalis/Interiors/KR_Z07_I07_PhoenixTop": {
+            "name": "Alcazar-Ruine",
+            "sub": "Phönixturm (2/2 - Papa Jacobo)"
+        },
+        "Khrysalis/Interiors/KR_Z07_I09_SerpBot": {
+            "name": "Alcazar-Ruine",
+            "sub": "Schlangenturm (1/2)"
+        },
+        "Khrysalis/Interiors/KR_Z07_I11_SerpCave": {
+            "name": "Alcazar-Ruine",
+            "sub": "Schlangenturm (2/2)"
+        },
+        "Khrysalis/Interiors/KR_Z07_I12_StagBot": {
+            "name": "Alcazar-Ruine",
+            "sub": "Hirschturm (1/2 - Verirrter Ritter)"
+        },
+        "Khrysalis/Interiors/KR_Z07_I13_StagTop": {
+            "name": "Alcazar-Ruine",
+            "sub": "Hirschturm (2/2)"
+        },
+        "Khrysalis/Interiors/KR_Z07_I15_CrabBot": {
+            "name": "Alcazar-Ruine",
+            "sub": "Krabbenturm (1/2)"
+        },
+        "Khrysalis/Interiors/KR_Z07_I17_CrabCave": {
+            "name": "Alcazar-Ruine",
+            "sub": "Krabbenturm (2/2 - Tiefenbrut)"
+        },
+        "Khrysalis/Interiors/KR_Z08_I02_PheonixTower": {
+            "name": "Neue Aurora",
+            "sub": "Phönixturm"
+        },
+        "Khrysalis/Interiors/KR_Z08_I03_SerpentTower": {
+            "name": "Neue Aurora",
+            "sub": "Schlangenturm"
+        },
+        "Khrysalis/Interiors/KR_Z08_I04_StagTower": {
+            "name": "Neue Aurora",
+            "sub": "Hirschturm"
+        },
+        "Khrysalis/Interiors/KR_Z08_I05_CrabTower": {
+            "name": "Neue Aurora",
+            "sub": "Krabbenturm"
+        },
+        "Khrysalis/Interiors/KR_Z08_I06_Dreamroom1": {
+            "name": "Neue Aurora",
+            "sub": "Erste Kammer des Geistes"
+        },
+        "Khrysalis/Interiors/KR_Z08_I07_Dreamroom2": {
+            "name": "Neue Aurora",
+            "sub": "Zweite Kammer des Geistes"
+        },
+        "Khrysalis/Interiors/KR_Z08_I08_Dreamroom3": {
+            "name": "Neue Aurora",
+            "sub": "Dritte Kammer des Geistes"
+        },
+        "Khrysalis/Interiors/KR_Z09_I02_NadezhaHouseLG": {
+            "name": "Sardonyx",
+            "sub": "Nadezha Pfeffersicht"
+        },
+        "Khrysalis/Interiors/KR_Z09_I04_SeaTowerBot": {
+            "name": "Sardonyx",
+            "sub": "Lieza Schiffbruch"
+        },
+        "Khrysalis/Interiors/KR_Z09_I06_DeadLeafBot": {
+            "name": "Sardonyx",
+            "sub": "Zuska Wirbelblatt"
+        },
+        "Khrysalis/Interiors/KR_Z09_I08_PaleBeautyBot": {
+            "name": "Sardonyx",
+            "sub": "Drepa Hakenspitze"
+        },
+        "Khrysalis/Interiors/KR_Z09_I10_GarrisonBot": {
+            "name": "Sardonyx",
+            "sub": "Teuflische Garnison"
+        },
+        "Khrysalis/Interiors/KR_Z09_I11_GarrisonTop": {
+            "name": "Sardonyx",
+            "sub": "Kapitän der zweiten Kolonne"
+        },
+        "Khrysalis/Interiors/KR_Z09_I12_LostLightMain": {
+            "name": "Sardonyx",
+            "sub": "Schrein des verlorenen Lichts"
+        },
+        "Khrysalis/Interiors/KR_Z09_I13_ObeliskChamber": {
+            "name": "Sardonyx",
+            "sub": "Schrein des verlorenen Lichts (Obeliskenkammer)"
+        },
+        "Khrysalis/Interiors/KR_Z09_I14_TroikaPalaceWSGate": {
+            "name": "Sardonyx",
+            "sub": "Zelda Trugritter"
+        },
+        "Khrysalis/Interiors/KR_Z09_I15_ZedsHouseSM": {
+            "name": "Sardonyx",
+            "sub": "Zeds Haus"
+        },
+        "Khrysalis/Interiors/KR_Z09_I19_TroikaPalaceDungeon": {
+            "name": "Sardonyx",
+            "sub": "Balor Brukktan"
+        },
+        "Khrysalis/Interiors/KR_Z09_I20_MunitionsRoom": {
+            "name": "Sardonyx",
+            "sub": "Munitionsoffizier"
+        },
+        "Khrysalis/Interiors/KR_Z09_I21_VaziviaHouseLG": {
+            "name": "Sardonyx",
+            "sub": "Vazivika Willensbruch"
+        },
+        "Khrysalis/Interiors/KR_Z09_I22_GarrisonArmory": {
+            "name": "Sardonyx",
+            "sub": "Waffenkammer der Garnison"
+        },
+        "Khrysalis/Interiors/KR_Z09_I24_RozimundHouseLG": {
+            "name": "Sardonyx",
+            "sub": "Rozimunde Einblatt"
+        },
+        "Khrysalis/Interiors/KR_Z09_I26_ZoudicaHouseLG": {
+            "name": "Sardonyx",
+            "sub": "Zudica Grünklaue"
+        },
+        "Khrysalis/Interiors/KR_Z09_I25_ZharelliaHouseLG": {
+            "name": "Sardonyx",
+            "sub": "Zharellia Flinkschwind"
+        },
+        "Khrysalis/Interiors/KR_Z09_I26_PaleBeautyBot02": {
+            "name": "Sardonyx",
+            "sub": "Simone Flügelschlag"
+        },
+        "Khrysalis/Interiors/KR_Z10_I01_BurrowTent": {
+            "name": "Kondhawüste",
+            "sub": "Sonya Jadeauge"
+        },
+        "Khrysalis/Interiors/KR_Z10_I05_AlluviumCave": {
+            "name": "Kondhawüste",
+            "sub": "R'Lorr M'Wah"
+        },
+        "Khrysalis/Interiors/KR_Z10_I05_DryGulchCave": {
+            "name": "Kondhawüste",
+            "sub": "Evandyr Halbohr"
+        },
+        "Khrysalis/Interiors/KR_Z10_I05_MetasomaCave01": {
+            "name": "Kondhawüste",
+            "sub": "Höhle der Wespentaille (1/3)"
+        },
+        "Khrysalis/Interiors/KR_Z10_I05_MetasomaCave02": {
+            "name": "Kondhawüste",
+            "sub": "Höhle der Wespentaille (2/3)"
+        },
+        "Khrysalis/Interiors/KR_Z10_I05_MetasomaCave03": {
+            "name": "Kondhawüste",
+            "sub": "Schwarze Baroness"
+        },
+        "Khrysalis/Interiors/KR_Z10_I08_SolarArcMain": {
+            "name": "Kondhawüste",
+            "sub": "Sonnenbogen"
+        },
+        "Khrysalis/Interiors/KR_Z10_I09_SolarArcChambBalance": {
+            "name": "Kondhawüste",
+            "sub": "Sonnenbogen (Balancekammer)"
+        },
+        "Khrysalis/Interiors/KR_Z10_I10_SolarArcChambDeath": {
+            "name": "Kondhawüste",
+            "sub": "Sonnenbogen (Todeskammer)"
+        },
+        "Khrysalis/Interiors/KR_Z10_I11_SolarArcChambStorm": {
+            "name": "Kondhawüste",
+            "sub": "Sonnenbogen (Sturmkammer)"
+        },
+        "Khrysalis/Interiors/KR_Z10_I12_SolarArcChambMyth": {
+            "name": "Kondhawüste",
+            "sub": "Sonnenbogen (Mythoskammer)"
+        },
+        "Khrysalis/Interiors/KR_Z10_I13_SolarArcChambIce": {
+            "name": "Kondhawüste",
+            "sub": "Sonnenbogen (Eiskammer)"
+        },
+        "Khrysalis/Interiors/KR_Z10_I14_SolarArcChambFire": {
+            "name": "Kondhawüste",
+            "sub": "Sonnenbogen (Feuerkammer)"
+        },
+        "Khrysalis/Interiors/KR_Z10_I15_SolarArcChambLife": {
+            "name": "Kondhawüste",
+            "sub": "Sonnenbogen (Lebenskammer)"
+        },
+        "Khrysalis/Interiors/KR_Z10_I16_SolarArcChambShadow": {
+            "name": "Kondhawüste",
+            "sub": "Schattenkammer"
+        },
+        "Khrysalis/Interiors/KR_Z10_I17_BloodStoneCave": {
+            "name": "Kondhawüste",
+            "sub": "Blutstein-Höhle"
+        },
+        "Khrysalis/Interiors/KR_Z10_I18_FoodCave": {
+            "name": "Kondhawüste",
+            "sub": "Futterhöhle"
+        },
+        "Khrysalis/Interiors/KR_Z11_I01_BlackHole": {
+            "name": "Das Nest",
+            "sub": "Das Schwarze Loch"
+        },
+        "Khrysalis/Interiors/KR_Z11_I02_RecluseChamber": {
+            "name": "Das Nest",
+            "sub": "Xestia Sechsstreif"
+        },
+        "Khrysalis/Interiors/KR_Z11_I03_WarpTowerBot": {
+            "name": "Das Nest",
+            "sub": "Turm des Kettfadens"
+        },
+        "Khrysalis/Interiors/KR_Z11_I04_WarpTowerTop": {
+            "name": "Das Nest",
+            "sub": "Turm des Kettfadens (Ekrevitz Bösesblut)"
+        },
+        "Khrysalis/Interiors/KR_Z11_I05_WeftTowerBot": {
+            "name": "Das Nest",
+            "sub": "Turm des Schussfadens (1/2)"
+        },
+        "Khrysalis/Interiors/KR_Z11_I06_WeftTowerTop": {
+            "name": "Das Nest",
+            "sub": "Turm des Schussfadens (2/2)"
+        },
+        "Khrysalis/Interiors/KR_Z11_I07_MagiHouseMain": {
+            "name": "Das Nest",
+            "sub": "Haus der Magi"
+        },
+        "Khrysalis/Interiors/KR_Z11_I08_MagiHouseChamb01": {
+            "name": "Das Nest",
+            "sub": "Haus der Magi (Erste Kammer)"
+        },
+        "Khrysalis/Interiors/KR_Z11_I09_MagiHouseChamb02": {
+            "name": "Das Nest",
+            "sub": "Haus der Magi (Spinnen-Erzmagier)"
+        },
+        "Khrysalis/Interiors/KR_Z11_I10_MagiHouseChamb03": {
+            "name": "Das Nest",
+            "sub": "Haus der Magi (Kozak Schwarzherz)"
+        },
+        "Khrysalis/Interiors/KR_Z11_I12_MagiHouseChamb05": {
+            "name": "Das Nest",
+            "sub": "Haus der Magi (Erzmagus Lorcan)"
+        },
+        "Khrysalis/Interiors/KR_Z11_I13_PalFangsMain": {
+            "name": "Das Nest",
+            "sub": "Palast der Scheren"
+        },
+        "Khrysalis/Interiors/KR_Z11_I14_PalFangsChamb01": {
+            "name": "Das Nest",
+            "sub": "Palast der Scheren (Erste Kammer)"
+        },
+        "Khrysalis/Interiors/KR_Z11_I15_PalFangsChamb02": {
+            "name": "Das Nest",
+            "sub": "Palast der Scheren (Zweite Kammer)"
+        },
+        "Khrysalis/Interiors/KR_Z11_I16_PalFangsChamb03": {
+            "name": "Das Nest",
+            "sub": "Palast der Scheren (Dritte Kammer)"
+        },
+        "Khrysalis/Interiors/KR_Z11_I17_PalFangsChamb04": {
+            "name": "Das Nest",
+            "sub": "Palast der Scheren (Tamulus)"
+        },
+        "Khrysalis/Interiors/KR_Z11_I19_BarbCell": {
+            "name": "Das Nest",
+            "sub": "Zelle"
+        },
+        "Khrysalis/Interiors/KR_Z11_I20_InteroRoom": {
+            "name": "Das Nest",
+            "sub": "Inquisitor Ximenez"
+        },
+        "Khrysalis/Interiors/KR_Z11_I21_MutationChamb0": {
+            "name": "Das Nest",
+            "sub": "Mutationskammer A"
+        },
+        "Khrysalis/Interiors/KR_Z11_I22_MutationChamb02": {
+            "name": "Das Nest",
+            "sub": "Mutationskammer B"
+        },
+        "Khrysalis/Interiors/KR_Z11_I23_TransformChamb": {
+            "name": "Das Nest",
+            "sub": "Undrek Pestklaue"
+        },
+        "Khrysalis/Interiors/KR_Z11_I24_Cave01": {
+            "name": "Das Nest",
+            "sub": "Vernehmer Rentenius"
+        },
+        "Khrysalis/Interiors/KR_Z12_I01_SpiritPlane": {
+            "name": "Schattenpalast",
+            "sub": "Moros' Baumwurzeln"
+        },
+        "Khrysalis/Interiors/KR_Z12_I02_Entry": {
+            "name": "Schattenpalast",
+            "sub": "Eingang"
+        },
+        "Khrysalis/Interiors/KR_Z12_I03_Galleries": {
+            "name": "Schattenpalast",
+            "sub": "Galerie"
+        },
+        "Khrysalis/Interiors/KR_Z12_I04_MorgantheBossRoom": {
+            "name": "Schattenpalast",
+            "sub": "Morganthe"
+        },
+        "Khrysalis/KR_Z00_Hub": {
+            "name": "Bastei"
+        },
+        "Khrysalis/KR_Z01_SilentMarket": {
+            "name": "Der Stille Markt"
+        },
+        "Khrysalis/KR_Z02_MoonCliffs": {
+            "name": "Mondklippen"
+        },
+        "Khrysalis/KR_Z03_LastWood": {
+            "name": "Der Letzte Hain"
+        },
+        "Khrysalis/KR_Z04_TyrianGorge": {
+            "name": "Purpurschlucht"
+        },
+        "Khrysalis/KR_Z05_FortRachias": {
+            "name": "Rakkiasfestung"
+        },
+        "Khrysalis/KR_Z06_CrescentBeach": {
+            "name": "Mondsichelstrand"
+        },
+        "Khrysalis/KR_Z07_RuinedAlcazar": {
+            "name": "Alcazar-Ruine"
+        },
+        "Khrysalis/KR_Z08_RadianceReborn": {
+            "name": "Neue Aurora"
+        },
+        "Khrysalis/KR_Z09_MantisCity": {
+            "name": "Sardonyx"
+        },
+        "Khrysalis/KR_Z10_KondhaDesert": {
+            "name": "Kondhawüste"
+        },
+        "Khrysalis/KR_Z11_TheHive": {
+            "name": "Das Nest"
+        },
+        "Khrysalis/KR_Z12_ShadowPalace": {
+            "name": "Schattenpalast"
+        }
+	}
+}

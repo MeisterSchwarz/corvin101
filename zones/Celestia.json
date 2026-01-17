@@ -1,0 +1,11 @@
+{
+	"meta": {
+		"world": "Celestia",
+		"image": "celestia"
+	},
+	"zones": {
+		"Celestia/CL_Hub": {
+			"name": "Basislager"
+		}
+	}
+}

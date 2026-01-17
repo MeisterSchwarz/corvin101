@@ -1,0 +1,38 @@
+{
+	"meta": {
+		"world": "Lemuria",
+		"image": "lemuria"
+	},
+	"zones": {
+        "Lemuria/Interiors/LM_Z02_UrsaiMonitoringStation": {
+            "name": "Ursai-Dorf",
+            "sub": "Überwachungsstation"
+        },
+        "Lemuria/Interiors/LM_Z02_Volcano": {
+            "name": "Ursai-Dorf",
+            "sub": "Killawahoo"
+        },
+		"Lemuria/Interiors/LM_Z02_VolcanoClimb": {
+            "name": "Ursai-Dorf",
+            "sub": "Donnersaurus-Fluch"
+        },
+        "Lemuria/Interiors/LM_Z02_VolcanoTop": {
+            "name": "Ursai-Dorf",
+            "sub": "Vulkanspitze"
+        },
+        "Lemuria/Interiors/LM_Z03_WendigoNest": {
+            "name": "Nachtdorf",
+            "sub": "Der Schliwusel"
+        },
+        "Lemuria/LM_Z01_WildLands": {
+            "name": "Wildnis"
+        },
+        "Lemuria/LM_Z02_UrsaiVillage": {
+            "name": "Ursai-Dorf"
+        },
+        "Lemuria/LM_Z03_NightForest": {
+            "name": "Nachtwald"
+        }
+
+	}
+}

@@ -1,0 +1,30 @@
+{
+	"meta": {
+		"world": "Mirage",
+		"image": "mirage"
+	},
+	"zones": {
+		"Mirage/Interiors/MR_Z10_EastTimeDunes": {
+			"name": "Sande der Zeit",
+            "sub": "Schattenknochen"
+		},
+		"Mirage/Interiors/MR_Z10_NorthTimeDunes": {
+			"name": "Sande der Zeit",
+            "sub": "Großvater Spinne"
+		},
+		"Mirage/Interiors/MR_Z10_SandsofTime": {
+			"name": "Sande der Zeit"
+		},
+		"Mirage/Interiors/MR_Z10_SouthTimeDune": {
+			"name": "Sande der Zeit",
+            "sub": "Schattenbalg"
+		},
+		"Mirage/Interiors/MR_Z10_WestTimeDune": {
+			"name": "Sande der Zeit",
+            "sub": "Bert Schattenhaar"
+		},
+		"Mirage/MR_Z10_Chronoverge": {
+			"name": "Chronoring"
+		}
+	}
+}

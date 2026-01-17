@@ -1,0 +1,299 @@
+{
+	"meta": {
+		"world": "Empyrea",
+		"image": "empyrea"
+	},
+	"zones": {
+		    "Empyrea/EM_Z00_Aeriel_HUB": {
+        "name": "Äriel-Küste"
+    },
+    "Empyrea/EM_Z01_Jungle": {
+        "name": "Äriel-Dschungel"
+    },
+    "Empyrea/EM_Z02_Zanadu": {
+        "name": "Zanadu"
+    },
+    "Empyrea/EM_Z03_OuterAthanor": {
+        "name": "Athanor-Außenbezirk"
+    },
+    "Empyrea/EM_Z04_InnerAthanor": {
+        "name": "Inneres von Athanor"
+    },
+    "Empyrea/EM_Z05_Sepidious": {
+        "name": "Der Magen"
+    },
+    "Empyrea/EM_Z06_NimbusHanger": {
+        "name": "Nimbus-Hangar"
+    },
+    "Empyrea/EM_Z07_NimbusCitadel": {
+        "name": "Nimbus-Zitadelle"
+    },
+    "Empyrea/EM_Z08_SWAeroplains": {
+        "name": "Südwestliche Aeroebenen"
+    },
+    "Empyrea/EM_Z09_NWAeroplains": {
+        "name": "Nordöstliche Aeroebenen"
+    },
+    "Empyrea/EM_Z10_PortAero": {
+        "name": "Aerohafen"
+    },
+    "Empyrea/EM_Z11_VeloCity": {
+        "name": "Flinkfurt"
+    },
+    "Empyrea/EM_Z12_LandingZone": {
+        "name": "Mandalla"
+    },
+    "Empyrea/EM_Z12_SamsaraVillage": {
+        "name": "Dorf Samsara"
+    },
+    "Empyrea/EM_Z13_SamsaraDestroyed": {
+        "name": "Dorf Samsara"
+    },
+    "Empyrea/EM_Z14_ChaosJungle": {
+        "name": "Chaosdschungel"
+    },
+    "Empyrea/EM_Z15_Nexus": {
+        "name": "Träumerei"
+    },
+    "Empyrea/EM_Z16_Husk": {
+        "name": "Finsterhain"
+    },
+    "Empyrea/Interiors/EM_Z00_ArkHold": {
+        "name": "Äriel-Küste",
+        "sub": "Die Arche"
+    },
+    "Empyrea/Interiors/EM_Z01_BeastmanCave": {
+        "name": "Tolli-Kampfclub"
+    },
+    "Empyrea/Interiors/EM_Z02_BeaconHope": {
+        "name": "Zanadu",
+        "sub": "Leuchtfeuer der Hoffnung"
+    },
+    "Empyrea/Interiors/EM_Z03_IceAccessTunnel": {
+        "name": "Athanor-Außenbezirk",
+        "sub": "Der Schrecken"
+    },
+    "Empyrea/Interiors/EM_Z03_IceDwarfBunker": {
+        "name": "Athanor-Außenbezirk",
+        "sub": "Bunker"
+    },
+    "Empyrea/Interiors/EM_Z03_IceGreatHall": {
+        "name": "Athanor-Außenbezirk",
+        "sub": "Große Halle"
+    },
+    "Empyrea/Interiors/EM_Z03_MeltingHouse": {
+        "name": "Athanor-Außenbezirk",
+        "sub": "Dampfschrecken"
+    },
+    "Empyrea/Interiors/EM_Z03_Vault": {
+        "name": "Athanor-Außenbezirk",
+        "sub": "Frostfluch"
+    },
+    "Empyrea/Interiors/EM_Z04_Cistern": {
+        "name": "Inneres von Athanor",
+        "sub": "Magmaschrecken"
+    },
+    "Empyrea/Interiors/EM_Z04_ControlRoom": {
+        "name": "Inneres von Athanor",
+        "sub": "Kontrollraum"
+    },
+    "Empyrea/Interiors/EM_Z04_I03_LightTemple": {
+        "name": "Inneres von Athanor",
+        "sub": "Tempel des Lichts"
+    },
+    "Empyrea/Interiors/EM_Z04_Praesidium": {
+        "name": "Inneres von Athanor",
+        "sub": "Präsidium"
+    },
+    "Empyrea/Interiors/EM_Z04_SteamVentControl": {
+        "name": "Inneres von Athanor",
+        "sub": "Dampffabrik"
+    },
+    "Empyrea/Interiors/EM_Z05_Brain": {
+        "name": "Medulla"
+    },
+    "Empyrea/Interiors/EM_Z05_Heart": {
+        "name": "Achsenskelett",
+        "sub": "Herz (Qhatzwoman)"
+    },
+    "Empyrea/Interiors/EM_Z05_HeartPath": {
+        "name": "Achsenskelett",
+        "sub": "Herz"
+    },
+    "Empyrea/Interiors/EM_Z05_InkSack": {
+        "name": "Achsenskelett",
+        "sub": "Tintendrüse (Dynt)"
+    },
+    "Empyrea/Interiors/EM_Z05_InkTubing": {
+        "name": "Achsenskelett",
+        "sub": "Tintendrüse"
+    },
+    "Empyrea/Interiors/EM_Z05_LeftEye": {
+        "name": "Achsenskelett",
+        "sub": "Linkes Auge (Gifteiche)"
+    },
+    "Empyrea/Interiors/EM_Z05_LeftEyePath": {
+        "name": "Achsenskelett",
+        "sub": "Linkes Auge"
+    },
+    "Empyrea/Interiors/EM_Z05_NodoChord": {
+        "name": "Achsenskelett"
+    },
+    "Empyrea/Interiors/EM_Z05_RightEye": {
+        "name": "Achsenskelett",
+        "sub": "Rechtes Auge (Der Pinguin)"
+    },
+    "Empyrea/Interiors/EM_Z05_RightEyePath": {
+        "name": "Achsenskelett",
+        "sub": "Rechtes Auge"
+    },
+    "Empyrea/Interiors/EM_Z07_AudienceChambers": {
+        "name": "Nimbus-Zitadelle",
+        "sub": "Audienzzimmer"
+    },
+    "Empyrea/Interiors/EM_Z07_ControlRoom": {
+        "name": "Nimbus-Zitadelle",
+        "sub": "Admiral Dynt"
+    },
+    "Empyrea/Interiors/EM_Z07_MilitaryStronghold": {
+        "name": "Nimbus-Zitadelle",
+        "sub": "Militärstützpunkt"
+    },
+    "Empyrea/Interiors/EM_Z07_PrivateWing": {
+        "name": "Nimbus-Zitadelle",
+        "sub": "Vanitus"
+    },
+    "Empyrea/Interiors/EM_Z07_RearCourtyard": {
+        "name": "Nimbus-Zitadelle",
+        "sub": "Prätorin Drusilla"
+    },
+    "Empyrea/Interiors/EM_Z07_SecondaryDock": {
+        "name": "Nimbus-Zitadelle",
+        "sub": "Dock"
+    },
+    "Empyrea/Interiors/EM_Z07_TrainingGrounds": {
+        "name": "Nimbus-Zitadelle",
+        "sub": "Übungsplatz"
+    },
+    "Empyrea/Interiors/EM_Z08_DarkCloudBase": {
+        "name": "Südwestliche Aeroebenen",
+        "sub": "Doktor Dementor"
+    },
+    "Empyrea/Interiors/EM_Z08_MeowlsDen": {
+        "name": "Südwestliche Aeroebenen",
+        "sub": "Neuleanischer Löwe"
+    },
+    "Empyrea/Interiors/EM_Z09_HelenasBattle": {
+        "name": "Nordöstliche Aeroebenen",
+        "sub": "Helena"
+    },
+    "Empyrea/Interiors/EM_Z09_HelenasCamp": {
+        "name": "Nordöstliche Aeroebenen",
+        "sub": "Helenas Lager"
+    },
+    "Empyrea/Interiors/EM_Z09_HumongishfrogBattlefield": {
+        "name": "Nordöstliche Aeroebenen",
+        "sub": "Froschprinz"
+    },
+    "Empyrea/Interiors/EM_Z10_1stAeroDwarfHouse": {
+        "name": "Aerohafen",
+        "sub": "1. Aerozwerghaus"
+    },
+    "Empyrea/Interiors/EM_Z10_2ndAeroDwarfHouse": {
+        "name": "Aerohafen",
+        "sub": "2. Aerozwerghaus"
+    },
+    "Empyrea/Interiors/EM_Z10_3rdAeroDwarfHouse": {
+        "name": "Aerohafen",
+        "sub": "3. Aerozwerghaus"
+    },
+    "Empyrea/Interiors/EM_Z10_FieldPartyCrash": {
+        "name": "Aerohafen",
+        "sub": "Absturzstelle"
+    },
+    "Empyrea/Interiors/EM_Z12_I09_Clearing_C": {
+        "name": "Mandalla",
+        "sub": "Lichtung"
+    },
+    "Empyrea/Interiors/EM_Z12_AshenCaves": {
+        "name": "Mandalla",
+        "sub": "Wachsamer Sargun"
+    },
+    "Empyrea/Interiors/EM_Z12_DyingGlade": {
+        "name": "Mandalla",
+        "sub": "Todesameise"
+    },
+    "Empyrea/Interiors/EM_Z12_DyingJungle": {
+        "name": "Mandalla",
+        "sub": "Sterbender Dschungel"
+    },
+    "Empyrea/Interiors/Em_Z13_PossessedShrine": {
+        "name": "Dorf Samsara",
+        "sub": "Besessener Schrein"
+    },
+    "Empyrea/Interiors/EM_Z14_CaveRefuge": {
+        "name": "Chaosdschungel",
+        "sub": "Zuflucht"
+    },
+    "Empyrea/Interiors/EM_Z15_DreamLife": {
+        "name": "Träumerei",
+        "sub": "Der Schulleiter"
+    },
+    "Empyrea/Interiors/EM_Z15_DreamRavenwood": {
+        "name": "Träumerei",
+        "sub": "Rabenhain"
+    },
+    "Empyrea/Interiors/EM_Z15_DreamShrine": {
+        "name": "Träumerei",
+        "sub": "Traumschrein"
+    },
+    "Empyrea/Interiors/EM_Z15_DreamBabaYaga": {
+        "name": "Träumerei",
+        "sub": "Traumwelt (Polaris)"
+    },
+       "Empyrea/Interiors/EM_Z15_DreamHive": {
+        "name": "Träumerei",
+        "sub": "Traumwelt"
+    },
+    "Empyrea/Interiors/EM_Z15_NightmareDS": {
+        "name": "Träumerei",
+        "sub": "Alptraum (2/3)"
+    },    
+    "Empyrea/Interiors/EM_Z15_NightmareFinale": {
+        "name": "Träumerei",
+        "sub": "Traum-Belloq"
+    },
+    "Empyrea/Interiors/EM_Z15_NightmareKrok": {
+        "name": "Träumerei",
+        "sub": "Alptraum (3/3 - Rätselraum)"
+    },
+    "Empyrea/Interiors/EM_Z15_NightmareRealm": {
+        "name": "Träumerei",
+        "sub": "Alptraum (1/3)"
+    },
+    "Empyrea/Interiors/EM_Z16_I01_AstralGrove": {
+        "name": "Finsterhain",
+        "sub": "Wachsamer Sargun"
+    },
+    "Empyrea/Interiors/EM_Z16_I02_ElementalGrove": {
+        "name": "Finsterhain",
+        "sub": "Arachna-Meistermagus"
+    },
+    "Empyrea/Interiors/EM_Z16_I03_SpiritualGrove": {
+        "name": "Finsterhain",
+        "sub": "Der Skorpion & Die Ratte"
+    },
+    "Empyrea/Interiors/EM_Z16_I04_StormTitan": {
+        "name": "Finsterhain",
+        "sub": "Titanendreizack"
+    },
+    "Empyrea/Interiors/EM_Z16_I05_BrokenBough_A": {
+        "name": "Finsterhain",
+        "sub": "Äthyr-Titan"
+    },
+     "Empyrea/Interiors/EM_Z16_I06_BrokenBough_B": {
+        "name": "Finsterhain",
+        "sub": "Äthyr-Titan"
+    }
+	}
+}

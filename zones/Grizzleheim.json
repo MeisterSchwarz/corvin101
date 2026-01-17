@@ -1,0 +1,11 @@
+{
+	"meta": {
+		"world": "Grizzleheim",
+		"image": "grizzleheim"
+	},
+	"zones": {
+		"Grizzleheim/GH_MainHub": {
+			"name": "Nordwacht"
+		}
+	}
+}

@@ -1,0 +1,23 @@
+# build 
+*.exe
+*.dll
+*.so
+*.dylib
+
+*.log
+
+# tmp
+*.tmp
+*.bak
+*.cache
+
+# editor
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# local config
+settings.json
+config.local.*
+

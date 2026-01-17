@@ -1,0 +1,11 @@
+{
+	"meta": {
+		"world": "Zafaria",
+		"image": "zafaria"
+	},
+	"zones": {
+		"Zafaria/ZF_Z00_Hub": {
+			"name": "Baobab-Kreuzung"
+		}
+	}
+}

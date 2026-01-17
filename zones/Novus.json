@@ -1,0 +1,11 @@
+{
+	"meta": {
+		"world": "Novus",
+		"image": "novus"
+	},
+	"zones": {
+		"Novus/NV_Z01_Conatus": {
+			"name": "Conatus"
+		}
+	}
+}

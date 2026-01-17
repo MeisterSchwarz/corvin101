@@ -1,0 +1,24 @@
+{
+	"meta": {
+		"world": "Minispiel",
+		"image": "wizardcity"
+	},
+	"zones": {
+		"ThePhantomZoneWorld/concentration": {
+			"name": "Rummel",
+			"sub": "Fokus Pokus"
+		},
+		"ThePhantomZoneWorld/Dueling_Diego": {
+			"name": "Rummel",
+			"sub": "Diegos Duelle"
+		},
+		"ThePhantomZoneWorld/PetGameDance": {
+			"name": "Platz der Tiere",
+			"sub": "Tanzspiel"
+		},
+		"ThePhantomZoneWorld/SkullRidersPhantomZone": {
+			"name": "Rummel",
+			"sub": "Schädelreiter"
+		}
+	}
+}

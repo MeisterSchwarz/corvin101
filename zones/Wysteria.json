@@ -1,0 +1,11 @@
+{
+	"meta": {
+		"world": "Wysteria",
+		"image": "wysteria"
+	},
+	"zones": {
+		"Wysteria/PA_Hub": {
+			"name": "Wutzwärts-Akademie"
+		}
+	}
+}

@@ -1,0 +1,122 @@
+{
+	"meta": {
+		"world": "Karamell",
+		"image": "karamelle"
+	},
+	"zones": {
+		"Karamelle/Interiors/KM_Z00_Glockenspiel_01": {
+			"name": "Karamellstadt",
+            "sub": "Glockenspiel"
+		},
+		"Karamelle/Interiors/KM_Z03_HangryGobblerCave_01": {
+			"name": "Gummibonbonwald",
+            "sub": "Hungrigwütendster Schlunder"
+		},
+		"Karamelle/Interiors/KM_Z04_BonBon": {
+			"name": "Süßschloss",
+            "sub": "Der Bebenbeschwörer"
+		},
+		"Karamelle/Interiors/KM_Z04_GummyPlant": {
+			"name": "Süßschloss",
+            "sub": "Gummifabrik"
+		},
+		"Karamelle/Interiors/KM_Z04_IceCreamParlor": {
+			"name": "Süßschloss",
+            "sub": "Nanas Eisdiele"
+		},
+		"Karamelle/Interiors/KM_Z04_PowerRoom": {
+			"name": "Süßschloss",
+            "sub": "Gummifabrik (Generator)"
+		},
+		"Karamelle/Interiors/KM_Z05_ChocShoppe": {
+			"name": "Nibbleheim",
+            "sub": "Schokoladen"
+		},
+		"Karamelle/Interiors/KM_Z05_PumpRoom": {
+			"name": "Nibbleheim",
+            "sub": "Pumpenraum"
+		},
+		"Karamelle/Interiors/KM_Z05_TreacleFoundry": {
+			"name": "Nibbleheim",
+            "sub": "Schmelze"
+		},
+		"Karamelle/Interiors/KM_Z06_MiningTunnel_A": {
+			"name": "Nibbleheim-Mine",
+            "sub": "Bergwerkstunnel A"
+		},
+		"Karamelle/Interiors/KM_Z06_MiningTunnel_B": {
+			"name": "Nibbleheim-Mine",
+            "sub": "Bergwerkstunnel B"
+		},
+		"Karamelle/Interiors/KM_Z07_CupcakeFactory": {
+			"name": "Gutenstadt",
+            "sub": "Törtchenfabrik"
+		},
+		"Karamelle/Interiors/KM_Z08_ColaLake": {
+			"name": "Schwarzer Lakritzwald",
+            "sub": "Nana"
+		},
+		"Karamelle/Interiors/KM_Z08_LoggingCampWahehouse": {
+			"name": "Schwarzer Lakritzwald",
+            "sub": "Nana"
+		},
+		"Karamelle/Interiors/KM_Z08_RosinasHouse": {
+			"name": "Schwarzer Lakritzwald",
+            "sub": "Richter Veg"
+		},
+		"Karamelle/Interiors/KM_Z09_FarmersHouse": {
+			"name": "Zuckermais-Bauernhof",
+            "sub": "Wilhelm Wonky"
+		},
+		"Karamelle/Interiors/KM_Z09_HotHouse": {
+			"name": "Zuckermais-Bauernhof",
+            "sub": "Heißhaus-Silo"
+		},
+		"Karamelle/Interiors/KM_Z09_Silo": {
+			"name": "Zuckermais-Bauernhof",
+            "sub": "Silo"
+		},
+		"Karamelle/Interiors/KM_Z10_GobblertonLibrary": {
+			"name": "Schlunderton",
+            "sub": "Bibliothek"
+		},
+		"Karamelle/Interiors/KM_Z10_Gym": {
+			"name": "Schlunderton",
+            "sub": "Sportstudio"
+		},
+		"Karamelle/Interiors/KM_Z10_RosinasLab": {
+			"name": "Schlunderton",
+            "sub": "Rosinas Labor"
+		},
+		"Karamelle/KM_Z00_HUB": {
+			"name": "Karamellstadt"
+		},
+		"Karamelle/KM_Z02_CandyMountains": {
+			"name": "Kandiszucker-Berg"
+		},
+		"Karamelle/KM_Z03_GumdropForest": {
+			"name": "Gummibonbonwald"
+		},
+		"Karamelle/KM_Z04_Sweetzburg": {
+			"name": "Süßschloss"
+		},
+		"Karamelle/KM_Z05_Nibbleheim": {
+			"name": "Nibbleheim"
+		},
+		"Karamelle/KM_Z06_Mines": {
+			"name": "Nibbleheim-Mine"
+		},
+		"Karamelle/KM_Z07_Gutenstadt": {
+			"name": "Gutenstadt"
+		},
+		"Karamelle/KM_Z08_LicoriceForest": {
+			"name": "Schwarzer Lakritzwald"
+		},
+		"Karamelle/KM_Z09_CandyCornFarm": {
+			"name": "Zuckermais-Bauernhof"
+		},
+		"Karamelle/KM_Z10_Gobblerton": {
+			"name": "Schlunderton"
+		}
+	}
+}

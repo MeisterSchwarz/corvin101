@@ -1,0 +1,80 @@
+{
+	"meta": {
+		"world": "Azteka",
+		"image": "azteca"
+	},
+	"zones": {
+		"Azteca/AZ_Z00_Zocalo": {
+            "name": "Der Zocalo"
+        },
+        "Azteca/AZ_Z01_ThreePoints": {
+            "name": "Dreispitz"
+        },
+        "Azteca/AZ_Z02_Cenote": {
+            "name": "Cenote"
+        },
+        "Azteca/AZ_Z03_MangroveMarsh": {
+            "name": "Mangrovensümpfe"
+        },
+        "Azteca/AZ_Z04_SaltmeadowSwamp": {
+            "name": "Salzmarschen"
+        },
+        "Azteca/AZ_Z05_ZultunDock": {
+            "name": "Zultun-Dock"
+        },
+        "Azteca/AZ_Z07_TierraDeBrea": {
+            "name": "Tierra De Brea"
+        },
+        "Azteca/AZ_Z10_FloatingMountains": {
+            "name": "Schwebende Berge"
+        },
+        "Azteca/Interiors/AZ_Z00_YacatesHouse": {
+            "name": "Der Zocalo",
+            "sub": "Malakeen Mondtrunken"
+        },
+        "Azteca/Interiors/AZ_Z01_JuraPalace_Room01": {
+            "name": "Dreispitz",
+            "sub": "Jurapalast"
+        },
+        "Azteca/Interiors/AZ_Z01_JuraPalace_Room02": {
+            "name": "Dreispitz",
+            "sub": "Königliches Gemach"
+        },
+        "Azteca/Interiors/AZ_Z02_Mine03": {
+            "name": "Cenote",
+            "sub": "Guillermo Trümmerhorn"
+        },
+        "Azteca/Interiors/AZ_Z02_Tomb01": {
+            "name": "Cenote",
+            "sub": "Azcal Feuerameise"
+        },
+        "Azteca/Interiors/AZ_Z02_WhiteFirePyramid": {
+            "name": "Cenote",
+            "sub": "Pyramide des weißen Feuers"
+        },
+        "Azteca/Interiors/AZ_Z03_Tomb02": {
+            "name": "Mangrovensümpfe",
+            "sub": "Poca Grauenstern"
+        },
+        "Azteca/Interiors/AZ_Z03_Tomb05": {
+            "name": "Mangrovensümpfe",
+            "sub": "Coatl-Erdmutter"
+        },
+        "Azteca/Interiors/AZ_Z04_TreeOfSecrets01": {
+            "name": "Salzmarschen",
+            "sub": "Fuego-Geist"
+        },
+        "Azteca/Interiors/AZ_Z04_TreeOfSecrets02": {
+            "name": "Salzmarschen",
+            "sub": "Tempestad-Geist"
+        },
+        "Azteca/Interiors/AZ_Z04_TreeOfSecrets03": {
+            "name": "Salzmarschen",
+            "sub": "Hielo-Geist"
+        },
+        "Azteca/Interiors/AZ_Z05_Tower01": {
+            "name": "Zultun-Dock",
+            "sub": "Chantico Blauluft"
+        }
+	}
+}

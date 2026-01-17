@@ -1,0 +1,53 @@
+{
+	"meta": {
+		"world": "krokotopia",
+		"image": "krokotopia"
+	},
+	"zones": {
+	   "Krokotopia/KT_Hub": {
+            "name": "Die Oase"
+        },
+        "Krokotopia/KT_Hub_Crypt": {
+            "name": "Grab der Stürme"
+        },
+        "Krokotopia/KT_Hub_Sphinx": {
+            "name": "Krokosphinx"
+        },
+        "Krokotopia/KT_Krokosphinx/Interiors/KT_Arena_T3": {
+            "name": "Große Arena",
+            "sub": "Manders Trophäenraum"
+        },
+        "Krokotopia/KT_Krokosphinx/Interiors/KT_Arena_T5": {
+            "name": "Große Arena",
+            "sub": "Wilder Sonnenvogel"
+        },
+        "Krokotopia/KT_Krokosphinx/Interiors/KT_Arena_T6": {
+            "name": "Große Arena",
+            "sub": "Krag Steinkinn"
+        },
+        "Krokotopia/KT_Krokosphinx/Interiors/KT_Arena_T7": {
+            "name": "Große Arena",
+            "sub": "Bert Hammerhaar"
+        },
+        "Krokotopia/KT_Krokosphinx/Interiors/KT_Arena_T8": {
+            "name": "Große Arena",
+            "sub": "Itennu Sokkwi"
+        },
+        "Krokotopia/KT_Krokosphinx/KT_Arena": {
+            "name": "Große Arena"
+        },
+        "Krokotopia/KT_Krokosphinx/KT_EntranceHall": {
+            "name": "Halle"
+        },
+        "Krokotopia/KT_Tomb/KT_DjeseritTomb": {
+            "name": "Djeserit-Familiengruft"
+        },
+        "Krokotopia/KT_Tomb/KT_WellOfSpirits": {
+            "name": "Brunnen der Geister"
+        },
+        "Krokotopia/KT_WorldTeleporter": {
+            "name": "Die Oase",
+            "sub": "Teleporter"
+        }
+	}
+}

@@ -1,0 +1,14 @@
+{
+	"meta": {
+		"world": "Arkanum",
+		"image": "arcanum"
+	},
+	"zones": {
+		"Arcanum/Interiors/AR_Z01_DeadArchive": {
+			"name": "Totenarchiv"
+		},
+		"Arcanum/AR_Z01_Hub": {
+			"name": "Arkanum"
+		}
+	}
+}

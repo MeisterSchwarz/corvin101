@@ -1,0 +1,38 @@
+{
+	"meta": {
+		"world": "Dungeons",
+		"image": "dungeons"
+	},
+	"zones": {
+		"G14_DM/DM_Z01_CastleDarkmoor": {
+			"name": "Schloss Düstermoor"
+		},
+		"G14_DM/DM_Z06_Bridge": {
+			"name": "Schloss Düstermoor (Friedhof)"
+		},
+        "G14_DM/DM_Z07_Graveyard": {
+            "name": "Schloss Düstermoor (Friedhof)",
+            "sub": "Yevgeny Nachtschleicher"
+        },
+        "G14_DM/Interiors/DM_Z08_I02_Mausoleum_Lower": {
+            "name": "Schloss Düstermoor (Friedhof)",
+            "sub": "Schannt von Schannt"
+        },
+        "G14_DM/Interiors/DM_Z08_I01_MausoleumTop": {
+            "name": "Schloss Düstermoor (Friedhof)",
+            "sub": "Malistaire der Todtrotzer"
+        },
+        "G14_SB/SB_Z01_KimbaalungVillage": {
+            "name": "Kembaalung"
+        },
+        "G14_SB/SB_Z02_PagodaRoom01": {
+            "name": "Pagode der Harmonie (1/3)"
+        },
+        "G14_SB/SB_Z03_PagodaRoom02": {
+            "name": "Pagode der Harmonie (2/3)"
+        },
+        "G14_SB/SB_Z04_PagodaRoom03": {
+            "name": "Pagode der Harmonie (3/3)"
+        }
+	}
+}

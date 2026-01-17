@@ -1,0 +1,11 @@
+{
+	"meta": {
+		"world": "Drachenfels",
+		"image": "dragonspyre"
+	},
+	"zones": {
+		"DragonSpire/DS_Hub_Cathedral": {
+			"name": "Die Basilika"
+		}
+	}
+}

@@ -1,0 +1,11 @@
+{
+	"meta": {
+		"world": "Polaris",
+		"image": "polaris"
+	},
+	"zones": {
+		"Polaris/PL_Z00_Walruskberg": {
+			"name": "Walrossjaberg"
+		}
+	}
+}

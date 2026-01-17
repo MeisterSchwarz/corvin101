@@ -1,0 +1,11 @@
+{
+	"meta": {
+		"world": "Avalon",
+		"image": "avalon"
+	},
+	"zones": {
+		"Avalon/AV_Z00_Hub": {
+			"name": "Calibur"
+		}
+	}
+}
