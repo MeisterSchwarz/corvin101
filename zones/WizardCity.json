@@ -40,8 +40,21 @@
 			"name": "Wasserwerk",
 			"sub": "4. Turm (2/2)"
 		},
+		"WizardCity/Interiors/WC_CastleTours": {
+			"name": "Stadtmitte",
+			"sub": "Schlossbesichtigungen"
+		},
 		"WizardCity/Interiors/WC_Hatchery": {
-			"name": "Der Brutplatz"
+			"name": "Platz der Tiere",
+			"sub": "Der Brutplatz"
+		},
+		"WizardCity/Interiors/WC_Headmaster_Tower": {
+			"name": "Stadtmitte",
+			"sub": "Gammas Turm"
+		},
+		"WizardCity/Interiors/WC_Headmistress_House": {
+			"name": "Stadtmitte",
+			"sub": "Haus des Schulleiters"
 		},
 		"WizardCity/Interiors/WC_Housing_Dorm_Interior": {
 			"name": "Rabenhain",
@@ -78,6 +91,9 @@
 			"name": "Rabenhain",
 			"sub": "Turm des Eises"
 		},
+		"WizardCity/WC_Duel_Arena": {
+			"name": "Arena"
+		},
 		"WizardCity/WC_Golem_Tower": {
 			"name": "Golemturm"
 		},
@@ -96,6 +112,18 @@
 		"WizardCity/WC_Shop_Area": {
 			"name": "Kaufmannsviertel"
 		},
+		"WizardCity/WC_Streets/Interiors/WC_Colossus_Balcony": {
+			"name": "Kolossusboulevard",
+			"sub": "Schlunderkönig"
+		},
+		"WizardCity/WC_Streets/Interiors/WC_Colossus_H1": {
+			"name": "Kolossusboulevard",
+			"sub": "Mildred Morgenaug"
+		},
+		"WizardCity/WC_Streets/Interiors/WC_Colossus_ThroneRoom": {
+			"name": "Kolossusboulevard",
+			"sub": "Prinz Schlunderstein"
+		},
 		"WizardCity/WC_Streets/Interiors/WC_Cyclops_T1": {
 			"name": "Zyklopenweg",
 			"sub": "Visus Maximus"
@@ -103,6 +131,14 @@
 		"WizardCity/WC_Streets/Interiors/WC_Cyclops_T2": {
 			"name": "Zyklopenweg",
 			"sub": "General Akilles"
+		},
+		"WizardCity/WC_Streets/Interiors/WC_Firecat_T3": {
+			"name": "Feuerkatzenallee",
+			"sub": "Grymma Plageschlag"
+		},
+		"WizardCity/WC_Streets/Interiors/WC_Firecat_Theatre": {
+			"name": "Feuerkatzenallee",
+			"sub": "Avid Flinkpfeil"
 		},
 		"WizardCity/WC_Streets/Interiors/WC_OldeTown_AuctionHouse": {
 			"name": "Altes Viertel",
@@ -115,6 +151,9 @@
 		"WizardCity/WC_Streets/Interiors/WC_PET_Park": {
 			"name": "Platz der Tiere"
 		},
+		"WizardCity/WC_Streets/WC_Colossus": {
+			"name": "Kolossusboulevard"
+		},
 		"WizardCity/WC_Streets/WC_Cyclops": {
 			"name": "Zyklopenweg"
 		},
@@ -123,6 +162,12 @@
 		},
 		"WizardCity/WC_Streets/WC_OldeTown": {
 			"name": "Altes Viertel"
+		},
+		"WizardCity/WC_Streets/WC_Triton": {
+			"name": "Tritonenstraße"
+		},
+		"WizardCity/WC_Streets/WC_Triton_Underwater/WC_Triton_Underwater": {
+			"name": "Krabbengasse"
 		},
 		"WizardCity/WC_Streets/WC_Unicorn": {
 			"name": "Einhornweg"

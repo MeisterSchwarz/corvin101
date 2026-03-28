@@ -7,6 +7,9 @@
 		"Arcanum/Interiors/AR_Z01_DeadArchive": {
 			"name": "Totenarchiv"
 		},
+		"Arcanum/Interiors/AR_Z01_MusicologyOffice": {
+			"name": "Musikraum"
+		},
 		"Arcanum/AR_Z01_Hub": {
 			"name": "Arkanum"
 		}

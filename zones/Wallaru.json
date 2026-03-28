@@ -4,8 +4,60 @@
 		"image": "wallaru"
 	},
 	"zones": {
+        "Wallaru/Interiors/WL_Z01_I00_PrimeMinister": {
+            "name": "Hope Springs",
+            "sub": "Haus des Premierministers"
+        },
+        "Wallaru/Interiors/WL_Z01_I01_Bank": {
+            "name": "Hope Springs",
+            "sub": "Bank"
+        },
+        "Wallaru/Interiors/WL_Z01_I05_MonquistanEmbassy": {
+            "name": "Hope Springs",
+            "sub": "Monquista-Botschaft"
+        },
+        "Wallaru/Interiors/WL_Z01_I06_SupplyStore": {
+            "name": "Hope Springs",
+            "sub": "Haus auf Pfählen"
+        },
+        "Wallaru/Interiors/WL_Z01_I07_GroceryStore": {
+            "name": "Hope Springs",
+            "sub": "Lebensmittelladen"
+        },
+        "Wallaru/Interiors/WL_Z01_I08_BoomerangDepot": {
+            "name": "Hope Springs",
+            "sub": "Bumerangladen"
+        },
+        "Wallaru/Interiors/WL_Z01_I10_DundarasTunnel": {
+            "name": "Hope Springs",
+            "sub": "Dundaras Tunnel"
+        },
+        "Wallaru/Interiors/WL_Z02_I02_RebelMine": {
+            "name": "Outback",
+            "sub": "Rebellenmine"
+        },
+        "Wallaru/Interiors/WL_Z02_I03_CannonLedge": {
+            "name": "Outback",
+            "sub": "Kanonenvorsprung"
+        },
+        "Wallaru/Interiors/WL_Z02_I05_RidgeCave": {
+            "name": "Outback",
+            "sub": "Aufstieg zum Gebirgskamm"
+        },
+        "Wallaru/Interiors/WL_Z02_I07_OutbackRidge": {
+            "name": "Outback",
+            "sub": "Outback-Gebirgskamm"
+        },
         "Wallaru/Interiors/WL_Z02_I10_OutbackDungeon_Easy": {
-            "name": "Malus (Standard)"
+            "name": "Malus"
+        },
+        "Wallaru/Interiors/WL_Z03_I01_KangaGuruShrine": {
+            "name": "Königsland",
+            "sub": "Solomon"
+        },
+        "Wallaru/Interiors/WL_Z03_I02_WallabyCave": {
+            "name": "Königsland",
+            "sub": "Verschollene Mine des Königs"
         },
         "Wallaru/Interiors/WL_Z04_I02_JudgeVegDream": {
             "name": "Traumzeit (Richter Veggies Traum)"
@@ -17,9 +69,85 @@
             "name": "Traumzeit",
             "sub": "Freddies Domäne"
         },
+        "Wallaru/Interiors/WL_Z05_DroverCave": {
+            "name": "Teppichhai-Territorium",
+            "sub": "Viehtreiberhöhle"
+        },
+        "Wallaru/Interiors/WL_Z05_I01_ColliesDen": {
+            "name": "Teppichhai-Territorium",
+            "sub": "Ned Collies Räuberhöhle"
+        },
+        "Wallaru/Interiors/WL_Z05_I02_BunyipWarrens": {
+            "name": "Teppichhai-Territorium",
+            "sub": "Bunyip-Bau"
+        },
+        "Wallaru/Interiors/WL_Z05_I03_HostageCave": {
+            "name": "Teppichhai-Territorium",
+            "sub": "Geiselhöhle"
+        },
+        "Wallaru/Interiors/WL_Z05_I08_WestClearing": {
+            "name": "Teppichhai-Territorium",
+            "sub": "Westliche Lichtung"
+        },
+        "Wallaru/Interiors/WL_Z05_I09_EastClearing": {
+            "name": "Teppichhai-Territorium",
+            "sub": "Östliche Lichtung"
+        },
+        "Wallaru/Interiors/WL_Z06_I01_CollieTunnel": {
+            "name": "Collie-Farm",
+            "sub": "Collie-Tunnel"
+        },
+        "Wallaru/Interiors/WL_Z06_I02_WestPasture": {
+            "name": "Collie-Farm",
+            "sub": "Westliche Weide"
+        },
+        "Wallaru/Interiors/WL_Z06_I03_JudgeJudisOffice": {
+            "name": "Collie-Farm",
+            "sub": "Richter Judis Büro"
+        },
+        "Wallaru/Interiors/WL_Z06_I04_DemolitionTunnels": {
+            "name": "Collie-Farm",
+            "sub": "Sprengtunnel"
+        },
+        "Wallaru/Interiors/WL_Z06_I05_BarnPrison": {
+            "name": "Collie-Farm",
+            "sub": "Gefängnisscheune"
+        },
         "Wallaru/Interiors/WL_Z06_I06_CollieHomestead": {
-            "name": "Collie Farm",
+            "name": "Collie-Farm",
             "sub" : "Collie-Wohnhaus"
+        },
+        "Wallaru/Interiors/WL_Z07_Clearing_01": {
+            "name": "Eukalyptuswald",
+            "sub" : "Erste Waldlichtung"
+        },
+        "Wallaru/Interiors/WL_Z07_Clearing_02": {
+            "name": "Eukalyptuswald",
+            "sub" : "Zweite Waldlichtung"
+        },
+        "Wallaru/Interiors/WL_Z07_Clearing_03": {
+            "name": "Eukalyptuswald",
+            "sub" : "Dritte Waldlichtung"
+        },
+        "Wallaru/Interiors/WL_Z07_Gatehouse_01": {
+            "name": "Eukalyptuswald",
+            "sub" : "Torhaus"
+        },
+        "Wallaru/Interiors/WL_Z07_PinkLake": {
+            "name": "Eukalyptuswald",
+            "sub" : "Rosa See"
+        },
+        "Wallaru/Interiors/WL_Z08_I01_SolidGoldLounge": {
+            "name": "Wasserloch-Resort",
+            "sub" : "Massive Gold-Lounge"
+        },
+        "Wallaru/Interiors/WL_Z08_I02_LagoonPipeline": {
+            "name": "Wasserloch-Resort",
+            "sub" : "Lagunen-Rohrleitung"
+        },
+        "Wallaru/Interiors/WL_Z08_I03_HotelRoom": {
+            "name": "Wasserloch-Resort",
+            "sub" : "Hütte"
         },
 	   "Wallaru/WL_Z01_Hub": {
             "name": "Hope Springs"
@@ -27,18 +155,23 @@
         "Wallaru/WL_Z02_Outback": {
             "name": "Outback"
         },
+         "Wallaru/WL_Z03_Kingsland": {
+            "name": "Königsland"
+        },
         "Wallaru/WL_Z04_TheDreaming": {
             "name": "Traumzeit"
         },
+        "Wallaru/WL_Z05_Wobbegong_JT": {
+            "name": "Teppichhai-Territorium"
+        },
         "Wallaru/WL_Z06_CollieRanch": {
-            "name": "Collie Farm"
+            "name": "Collie-Farm"
         },
         "Wallaru/WL_Z07_EucalyptusForest": {
             "name": "Eukalyptuswald"
         },
-        "WL_Z06_I03_JudgeJudisOffice": {
-            "name": "Collie Farm",
-            "sub": "Richter Judis Büro"
+        "Wallaru/WL_Z08_BillabongResort": {
+            "name": "Wasserloch-Resort"
         }
 	}
 }

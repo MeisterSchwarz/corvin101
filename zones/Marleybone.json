@@ -58,6 +58,9 @@
         "Marleybone/MB_Station/MB_FlightToHydePark": {
             "name": "Ballonwagen z. Hyde Park"
         },
+        "Marleybone/MB_Station/MB_Ironworks": {
+            "name": "Die Eisenhütte"
+        },
         "Marleybone/MB_Station/MB_Station_Hub": {
             "name": "Digmoore Station"
         }

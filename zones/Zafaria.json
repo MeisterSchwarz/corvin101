@@ -4,8 +4,64 @@
 		"image": "zafaria"
 	},
 	"zones": {
+		"Zafaria/Interiors/ZF_Z07_I01_Darajani_Palace": {
+			"name": "Steinstadt",
+			"sub": "Darajani-Palast"
+		},
+		"Zafaria/Interiors/ZF_Z07_I02_War_Olyphants_Tower": {
+			"name": "Steinstadt",
+			"sub": "Hathi Starkrüssel"
+		},
+		"Zafaria/Interiors/ZF_Z07_I03_Zoo": {
+			"name": "Steinstadt",
+			"sub": "Darajani-Zoo"
+		},
+		"Zafaria/Interiors/ZF_Z07_I04_Amedras_Tower": {
+			"name": "Steinstadt",
+			"sub": "Amedras Leichtfuß"
+		},
+		"Zafaria/Interiors/ZF_Z08_I01_Stone_Town_Barge": {
+			"name": "Flusshafen",
+			"sub": "Lastkahn"
+		},
+		"Zafaria/Interiors/ZF_Z08_I02_Belloqs_Tent": {
+			"name": "Flusshafen",
+			"sub": "Belloqs Zelt"
+		},
+		"Zafaria/Interiors/ZF_Z08_I04_Library_Cave_Art_Museum": {
+			"name": "Flusshafen",
+			"sub": "Bibliothek"
+		},
+		"Zafaria/Interiors/ZF_Z10_I05_Little_Mausoleum_03": {
+			"name": "Elefantenfriedhof",
+			"sub": "Trommelhaus"
+		},
 		"Zafaria/ZF_Z00_Hub": {
 			"name": "Baobab-Kreuzung"
+		},
+		"Zafaria/ZF_Z02_Baobab_Market": {
+			"name": "Baobab-Markt"
+		},
+		"Zafaria/ZF_Z03_Savannah": {
+			"name": "Savanne"
+		},
+		"Zafaria/ZF_Z05_Zamunda_Outskirts": {
+			"name": "Zamunda-Umland"
+		},
+		"Zafaria/ZF_Z06_Zamunda": {
+			"name": "Zamunda"
+		},
+		"Zafaria/ZF_Z07_Stone_Town": {
+			"name": "Steinstadt"
+		},
+		"Zafaria/ZF_Z08_Waterfront": {
+			"name": "Flusshafen"
+		},
+		"Zafaria/ZF_Z09_Drum_Jungle": {
+			"name": "Congadschungel"
+		},
+		"Zafaria/ZF_Z10_Elephant_Graveyard": {
+			"name": "Elefantenfriedhof"
 		}
 	}
 }

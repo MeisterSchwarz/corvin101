@@ -6,6 +6,30 @@
 	"zones": {
 		"Celestia/CL_Hub": {
 			"name": "Basislager"
+		},
+		"Celestia/CL_Z06_StormHaven": {
+			"name": "Sturmspalte"
+		},
+		"Celestia/CL_Z07_Storm_Lord_Temple": {
+			"name": "Sturmspalte - Halle"
+		},
+		"Celestia/CL_Z08_Temple_Of_The_Moon/MoonC1": {
+			"name": "Die Säulenhalle",
+			"sub": "Außenbereich"
+		},
+		"Celestia/CL_Z08_Temple_Of_The_Moon/MoonC2": {
+			"name": "Die Säulenhalle"
+		},
+		"Celestia/CL_Z09_Science_Center": {
+			"name": "Forschungszentrum"
+		},
+		"Celestia/Interiors/CL_Z06i1_StormHaven": {
+			"name": "Sturmspalte",
+			"sub": "Karolak Nachtweber"
+		},
+		"Celestia/Interiors/CL_Z07i1_Storm_Lord_Temple": {
+			"name": "Sturmspalte - Halle",
+			"sub": "Sturmfürstentempel"
 		}
 	}
 }

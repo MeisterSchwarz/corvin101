@@ -10,20 +10,74 @@
         "Housing/Mooshu/MS_Tier2_Interior": {
             "name": "Zarenpalast"
         },
+        "Housing/School/Balance_Exterior": {
+            "name": "Haus der Balance",
+            "sub": "Außenbereich"
+        },
+        "Housing/School/Balance_Interior": {
+            "name": "Haus der Balance"
+        },
         "Housing/School/Life_Exterior": {
-            "name": "Haus des Lebens (Außenbereich)"
+            "name": "Haus des Lebens",
+            "sub": "Außenbereich"
+        },
+        "Housing/School/Life_Interior": {
+            "name": "Haus des Lebens"
+        },
+        "Housing/School/Myth_Exterior": {
+            "name": "Haus des Mythos",
+            "sub": "Außenbereich"
+        },
+        "Housing/School/Myth_Interior": {
+            "name": "Haus des Mythos"
+        },
+        "Housing/School/Storm_Exterior": {
+            "name": "Haus des Sturms",
+            "sub": "Außenbereich"
+        },
+        "Housing/School/Storm_Interior": {
+            "name": "Haus des Sturms"
+        },
+        "Housing_AV_BAC/Exterior": {
+            "name": "Avalon-Schlossgrundstück"
+        },
+        "Housing_AV_BAC/Interior": {
+            "name": "Avalon-Schlossgrundstück",
+            "sub": "Höhle"
+        },
+        "Housing_CL/CL/House_CL_Tier01_A_Inside": {
+            "name": "Einsame Insel",
+            "sub": "Hütte"
+        },
+        "Housing_CL/CL/House_CL_Tier01_A_Outside": {
+            "name": "Einsame Insel"
         },
         "Housing_FarmHouse/Exterior": {
-            "name": "Bauernhof (Außenbereich)"
+            "name": "Bauernhof"
         },
         "Housing_FarmHouse/Interior": {
-            "name": "Bauernhof"
+            "name": "Bauernhof",
+            "sub": "Haus"
+        },
+        "Housing_Polarian_Fort/Polarian_Fort_Ext": {
+            "name": "Festung des Revolutionärs",
+            "sub": "Außenbereich"
+        },
+        "Housing_Polarian_Fort/Polarian_Fort_Int": {
+            "name": "Festung des Revolutionärs"
         },
         "Housing_Polaris_Ship/House_Polaris_Ship_EXT": {
             "name": "Polarisches Schiffswrack (Außenbereich)"
         },
         "Housing_Polaris_Ship/House_Polaris_Ship_INT": {
             "name": "Polarisches Schiffswrack"
+        },
+        "Housing_SunkP/Exterior": {
+            "name": "Versunkener Palast",
+            "sub": "Außenbereich"
+        },
+        "Housing_SunkP/Interior": {
+            "name": "Versunkener Palast"
         },
         "Housing_Villa_Gardens/Exterior": {
             "name": "Gartenvilla (Außenbereich)"

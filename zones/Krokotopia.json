@@ -4,6 +4,12 @@
 		"image": "krokotopia"
 	},
 	"zones": {
+        "Krokotopia/Interiors/KT_HallofDoors": {
+            "name": "Halle der Türen"
+        },
+        "Krokotopia/Interiors/KT_Library": {
+            "name": "Bibliothek von Krokotopia"
+        },
 	   "Krokotopia/KT_Hub": {
             "name": "Die Oase"
         },
@@ -38,6 +44,37 @@
         },
         "Krokotopia/KT_Krokosphinx/KT_EntranceHall": {
             "name": "Halle"
+        },
+        "Krokotopia/KT_Krokosphinx/KT_Retreat": {
+            "name": "Königliche Residenz"
+        },
+        "Krokotopia/KT_Pyramid/Interiors/KT_Chamber_T3": {
+            "name": "Kammer des Feuers",
+            "sub": "Kammer des Erwählten"
+        },
+        "Krokotopia/KT_Pyramid/Interiors/KT_Chamber_T4": {
+            "name": "Kammer des Feuers",
+            "sub": "Kammer der Verzauberten"
+        },
+        "Krokotopia/KT_Pyramid/KT_AltarOfKings": {
+            "name": "Altar der Könige"
+        },
+        "Krokotopia/KT_Pyramid/KT_Chamber": {
+            "name": "Kammer des Feuers"
+        },
+        "Krokotopia/KT_Selenopolis/Interiors/KT_Z04_Sanctum": {
+            "name": "Selenopolis",
+            "sub": "Khonshu"
+        },
+        "Krokotopia/KT_Selenopolis/Interiors/KT_Z07I04_MoonShrine": {
+            "name": "Garten des Khonshu",
+            "sub": "Mondstrahl-Tyrann"
+        },
+        "Krokotopia/KT_Selenopolis/KT_Z04_Selenopolis": {
+            "name": "Selenopolis"
+        },
+        "Krokotopia/KT_Selenopolis/KT_Z07_Garden": {
+            "name": "Garten des Khonshu"
         },
         "Krokotopia/KT_Tomb/KT_DjeseritTomb": {
             "name": "Djeserit-Familiengruft"

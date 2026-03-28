@@ -4,6 +4,22 @@
 		"image": "mirage"
 	},
 	"zones": {
+		"Mirage/Interiors/MR_Z01_Barracks": {
+			"name": "Alkali-Hügelgräber",
+            "sub": "Kasernenhügelgrab"
+		},
+		"Mirage/Interiors/MR_Z01_DefiledCryp": {
+			"name": "Alkali-Hügelgräber",
+            "sub": "Alte Krypta"
+		},
+		"Mirage/Interiors/MR_Z01_ImportantCave": {
+			"name": "Alkali-Hügelgräber",
+            "sub": "Wichtige Höhle"
+		},
+		"Mirage/Interiors/MR_Z01_TombForgotten": {
+			"name": "Alkali-Hügelgräber",
+            "sub": "Grab der Vergessenen"
+		},
 		"Mirage/Interiors/MR_Z10_EastTimeDunes": {
 			"name": "Sande der Zeit",
             "sub": "Schattenknochen"
@@ -22,6 +38,18 @@
 		"Mirage/Interiors/MR_Z10_WestTimeDune": {
 			"name": "Sande der Zeit",
             "sub": "Bert Schattenhaar"
+		},
+		"Mirage/MR_Z00_Hub": {
+			"name": "Caravan"
+		},
+		"Mirage/MR_Z01_AlkaliBarrows": {
+			"name": "Alkali-Hügelgräber"
+		},
+		"Mirage/MR_Z03_CaterwaulCanyon": {
+			"name": "Kratzbaum-Schlucht"
+		},
+		"Mirage/MR_Z07_ThievesDen": {
+			"name": "Räuberhöhle"
 		},
 		"Mirage/MR_Z10_Chronoverge": {
 			"name": "Chronoring"
