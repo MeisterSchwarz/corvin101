@@ -60,10 +60,12 @@
             "sub": "Verschollene Mine des Königs"
         },
         "Wallaru/Interiors/WL_Z04_I02_JudgeVegDream": {
-            "name": "Traumzeit (Richter Veggies Traum)"
+            "name": "Traumzeit",
+            "sub": "Richter Veggies Traum"
         },
         "Wallaru/Interiors/WL_Z04_I04_FurryosasDream": {
-            "name": "Traumzeit (Furryosas Traum)"
+            "name": "Traumzeit",
+            "sub": "Furryosas Traum"
         },
         "Wallaru/Interiors/WL_Z04_I05_FreddiesDomain": {
             "name": "Traumzeit",

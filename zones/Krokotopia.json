@@ -1,6 +1,6 @@
 {
 	"meta": {
-		"world": "krokotopia",
+		"world": "Krokotopia",
 		"image": "krokotopia"
 	},
 	"zones": {
@@ -9,6 +9,26 @@
         },
         "Krokotopia/Interiors/KT_Library": {
             "name": "Bibliothek von Krokotopia"
+        },
+        "Krokotopia/Interiors/KT_Shop01": {
+            "name": "Die Oase",
+            "sub": "Ringe & Amulette"
+        },
+        "Krokotopia/Interiors/KT_Shop02": {
+            "name": "Die Oase",
+            "sub": "Robenhändler"
+        },
+        "Krokotopia/Interiors/KT_Shop03": {
+            "name": "Die Oase",
+            "sub": "Hutverkäufer"
+        },
+        "Krokotopia/Interiors/KT_Shop04": {
+            "name": "Die Oase",
+            "sub": "Schuhverkäufer"
+        },
+        "Krokotopia/Interiors/KT_Shop05": {
+            "name": "Die Oase",
+            "sub": "Kartenspielhändler"
         },
 	   "Krokotopia/KT_Hub": {
             "name": "Die Oase"
@@ -48,6 +68,14 @@
         "Krokotopia/KT_Krokosphinx/KT_Retreat": {
             "name": "Königliche Residenz"
         },
+        "Krokotopia/KT_Pyramid/Interiors/KT_Chamber_T1": {
+            "name": "Kammer des Feuers",
+            "sub": "Kammer des Champions"
+        },
+        "Krokotopia/KT_Pyramid/Interiors/KT_Chamber_T2": {
+            "name": "Kammer des Feuers",
+            "sub": "Nirini-Quartiermeister"
+        },
         "Krokotopia/KT_Pyramid/Interiors/KT_Chamber_T3": {
             "name": "Kammer des Feuers",
             "sub": "Kammer des Erwählten"
@@ -56,11 +84,25 @@
             "name": "Kammer des Feuers",
             "sub": "Kammer der Verzauberten"
         },
+        "Krokotopia/KT_Pyramid/Interiors/KT_Chamber_T5": {
+            "name": "Kammer des Feuers",
+            "sub": "Nirini-Champion"
+        },
+        "Krokotopia/KT_Pyramid/Interiors/KT_Hall_T1": {
+            "name": "Königliche Halle",
+            "sub": "Biti Nirini"
+        },
         "Krokotopia/KT_Pyramid/KT_AltarOfKings": {
             "name": "Altar der Könige"
         },
         "Krokotopia/KT_Pyramid/KT_Chamber": {
             "name": "Kammer des Feuers"
+        },
+        "Krokotopia/KT_Pyramid/KT_Hall": {
+            "name": "Königliche Halle"
+        },
+        "Krokotopia/KT_Pyramid/KT_PalaceOfFire": {
+            "name": "Palast des Feuers"
         },
         "Krokotopia/KT_Selenopolis/Interiors/KT_Z04_Sanctum": {
             "name": "Selenopolis",

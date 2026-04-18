@@ -4,6 +4,22 @@
 		"image": "zafaria"
 	},
 	"zones": {
+		"Zafaria/Interiors/ZF_Z00_I01_Witch_Doctors_Hut": {
+			"name": "Baobab-Kreuzung",
+			"sub": "Hüttes des Hexers"
+		},
+		"Zafaria/Interiors/ZF_Z01_I02_Library_Classroom": {
+			"name": "Baobab-Krone",
+			"sub": "Bibliothek"
+		},
+		"Zafaria/Interiors/ZF_Z04_CavePainting": {
+			"name": "Savanne",
+			"sub": "Höhlenmalerei"
+		},
+		"Zafaria/Interiors/ZF_Z04_I01_Queens_Cave": {
+			"name": "Savanne",
+			"sub": "Königin Tanei Geistermähne"
+		},
 		"Zafaria/Interiors/ZF_Z07_I01_Darajani_Palace": {
 			"name": "Steinstadt",
 			"sub": "Darajani-Palast"
@@ -38,6 +54,9 @@
 		},
 		"Zafaria/ZF_Z00_Hub": {
 			"name": "Baobab-Kreuzung"
+		},
+		"Zafaria/Zafaria/ZF_Z01_Baobab_Crown": {
+			"name": "Baobab-Krone"
 		},
 		"Zafaria/ZF_Z02_Baobab_Market": {
 			"name": "Baobab-Markt"

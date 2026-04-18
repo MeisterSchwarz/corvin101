@@ -6,6 +6,16 @@
 	"zones": {
 		"Avalon/AV_Z00_Hub": {
 			"name": "Calibur"
+		},
+		"Avalon/AV_Z02_HighRoad": {
+			"name": "Talstraße"
+		},
+		"Avalon/AV_Z03_CaerLyon": {
+			"name": "Carlyon"
+		},
+		"Avalon/Interiors/AV_Z03_ArchnalHideout": {
+			"name": "Carlyon",
+			"sub": "Ofiera Kaltgift"
 		}
 	}
 }

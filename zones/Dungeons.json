@@ -4,6 +4,13 @@
 		"image": "dungeons"
 	},
 	"zones": {
+        "DD_PA_01/DD_PA01_Tier05/DD_PA01_T05_Tanglewood": {
+			"name": "Schlingkrautschrecken-Herausforderung"
+		},
+        "DD_PA_01/DD_PA01_Tier05/DD_PA01_T05_Tower": {
+			"name": "Schlingkrautschrecken-Herausforderung",
+            "sub": "Waldschrat"
+		},
 		"G14_DM/DM_Z01_CastleDarkmoor": {
 			"name": "Schloss Düstermoor"
 		},
@@ -21,6 +28,9 @@
         "G14_DM/Interiors/DM_Z08_I01_MausoleumTop": {
             "name": "Schloss Düstermoor (Friedhof)",
             "sub": "Malistaire der Todtrotzer"
+        },
+        "G14_HS/HS_Z01_ZigazagUpper": {
+            "name": "Oberer Zickezack"
         },
         "G14_SB/SB_Z01_KimbaalungVillage": {
             "name": "Kembaalung"

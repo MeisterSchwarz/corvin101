@@ -92,6 +92,8 @@ func extractWorldKey(zoneKey string) string {
 	switch {
 	case strings.HasPrefix(base, "G14"):
 		return "Dungeons"
+	case strings.HasPrefix(base, "DD"):
+		return "Dungeons"
 
 	case strings.HasPrefix(base, "Housing"):
 		return "Housing"

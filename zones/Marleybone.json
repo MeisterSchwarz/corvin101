@@ -52,6 +52,17 @@
         "Marleybone/MB_Hub": {
             "name": "Regent's Square"
         },
+        "Marleybone/MB_ScotlandYard/Interiors/MB_Prison_T4": {
+            "name": "Newgate-Gefängnis",
+            "sub": "Gibson O'Leary"
+        },
+        "Marleybone/MB_ScotlandYard/Interiors/MB_Prison_T5": {
+            "name": "Newgate-Gefängnis",
+            "sub": "Qualen-Schrecker"
+        },
+        "Marleybone/MB_ScotlandYard/MB_Prison": {
+            "name": "Newgate-Gefängnis"
+        },
         "Marleybone/MB_ScotlandYard/MB_Roof": {
             "name": "Dach v. Scotland Yard"
         },

@@ -7,6 +7,9 @@
 		"Celestia/CL_Hub": {
 			"name": "Basislager"
 		},
+		"Celestia/CL_Z03_District_Of_The_Stars": {
+			"name": "Sternenquartier"
+		},
 		"Celestia/CL_Z06_StormHaven": {
 			"name": "Sturmspalte"
 		},
@@ -23,6 +26,13 @@
 		"Celestia/CL_Z09_Science_Center": {
 			"name": "Forschungszentrum"
 		},
+		"Celestia/CL_Z10_Kingdom_Of_The_Crabs": {
+			"name": "Krustianisches Reich"
+		},
+		"Celestia/Interiors/CL_Z03i4_District_of_the_Stars": {
+			"name": "Sternenquartier",
+			"sub": "Mahon Sternensucher"
+		},
 		"Celestia/Interiors/CL_Z06i1_StormHaven": {
 			"name": "Sturmspalte",
 			"sub": "Karolak Nachtweber"
@@ -30,6 +40,33 @@
 		"Celestia/Interiors/CL_Z07i1_Storm_Lord_Temple": {
 			"name": "Sturmspalte - Halle",
 			"sub": "Sturmfürstentempel"
+		},
+		"Celestia/Interiors/CL_Z09i1_Science_Center": {
+			"name": "Forschungszentrum",
+			"sub": "Maglump"
+		},
+		"Celestia/Interiors/CL_Z09i4_Science_Center": {
+			"name": "Forschungszentrum",
+			"sub": "Konservatorium"
+		},
+		"Celestia/Interiors/CL_Z09i5_Science_Center": {
+			"name": "Forschungszentrum",
+			"sub": "Torkontrollraum"
+		},
+		"Celestia/Interiors/CL_Z10i1_Kingdom_Of_The_Crabs": {
+			"name": "Krustianisches Reich",
+			"sub": "Nuncio"
+		},
+		"Celestia/Interiors/CL_Z10i2_Kingdom_Of_The_Crabs": {
+			"name": "Krustianisches Reich"
+		},
+		"Celestia/Interiors/CL_Z10i3_Kingdom_Of_The_Crabs": {
+			"name": "Krustianisches Reich",
+			"sub": "Königin Charybdis"
+		},
+		"Celestia/Interiors/CL_Z10i8_Kingdom_Of_The_Crabs": {
+			"name": "Krustianisches Reich",
+			"sub": "Acastus Hexfinn"
 		}
 	}
 }

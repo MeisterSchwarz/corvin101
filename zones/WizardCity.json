@@ -44,6 +44,10 @@
 			"name": "Stadtmitte",
 			"sub": "Schlossbesichtigungen"
 		},
+		"WizardCity/Interiors/WC_Fire_Cave": {
+			"name": "Golemturm",
+			"sub": "Drachenschlund-Höhle"
+		},
 		"WizardCity/Interiors/WC_Hatchery": {
 			"name": "Platz der Tiere",
 			"sub": "Der Brutplatz"
@@ -67,6 +71,14 @@
 			"name": "Platz der Tiere",
 			"sub": "Haustierladen"
 		},
+		"WizardCity/Interiors/WC_Park_Snackshop": {
+			"name": "Platz der Tiere",
+			"sub": "Futterladen"
+		},
+		"WizardCity/Interiors/WC_SchoolDeath": {
+			"name": "Schattenbruch",
+			"sub": "Schule des Todes"
+		},
 		"WizardCity/Interiors/WC_SchoolFire": {
 			"name": "Rabenhain",
 			"sub": "Schule des Feuers"
@@ -75,13 +87,33 @@
 			"name": "Rabenhain",
 			"sub": "Schule des Eises"
 		},
+		"WizardCity/Interiors/WC_SchoolLife": {
+			"name": "Rabenhain",
+			"sub": "Schule des Lebens"
+		},
+		"WizardCity/Interiors/WC_SchoolMyth": {
+			"name": "Rabenhain",
+			"sub": "Schule des Mythos"
+		},
 		"WizardCity/Interiors/WC_SchoolStorm": {
 			"name": "Rabenhain",
 			"sub": "Schule des Sturms"
 		},
+		"WizardCity/Interiors/WC_Shop_Athames": {
+			"name": "Kaufmannsviertel",
+			"sub": "Dolchverkäufer"
+		},
 		"WizardCity/Interiors/WC_ShopDye": {
 			"name": "Kaufmannsviertel",
 			"sub": "Färberei"
+		},
+		"WizardCity/Interiors/WC_Shop_Jeweler": {
+			"name": "Kaufmannsviertel",
+			"sub": "Juwelenschleiferin"
+		},
+		"WizardCity/Interiors/WC_Shop_Robes": {
+			"name": "Kaufmannsviertel",
+			"sub": "Robenverkäufer"
 		},
 		"WizardCity/Interiors/WC_TowerFire": {
 			"name": "Rabenhain",
@@ -90,6 +122,18 @@
 		"WizardCity/Interiors/WC_TowerIce": {
 			"name": "Rabenhain",
 			"sub": "Turm des Eises"
+		},
+		"WizardCity/Interiors/WC_TowerLife": {
+			"name": "Rabenhain",
+			"sub": "Turm des Lebens"
+		},
+		"WizardCity/Interiors/WC_TowerMyth": {
+			"name": "Rabenhain",
+			"sub": "Turm des Mythos"
+		},
+		"WizardCity/Interiors/WC_TowerStorm": {
+			"name": "Rabenhain",
+			"sub": "Turm des Sturms"
 		},
 		"WizardCity/WC_Duel_Arena": {
 			"name": "Arena"
@@ -132,6 +176,34 @@
 			"name": "Zyklopenweg",
 			"sub": "General Akilles"
 		},
+		"WizardCity/WC_Streets/Interiors/WC_DarkCave_MalistairesHouse": {
+			"name": "Dunkle Höhle",
+			"sub": "Malistaires Haus"
+		},
+		"WizardCity/WC_Streets/Interiors/WC_DarkCave_MalistairesSanctum": {
+			"name": "Dunkle Höhle",
+			"sub": "Malistaires Heiligtum"
+		},
+		"WizardCity/WC_Streets/Interiors/WC_Firecat_CabalSafehouse": {
+			"name": "Feuerkatzenallee",
+			"sub": "Zufluchtsort der Kabale"
+		},
+		"WizardCity/WC_Streets/Interiors/WC_Firecat_CabalSafehouse02": {
+			"name": "Feuerkatzenallee",
+			"sub": "Greta Schwarzkessel"
+		},
+		"WizardCity/WC_Streets/Interiors/WC_Firecat_H2": {
+			"name": "Feuerkatzenallee",
+			"sub": "Haus von Greta Schwarzkessel"
+		},
+		"WizardCity/WC_Streets/Interiors/WC_Firecat_T1": {
+			"name": "Feuerkatzenallee",
+			"sub": "Bastilla Grabwind"
+		},
+		"WizardCity/WC_Streets/Interiors/WC_Firecat_T2": {
+			"name": "Feuerkatzenallee",
+			"sub": "Wurmgrat"
+		},
 		"WizardCity/WC_Streets/Interiors/WC_Firecat_T3": {
 			"name": "Feuerkatzenallee",
 			"sub": "Grymma Plageschlag"
@@ -144,9 +216,25 @@
 			"name": "Altes Viertel",
 			"sub": "Basar"
 		},
+		"WizardCity/WC_Streets/Interiors/WC_Unicorn_H2": {
+			"name": "Einhornweg",
+			"sub": "Haus von Dorothy Gale"
+		},
+		"WizardCity/WC_Streets/Interiors/WC_Unicorn_H3": {
+			"name": "Einhornweg",
+			"sub": "Blechmann & Herr Toto"
+		},
+		"WizardCity/WC_Streets/Interiors/WC_Unicorn_HedgeMaze": {
+			"name": "Einhornweg",
+			"sub": "Heckenlabyrinth"
+		},
 		"WizardCity/WC_Streets/Interiors/WC_Unicorn_T1": {
 			"name": "Einhornweg",
 			"sub": "Lady Blackhope"
+		},
+		"WizardCity/WC_Streets/Interiors/WC_Unicorn_T2": {
+			"name": "Einhornweg",
+			"sub": "Klapperknochen"
 		},
 		"WizardCity/WC_Streets/Interiors/WC_PET_Park": {
 			"name": "Platz der Tiere"
@@ -156,6 +244,12 @@
 		},
 		"WizardCity/WC_Streets/WC_Cyclops": {
 			"name": "Zyklopenweg"
+		},
+		"WizardCity/WC_Streets/WC_DarkCave": {
+			"name": "Dunkle Höhle"
+		},
+		"WizardCity/WC_Streets/WC_Drains/Z00_Drains_HUB": {
+			"name": "Entwässerungskanal"
 		},
 		"WizardCity/WC_Streets/WC_Firecat": {
 			"name": "Feuerkatzenallee"

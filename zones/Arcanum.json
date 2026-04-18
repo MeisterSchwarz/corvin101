@@ -4,14 +4,36 @@
 		"image": "arcanum"
 	},
 	"zones": {
+		"Arcanum/AR_Z01_Hub": {
+			"name": "Arkanum"
+		},
+		"Arcanum/Interiors/AR_Dunes": {
+			"name": "Sandmeer"
+		},
 		"Arcanum/Interiors/AR_Z01_DeadArchive": {
 			"name": "Totenarchiv"
+		},
+		"Arcanum/Interiors/AR_Z01_DeathSchool": {
+			"name": "Kammer der Nekromantie"
+		},
+		"Arcanum/Interiors/AR_Z01_FireSchool": {
+			"name": "Kammer der Pyromantie"
+		},
+		"Arcanum/Interiors/AR_Z01_IceSchool": {
+			"name": "Kammer der Protektion"
+		},
+		"Arcanum/Interiors/AR_Z01_LifeSchool": {
+			"name": "Kammer der Heilung"
 		},
 		"Arcanum/Interiors/AR_Z01_MusicologyOffice": {
 			"name": "Musikraum"
 		},
-		"Arcanum/AR_Z01_Hub": {
-			"name": "Arkanum"
+		"Arcanum/Interiors/AR_Z01_MythSchool": {
+			"name": "Kammer der Beschwörung"
+		},
+		"Arcanum/Interiors/AR_Z01_StormSchool": {
+			"name": "Kammer der Zerstörung"
 		}
+	
 	}
 }

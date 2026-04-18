@@ -4,21 +4,267 @@
 		"image": "mirage"
 	},
 	"zones": {
+		"Mirage/Interiors/MR_Z00_CleanRoom": {
+			"name": "Caravan",
+            "sub": "Duumozids Höhle"
+		},
+		"Mirage/Interiors/MR_Z00_DumoozidsTent": {
+			"name": "Caravan",
+            "sub": "Duumozids Zelt"
+		},
+		"Mirage/Interiors/MR_Z00_HideyHole": {
+			"name": "Caravan",
+            "sub": "Gieriger Gürtelkrieger"
+		},
+		"Mirage/Interiors/MR_Z00_GhulturesNest": {
+			"name": "Caravan",
+            "sub": "Mutter der Todesgeier"
+		},
 		"Mirage/Interiors/MR_Z01_Barracks": {
 			"name": "Alkali-Hügelgräber",
             "sub": "Kasernenhügelgrab"
 		},
-		"Mirage/Interiors/MR_Z01_DefiledCryp": {
+		"Mirage/Interiors/MR_Z01_DefiledCrypt": {
 			"name": "Alkali-Hügelgräber",
-            "sub": "Alte Krypta"
+            "sub": "Geschändete Krypta"
+		},
+		"Mirage/Interiors/MR_Z01_ForbiddenVault": {
+			"name": "Alkali-Hügelgräber",
+            "sub": "Verbotene Kammer"
 		},
 		"Mirage/Interiors/MR_Z01_ImportantCave": {
 			"name": "Alkali-Hügelgräber",
             "sub": "Wichtige Höhle"
 		},
+		"Mirage/Interiors/MR_Z01_OverlordsOssuary": {
+			"name": "Alkali-Hügelgräber",
+            "sub": "Beinhaus des Hochfürsten"
+		},
 		"Mirage/Interiors/MR_Z01_TombForgotten": {
 			"name": "Alkali-Hügelgräber",
             "sub": "Grab der Vergessenen"
+		},
+		"Mirage/Interiors/MR_Z02_Alley01": {
+			"name": "Aggrobah",
+            "sub": "Finstere Gasse"
+		},
+		"Mirage/Interiors/MR_Z02_Alley03": {
+			"name": "Aggrobah",
+            "sub": "Achmad Peece"
+		},
+		"Mirage/Interiors/MR_Z02_FourPoints": {
+			"name": "Aggrobah",
+            "sub": "Loother Ray"
+		},
+		"Mirage/Interiors/MR_Z02_MagicCarpetRide": {
+			"name": "Magischer Teppich"
+		},
+		"Mirage/Interiors/MR_Z02_NorthGate": {
+			"name": "Aggrobah",
+            "sub": "Der Skorpion"
+		},
+		"Mirage/Interiors/MR_Z02_Palace": {
+			"name": "Aggrobah",
+            "sub": "Westlicher Zugang"
+		},
+		"Mirage/Interiors/MR_Z02_PalaceMain": {
+			"name": "Aggrobah",
+            "sub": "Palast"
+		},
+		"Mirage/Interiors/MR_Z02_PalaceTreasureVault": {
+			"name": "Aggrobah",
+            "sub": "Schatzkammer des Palastes"
+		},
+		"Mirage/Interiors/MR_Z02_PalaceTreasureVault02": {
+			"name": "Aggrobah",
+            "sub": "Shazin Deshekels"
+		},
+		"Mirage/Interiors/MR_Z02_SmugglingTunnel": {
+			"name": "Aggrobah",
+            "sub": "Alter Schmugglertunnel"
+		},
+		"Mirage/Interiors/MR_Z02_Stash": {
+			"name": "Aggrobah",
+            "sub": "Versteck"
+		},
+		"Mirage/Interiors/MR_Z02_SultFoyer": {
+			"name": "Aggrobah",
+            "sub": "Wohnung der Sultanin"
+		},
+		"Mirage/Interiors/MR_Z02_TheRoost": {
+			"name": "Aggrobah",
+            "sub": "Der Schlag"
+		},
+		"Mirage/Interiors/MR_Z02_TheRoost02": {
+			"name": "Aggrobah",
+            "sub": "Ali Cassim"
+		},
+		"Mirage/Interiors/MR_Z02_VizierApt": {
+			"name": "Aggrobah",
+            "sub": "Behausung des Wesirs"
+		},
+		"Mirage/Interiors/MR_Z02_Warehouse01": {
+			"name": "Aggrobah",
+            "sub": "Lagerhaus"
+		},
+		"Mirage/Interiors/MR_Z02_QuietBungalow": {
+			"name": "Aggrobah",
+            "sub": "Ruhiger Bungalow"
+		},
+		"Mirage/Interiors/MR_Z03_BuriedGardens": {
+			"name": "Kratzbaum-Schlucht",
+            "sub": "Verborgener Garten"
+		},
+		"Mirage/Interiors/MR_Z03_CavernOfTheWurm": {
+			"name": "Kratzbaum-Schlucht",
+            "sub": "Höhle des Wurms"
+		},
+		"Mirage/Interiors/MR_Z03_JezzeritCounselHall": {
+			"name": "Kratzbaum-Schlucht",
+            "sub": "Jezzerit-Ratsaal"
+		},
+		"Mirage/Interiors/MR_Z03_JezzeritMonastery": {
+			"name": "Kratzbaum-Schlucht",
+            "sub": "Jezzerit-Kloster"
+		},
+		"Mirage/Interiors/MR_Z03_LordsRetreat": {
+			"name": "Kratzbaum-Schlucht",
+            "sub": "Residenz des Lords"
+		},
+		"Mirage/Interiors/MR_Z03_TabbiManor": {
+			"name": "Kratzbaum-Schlucht",
+            "sub": "Haus Tabbi"
+		},
+		"Mirage/Interiors/MR_Z03_VassalManse": {
+			"name": "Kratzbaum-Schlucht",
+            "sub": "Vasallenhaus"
+		},
+		"Mirage/Interiors/MR_Z04_BaronsAudienceChamber": {
+			"name": "Rubal-Weiten",
+            "sub": "Audienzzimer des Barons"
+		},
+		"Mirage/Interiors/MR_Z04_BaronsRetreat": {
+			"name": "Rubal-Weiten",
+            "sub": "Residenz des Barons"
+		},
+		"Mirage/Interiors/MR_Z04_CalixcoManor": {
+			"name": "Rubal-Weiten",
+            "sub": "Triqholor-Herrenhaus"
+		},
+		"Mirage/Interiors/MR_Z04_CalixcoNursery": {
+			"name": "Rubal-Weiten",
+            "sub": "Baronin Fellkonnen"
+		},
+		"Mirage/Interiors/MR_Z04_MonguRefuge": {
+			"name": "Rubal-Weiten",
+            "sub": "Mungolen-Zuflucht"
+		},
+		"Mirage/Interiors/MR_Z04_TowerOfBabble": {
+			"name": "Rubal-Weiten",
+            "sub": "Plapperturm"
+		},
+		"Mirage/Interiors/MR_Z05_ArchitectHouse": {
+			"name": "Istanboa",
+            "sub": "Baumeister Antheemius"
+		},
+		"Mirage/Interiors/MR_Z05_Armory": {
+			"name": "Istanboa",
+            "sub": "Tetrus-Waffenkammer"
+		},
+		"Mirage/Interiors/MR_Z05_CatstanArchives": {
+			"name": "Istanboa",
+            "sub": "Halle der Geheimnisse"
+		},
+		"Mirage/Interiors/MR_Z05_CatstanRuins": {
+			"name": "Istanboa",
+            "sub": "Ruinen von Qhaztantinopel"
+		},
+		"Mirage/Interiors/MR_Z05_ConstractorDepot": {
+			"name": "Istanboa",
+            "sub": "Oberster Constractor Isibore"
+		},
+		"Mirage/Interiors/MR_Z05_Gatehouse": {
+			"name": "Istanboa",
+            "sub": "Hauptmann Stratoviper"
+		},
+		"Mirage/Interiors/MR_Z05_SnakeSafehouse": {
+			"name": "Istanboa",
+            "sub": "Unterschlupf"
+		},
+		"Mirage/Interiors/MR_Z05_SnakishPass": {
+			"name": "Istanboa",
+            "sub": "Schlangenpass"
+		},
+		"Mirage/Interiors/MR_Z05_TetrusPrison": {
+			"name": "Istanboa",
+            "sub": "Tetrus-Gefängnis"
+		},
+		"Mirage/Interiors/MR_Z05_VipersDen": {
+			"name": "Istanboa",
+            "sub": "Höhle der Vipern"
+		},
+		"Mirage/Interiors/MR_Z06_ChairmanSuite": {
+			"name": "Berg Yakhal",
+            "sub": "Suite des Vorsitzenden"
+		},
+		"Mirage/Interiors/MR_Z06_DeepFreeze": {
+			"name": "Berg Yakhal",
+            "sub": "Eiseskälte"
+		},
+		"Mirage/Interiors/MR_Z06_DeepFreeze_02": {
+			"name": "Berg Yakhal",
+            "sub": "Bibber-Qhatz"
+		},
+		"Mirage/Interiors/MR_Z06_DeepFreeze_03": {
+			"name": "Berg Yakhal",
+            "sub": "Miriam"
+		},
+		"Mirage/Interiors/MR_Z06_PrincessHovel": {
+			"name": "Berg Yakhal",
+            "sub": "Miriams Hütte"
+		},
+		"Mirage/Interiors/MR_Z06_RebelHQ": {
+			"name": "Berg Yakhal",
+            "sub": "Rebellenhauptquartier"
+		},
+		"Mirage/Interiors/MR_Z06_RebelHQ_02": {
+			"name": "Berg Yakhal",
+            "sub": "Hauptmann Grot"
+		},
+		"Mirage/Interiors/MR_Z06_RotwangLab": {
+			"name": "Berg Yakhal",
+            "sub": "Goofangs Labor"
+		},
+		"Mirage/Interiors/MR_Z07_AliChamber": {
+			"name": "Räuberhöhle",
+            "sub": "Audienzzimmer"
+		},
+		"Mirage/Interiors/MR_Z07_PrivateHalls": {
+			"name": "Räuberhöhle",
+            "sub": "Ali Baboons Privatsalon"
+		},
+		"Mirage/Interiors/MR_Z07_ThievesVault": {
+			"name": "Räuberhöhle",
+			"sub": "Schatzkammer der Diebe"
+		},
+		"Mirage/Interiors/MR_Z07_Trap": {
+			"name": "Räuberhöhle"
+		},
+		"Mirage/Interiors/MR_Z07_UnderDen": {
+			"name": "Räuberhöhle",
+			"sub": "Finstertiefen"
+		},
+		"Mirage/Interiors/MR_Z08_DumoozidLamp": {
+			"name": "Eerem-Palast",
+			"sub": "Duumozids Wunderlampe"
+		},
+		"Mirage/Interiors/MR_Z08_EeremGardens": {
+			"name": "Eerem-Palast",
+			"sub": "Garten von Eerem"
+		},
+		"Mirage/Interiors/MR_Z08_EerkalaCourt": {
+			"name": "Eerem-Palast",
+			"sub": "Eerkalas Pavillon"
 		},
 		"Mirage/Interiors/MR_Z10_EastTimeDunes": {
 			"name": "Sande der Zeit",
@@ -45,11 +291,26 @@
 		"Mirage/MR_Z01_AlkaliBarrows": {
 			"name": "Alkali-Hügelgräber"
 		},
+		"Mirage/MR_Z02_Aggrobah": {
+			"name": "Aggrobah"
+		},
 		"Mirage/MR_Z03_CaterwaulCanyon": {
 			"name": "Kratzbaum-Schlucht"
 		},
+		"Mirage/MR_Z04_RubalWastes": {
+			"name": "Rubal-Weiten"
+		},
+		"Mirage/MR_Z05_Istanboa": {
+			"name": "Istanboa"
+		},
+		"Mirage/MR_Z06_YakhalMountain": {
+			"name": "Berg Yakhal"
+		},
 		"Mirage/MR_Z07_ThievesDen": {
 			"name": "Räuberhöhle"
+		},
+		"Mirage/MR_Z08_EeremPalace": {
+			"name": "Eerem-Palast"
 		},
 		"Mirage/MR_Z10_Chronoverge": {
 			"name": "Chronoring"
