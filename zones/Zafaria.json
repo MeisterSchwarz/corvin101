@@ -20,6 +20,26 @@
 			"name": "Savanne",
 			"sub": "Königin Tanei Geistermähne"
 		},
+		"Zafaria/Interiors/ZF_Z06_I01_Barracks": {
+			"name": "Zamunda",
+			"sub": "Kaserne"
+		},
+		"Zafaria/Interiors/ZF_Z06_I02_Kings_Court03": {
+			"name": "Zamunda",
+			"sub": "Palast"
+		},
+		"Zafaria/Interiors/ZF_Z06_I03_Magicians_House": {
+			"name": "Zamunda",
+			"sub": "Goliath-Chon'Darr'Hna"
+		},
+		"Zafaria/Interiors/ZF_Z06_I04_Kings_Tomb_Anteroom": {
+			"name": "Zamunda",
+			"sub": "Grabmal des Königs"
+		},
+		"Zafaria/Interiors/ZF_Z06_I04_Kings_Tomb": {
+			"name": "Zamunda",
+			"sub": "Grabmal des Königs"
+		},
 		"Zafaria/Interiors/ZF_Z07_I01_Darajani_Palace": {
 			"name": "Steinstadt",
 			"sub": "Darajani-Palast"
@@ -44,18 +64,74 @@
 			"name": "Flusshafen",
 			"sub": "Belloqs Zelt"
 		},
+		"Zafaria/Interiors/ZF_Z08_I03_Black_Palace": {
+			"name": "Flusshafen",
+			"sub": "Schwarzer Palast"
+		},
 		"Zafaria/Interiors/ZF_Z08_I04_Library_Cave_Art_Museum": {
+			"name": "Flusshafen",
+			"sub": "Museum"
+		},
+		"Zafaria/Interiors/ZF_Z08_I08_Librarians_Hideout": {
 			"name": "Flusshafen",
 			"sub": "Bibliothek"
 		},
+		"Zafaria/Interiors/ZF_Z09_I01_Silverbacks_Shack": {
+			"name": "Congadschungel",
+			"sub": "Kalla Silberrücken"
+		},
+		"Zafaria/Interiors/ZF_Z09_I03_Barge_from_Stone_Town": {
+			"name": "Congadschungel",
+			"sub": "Aksil Schwarzrüssel"
+		},
+		"Zafaria/Interiors/ZF_Z09_I04_Overseers_Tower": {
+			"name": "Congadschungel",
+			"sub": "Zalakir Nachtweber"
+		},
+		"Zafaria/Interiors/ZF_Z09_I05_Waterfall_Cliff_Cave": {
+			"name": "Congadschungel",
+			"sub": "Ghadir Traumtrank"
+		},
+		"Zafaria/Interiors/ZF_Z09_I06_Jungle_Clearing": {
+			"name": "Congadschungel",
+			"sub": "Ranzan"
+		},
+		"Zafaria/Interiors/ZF_Z09_Ogun_Daggertooth_Shack": {
+			"name": "Congadschungel",
+			"sub": "Ogun Dolchzahn"
+		},
+		"Zafaria/Interiors/ZF_Z09_Oya_Redstorm_Cave": {
+			"name": "Congadschungel",
+			"sub": "Oya Blutsturm"
+		},
+		"Zafaria/Interiors/ZF_Z10_I01_Little_Mausoleum": {
+			"name": "Elefantenfriedhof",
+			"sub": "Ada Peitschklinge"
+		},
+		"Zafaria/Interiors/ZF_Z10_I02_Didos_Mausoleum": {
+			"name": "Elefantenfriedhof",
+			"sub": "Elissas Grab"
+		},
+		"Zafaria/Interiors/ZF_Z10_I03_Drum_House": {
+			"name": "Elefantenfriedhof",
+			"sub": "Das Trommelhaus"
+		},
+		"Zafaria/Interiors/ZF_Z10_I04_Little_Mausoleum_02": {
+			"name": "Elefantenfriedhof",
+			"sub": "Murat Grauauge"
+		},
 		"Zafaria/Interiors/ZF_Z10_I05_Little_Mausoleum_03": {
 			"name": "Elefantenfriedhof",
-			"sub": "Trommelhaus"
+			"sub": "Gherruld"
+		},
+		"Zafaria/Interiors/ZF_Z10_I06_Little_Mausoleum_04": {
+			"name": "Elefantenfriedhof",
+			"sub": "Dhakir Blutdorn"
 		},
 		"Zafaria/ZF_Z00_Hub": {
 			"name": "Baobab-Kreuzung"
 		},
-		"Zafaria/Zafaria/ZF_Z01_Baobab_Crown": {
+		"Zafaria/ZF_Z01_Baobab_Crown": {
 			"name": "Baobab-Krone"
 		},
 		"Zafaria/ZF_Z02_Baobab_Market": {
@@ -81,6 +157,16 @@
 		},
 		"Zafaria/ZF_Z10_Elephant_Graveyard": {
 			"name": "Elefantenfriedhof"
+		},
+		"Zafaria/ZF_Z11_Mirror_Lake": {
+			"name": "Spiegelsee"
+		},
+		"Zafaria/ZF_Z12_Shining_Mountain": {
+			"name": "Spiegelsee",
+			"sub": "Leuchtender Berg"
+		},
+		"Zafaria/ZF_Z13_Mirror_Lake_Drained": {
+			"name": "Spiegelsee"
 		}
 	}
 }

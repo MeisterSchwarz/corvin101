@@ -10,6 +10,10 @@
         "Krokotopia/Interiors/KT_Library": {
             "name": "Bibliothek von Krokotopia"
         },
+        "Krokotopia/Interiors/KT_School": {
+            "name": "Die Oase",
+            "sub": "Schule der Balance"
+        },
         "Krokotopia/Interiors/KT_Shop01": {
             "name": "Die Oase",
             "sub": "Ringe & Amulette"
@@ -103,6 +107,10 @@
         },
         "Krokotopia/KT_Pyramid/KT_PalaceOfFire": {
             "name": "Palast des Feuers"
+        },
+        "Krokotopia/KT_Selenopolis/Interiors/KT_Z04_Pyramid": {
+            "name": "Selenopolis",
+            "sub": "Himmelspyramide"
         },
         "Krokotopia/KT_Selenopolis/Interiors/KT_Z04_Sanctum": {
             "name": "Selenopolis",

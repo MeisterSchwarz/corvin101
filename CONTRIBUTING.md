@@ -1,41 +1,42 @@
-# Mitwirken an wizard101rpc
+# Contributing to wizard101rpc
 
-Vielen Dank für dein Interesse an wizard101rpc!  
-Beiträge in jeder Form sind willkommen – egal ob Code, Feedback oder Übersetzungen.
+Contributions of any kind are welcome — whether code, feedback, or translations.
 
-## Möglichkeiten zur Mitarbeit
+## Ways to contribute
 
-### 🐞 Fehler melden & Feature vorschlagen
-- Bitte nutze die **Issues** auf GitHub
-- Beschreibe möglichst genau:
-  - Was passiert?
-  - Was hättest du erwartet?
-
----
-
-### 🌍 Fehlende Gebiete melden
-
-wizard101rpc erkennt unbekannte Gebiete automatisch, wenn die Option  
-**„Fehlende Übersetzungen sammeln“** im Tray aktiviert ist.
-
-Dabei wird lokal eine Datei *missing_zones.log* erzeugt. Diese befindet sich im Verzeichnis *%APPDATA%\wizard101rpc* (diesen Pfad kopieren und im Dateiexplorer einfügen). Bitte schreibe zeilenweise deinen Übersetzungsvorschlag dahinter
-
-Du kannst die Einträge:
-- als Issue posten
-- oder direkt per Discord (**leonuni**) weitergeben
+### 🐞 Reporting bugs & suggesting features
+- Please use GitHub **Issues**
+- Try to describe as clearly as possible:
+  - What happened?
+  - What did you expect to happen?
 
 ---
 
-### 🧑‍💻 Selbst entwickeln
+### 🌍 Reporting missing areas
 
-Wenn du selbst an dem Projekt arbeiten möchtest, kannst du das Repository forken und lokal weiterentwickeln. Wenn du zufrieden bist erstelle gerne einen Pull Request
+wizard101rpc automatically detects unknown areas when the option  
+**“Fehlende Übersetzungen sammeln”** is enabled in the system tray.
 
-Bitte:
-- keine Formatierungs-Commits ohne funktionale Änderung
-- möglichst kleine, thematisch fokussierte PRs
+In this case, a local file named *missing_zones.log* is created.  
+The file is located in *%APPDATA%\wizard101rpc* (you can copy this path and paste it into the Windows file explorer).
 
-Build im Terminal:
+Please add your translation suggestion **on the same line**, after the existing entry.
+
+You can submit the entries:
+- by opening an Issue
+- or by contacting me directly on Discord (**leonuni**)
+
+---
+
+### 🧑‍💻 Local development
+
+If you want to work on the project yourself, feel free to fork the repository and develop locally.  
+Once you are happy with your changes, please open a pull request.
+
+Please note:
+- no formatting-only commits without functional changes
+- keep pull requests small and focused on a single topic
+
+Build from the terminal:
 ```bash
 go build -ldflags="-H=windowsgui -s -w" -o wizard101rpc.exe
-```
-Damit wird eine Windows-EXE ohne sichtbares Terminal erzeugt

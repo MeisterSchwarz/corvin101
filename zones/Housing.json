@@ -45,6 +45,9 @@
         "Housing/School/Storm_Interior": {
             "name": "Haus des Sturms"
         },
+        "Housing_AR_Dormroom/Interior": {
+            "name": "Arkanum-Wohnung"
+        },
         "Housing_AV_BAC/Exterior": {
             "name": "Avalon-Schlossgrundstück"
         },
@@ -67,7 +70,13 @@
         },
         "Housing_FarmHouse/Interior": {
             "name": "Bauernhof",
-            "sub": "Haus"
+            "sub": "Bauernhaus"
+        },
+        "Housing_Gauntlet_Forbidden_Library/Housing_Gauntlet_Forbidden_Library_Int01": {
+            "name": "Die Verbotene Bibliothek"
+        },
+        "Housing_Guild/GuildStarter_Ext": {
+            "name": "Gildenhaus"
         },
         "Housing_MonsterMagicArena/Interior": {
             "name": "Monstronomicon"

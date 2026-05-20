@@ -4,7 +4,7 @@
 		"image": "empyrea"
 	},
 	"zones": {
-		    "Empyrea/EM_Z00_Aeriel_HUB": {
+    "Empyrea/EM_Z00_Aeriel_HUB": {
         "name": "Äriel-Küste"
     },
     "Empyrea/EM_Z01_Jungle": {
@@ -65,13 +65,129 @@
     "Empyrea/Interiors/EM_Z01_BeastmanCave": {
         "name": "Tolli-Kampfclub"
     },
+    "Empyrea/Interiors/EM_Z01_BeastmanStockade": {
+        "name": "Äriel-Dschungel",
+        "sub": "Tolli-Fort"
+    },
+    "Empyrea/Interiors/EM_Z01_BeastmanWinchHouse01": {
+        "name": "Äriel-Dschungel",
+        "sub": "Windenhäuschen 1"
+    },
+    "Empyrea/Interiors/EM_Z01_BeastmanWinchHouse02": {
+        "name": "Äriel-Dschungel",
+        "sub": "Windenhäuschen 2"
+    },
+    "Empyrea/Interiors/EM_Z01_CalibansFort": {
+        "name": "Äriel-Dschungel",
+        "sub": "Calebans Festung"
+    },
+    "Empyrea/Interiors/EM_Z01_CaveScorax": {
+        "name": "Äriel-Dschungel",
+        "sub": "Sycorax' Höhle"
+    },
+    "Empyrea/Interiors/EM_Z01_CrushersLair": {
+        "name": "Äriel-Dschungel",
+        "sub": "Krasha"
+    },
+    "Empyrea/Interiors/EM_Z01_MonkeySpiderCave": {
+        "name": "Äriel-Dschungel",
+        "sub": "Spinnenaffenhöhle"
+    },
+    "Empyrea/Interiors/EM_Z01_MountainPath": {
+        "name": "Äriel-Dschungel",
+        "sub": "Tolli-Tunnel"
+    },
+    "Empyrea/Interiors/EM_Z01_MountainVillage": {
+        "name": "Äriel-Dschungel",
+        "sub": "Tolli-Berg"
+    },
+    "Empyrea/Interiors/EM_Z01_RaiderTower01": {
+        "name": "Äriel-Dschungel",
+        "sub": "D'Viss"
+    },
+    "Empyrea/Interiors/EM_Z01_RaiderTunnels": {
+        "name": "Äriel-Dschungel",
+        "sub": "Geheimer Tunnel"
+    },
+    "Empyrea/Interiors/EM_Z01_TowerOfSycorax": {
+        "name": "Äriel-Dschungel",
+        "sub": "Sycorax' Turm"
+    },
+    "Empyrea/Interiors/EM_Z02_Aethyrium": {
+        "name": "Zanadu",
+        "sub": "Äthyrium"
+    },
+    "Empyrea/Interiors/EM_Z02_AethyriumOffice": {
+        "name": "Zanadu",
+        "sub": "Büro der Erleuchteten"
+    },
+    "Empyrea/Interiors/EM_Z02_BatCave": {
+        "name": "Zanadu",
+        "sub": "Fledermaus' Höhle"
+    },
     "Empyrea/Interiors/EM_Z02_BeaconHope": {
         "name": "Zanadu",
         "sub": "Leuchtfeuer der Hoffnung"
     },
+    "Empyrea/Interiors/EM_Z02_ChargingStation": {
+        "name": "Zanadu",
+        "sub": "Ladestation"
+    },
+    "Empyrea/Interiors/EM_Z02_DanceHall": {
+        "name": "Zanadu",
+        "sub": "Tanzhalle"
+    },
+    "Empyrea/Interiors/EM_Z02_Gatehouse": {
+        "name": "Zanadu",
+        "sub": "General Kugelblitz"
+    },
+    "Empyrea/Interiors/EM_Z02_JineeHouse": {
+        "name": "Zanadu",
+        "sub": "Verlassenes Haus"
+    },
+    "Empyrea/Interiors/EM_Z02_LeisureDome": {
+        "name": "Zanadu",
+        "sub": "Vergnügungskuppel"
+    },
+    "Empyrea/Interiors/EM_Z02_Palace": {
+        "name": "Zanadu",
+        "sub": "Palast"
+    },
+    "Empyrea/Interiors/EM_Z02_SecretEntrance": {
+        "name": "Zanadu",
+        "sub": "Abflusskanal"
+    },
+    "Empyrea/Interiors/EM_Z02_SewerDrainage": {
+        "name": "Zanadu",
+        "sub": "Kanalisationskontrollraum"
+    },
+    "Empyrea/Interiors/EM_Z02_SewerFlooded": {
+        "name": "Zanadu",
+        "sub": "Kanalisationskontrollraum"
+    },
+    "Empyrea/Interiors/EM_Z02_Sewers": {
+        "name": "Zanadu",
+        "sub": "Kanalisation"
+    },
+    "Empyrea/Interiors/EM_Z02_ThroneRoom": {
+        "name": "Zanadu",
+        "sub": "Thronsaal"
+    },
+    "Empyrea/Interiors/EM_Z02_ZigisHouse": {
+        "name": "Zanadu",
+        "sub": "Zigis Anwesen"
+    },
     "Empyrea/Interiors/EM_Z03_IceAccessTunnel": {
         "name": "Athanor-Außenbezirk",
-        "sub": "Der Schrecken"
+        "sub": "Zugangstunnel"
+    },
+    "Empyrea/Interiors/EM_Z03_IceCouncilChamber": {
+        "name": "Athanor-Außenbezirk",
+        "sub": "Einar Frostspalter"
+    },
+    "Empyrea/Interiors/EM_Z03_IceCuttingComplex": {
+        "name": "Athanor-Außenbezirk",
+        "sub": "Eisblockfertigung"
     },
     "Empyrea/Interiors/EM_Z03_IceDwarfBunker": {
         "name": "Athanor-Außenbezirk",
@@ -83,11 +199,11 @@
     },
     "Empyrea/Interiors/EM_Z03_MeltingHouse": {
         "name": "Athanor-Außenbezirk",
-        "sub": "Dampfschrecken"
+        "sub": "Schmelzhütte"
     },
     "Empyrea/Interiors/EM_Z03_Vault": {
         "name": "Athanor-Außenbezirk",
-        "sub": "Frostfluch"
+        "sub": "Hauptarchiv"
     },
     "Empyrea/Interiors/EM_Z04_Cistern": {
         "name": "Inneres von Athanor",

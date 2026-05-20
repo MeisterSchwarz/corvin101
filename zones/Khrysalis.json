@@ -36,21 +36,61 @@
             "name": "Der Stille Markt (Kriegsraum)"
         },
         "Khrysalis/Interiors/KR_Z01_LimeBright": {
-            "name": "Der Stille Markt (Sauerpests Nest)"
+            "name": "Der Stille Markt",
+            "sub": "Vekan Sauerpest"
         },
         "Khrysalis/Interiors/KR_Z01_QuietOne": {
             "name": "Der Stille Markt",
             "sub": "Zandra Schweigestill"
         },
         "Khrysalis/Interiors/KR_Z01_DoomMask": {
-            "name": "Der Stille Markt (Schreckensmaskes Behausung)"
+            "name": "Der Stille Markt",
+            "sub": "Zaragovia Schreckensmaske"
         },
         "Khrysalis/Interiors/KR_Z01_ZanzaQuarters": {
             "name": "Der Stille Markt (Baubrecherins Quartier)"
         },
+        "Khrysalis/Interiors/KR_Z02_HiddenCave": {
+            "name": "Mondklippen",
+            "sub": "Magok Bienenräuber"
+        },
         "Khrysalis/Interiors/KR_Z02_Honeymill": {
             "name": "Mondklippen",
             "sub": "Honigmühle"
+        },
+        "Khrysalis/Interiors/KR_Z02_I10_WaterCave": {
+            "name": "Mondklippen",
+            "sub": "Belosto Zehenbiss"
+        },
+        "Khrysalis/Interiors/KR_Z02_MoonCliffs_Int01_01": {
+            "name": "Turm der Mondfinsternis"
+        },
+        "Khrysalis/Interiors/KR_Z02_MoonCliffs_Int01_02": {
+            "name": "Turm der Mondfinsternis"
+        },
+        "Khrysalis/Interiors/KR_Z02_MoonCliffs_Int01_03": {
+            "name": "Turm der Mondfinsternis",
+            "sub": "Ravik Traumsphäre"
+        },
+        "Khrysalis/Interiors/KR_Z02_MoonCliffs_Int01_A": {
+            "name": "Turm der Mondfinsternis",
+            "sub": "Schatten des Landes"
+        },
+        "Khrysalis/Interiors/KR_Z02_MoonCliffs_Int01_B": {
+            "name": "Turm der Mondfinsternis",
+            "sub": "Sofia Dunkelweit"
+        },
+        "Khrysalis/Interiors/KR_Z03_Cave_01": {
+            "name": "Der Letzte Hain",
+            "sub": "Mimo die Grimme"
+        },
+        "Khrysalis/Interiors/KR_Z03_DeathsHead_Cave_Int": {
+            "name": "Der Letzte Hain",
+            "sub": "Viridian Grüneich"
+        },
+        "Khrysalis/Interiors/KR_Z03_I05_UmbraTent": {
+            "name": "Der Letzte Hain",
+            "sub": "Ghalak Giftdorn"
         },
         "Khrysalis/Interiors/KR_Z03_UlleksTent": {
             "name": "Der Letzte Hain",

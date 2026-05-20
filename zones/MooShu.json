@@ -8,6 +8,14 @@
 			"name": "Katmandu",
             "sub": "Goldene Horde-Oberst"
 		},
+		"MooShu/Interiors/MS_Emperor_Palace": {
+			"name": "Jadepalast",
+            "sub": "Thronsaal"
+		},
+		"MooShu/Interiors/MS_GardenDojo_T1": {
+			"name": "Jadepalast",
+            "sub": "Mika Skarka"
+		},
 		"MooShu/Interiors/MS_RockDojoT2": {
 			"name": "Jadepalast",
             "sub": "Felsen-Dojo"

@@ -28,6 +28,10 @@
 			"name": "Alkali-Hügelgräber",
             "sub": "Geschändete Krypta"
 		},
+		"Mirage/Interiors/MR_Z01_DrujCave": {
+			"name": "Alkali-Hügelgräber",
+            "sub": "Druj"
+		},
 		"Mirage/Interiors/MR_Z01_ForbiddenVault": {
 			"name": "Alkali-Hügelgräber",
             "sub": "Verbotene Kammer"
@@ -159,6 +163,10 @@
 			"name": "Rubal-Weiten",
             "sub": "Mungolen-Zuflucht"
 		},
+		"Mirage/Interiors/MR_Z04_MottomanTreasureCave": {
+			"name": "Rubal-Weiten",
+            "sub": "Zuliman Mungol"
+		},
 		"Mirage/Interiors/MR_Z04_TowerOfBabble": {
 			"name": "Rubal-Weiten",
             "sub": "Plapperturm"
@@ -266,6 +274,26 @@
 			"name": "Eerem-Palast",
 			"sub": "Eerkalas Pavillon"
 		},
+		"Mirage/Interiors/MR_Z09_ChronocleChamber": {
+			"name": "Zruvan-Grotte",
+			"sub": "Das Chronokel"
+		},
+		"Mirage/Interiors/MR_Z09_HouseOfScrolls": {
+			"name": "Zruvan-Grotte",
+			"sub": "Schriftrollenhüterin"
+		},
+		"Mirage/Interiors/MR_Z09_TimelessCenter": {
+			"name": "Zruvan-Grotte",
+			"sub": "Wachsamer Adapa"
+		},
+		"Mirage/Interiors/MR_Z09_TimelessTower": {
+			"name": "Zruvan-Grotte",
+			"sub": "Zeitloser Turm"
+		},
+		"Mirage/Interiors/MR_Z10_ChapterHall": {
+			"name": "Chronoring",
+            "sub": "Kapitelsaal der Chronomanten"
+		},
 		"Mirage/Interiors/MR_Z10_EastTimeDunes": {
 			"name": "Sande der Zeit",
             "sub": "Schattenknochen"
@@ -311,6 +339,12 @@
 		},
 		"Mirage/MR_Z08_EeremPalace": {
 			"name": "Eerem-Palast"
+		},
+		"Mirage/MR_Z09_ZruvanGrotto": {
+			"name": "Zruvan-Grotte"
+		},
+		"Mirage/MR_Z09_ZruvanGrotto_Ancient": {
+			"name": "Zruvan-Grotte"
 		},
 		"Mirage/MR_Z10_Chronoverge": {
 			"name": "Chronoring"

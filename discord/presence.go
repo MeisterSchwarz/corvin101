@@ -184,17 +184,18 @@ func updateBattle() {
 	a := baseActivity()
 	a.Timestamps.Start = state.BattleStart()
 
+	a.Details = name
 	if sub != "" {
-		a.Details = "(⚔️) " + sub
-		a.State = name
-	} else {
-		a.State = "(⚔️) " + name
+		a.State = sub
 	}
 
 	if image != "" {
 		a.LargeImage = image
 		a.LargeText = world
 	}
+
+	a.SmallImage = "battle"
+	a.SmallText = "Im Kampf"
 
 	client.SetActivity(a)
 }

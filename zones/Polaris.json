@@ -8,6 +8,14 @@
 			"name": "Walrossjaberg",
 			"sub": "Bar"
 		},
+		"Polaris/Interiors/PL_Z00_TikiStockroom": {
+			"name": "Walrossjaberg",
+			"sub": "Inspektor Exacteur"
+		},
+		"Polaris/Interiors/PL_Z00_TikiTavern": {
+			"name": "Walrossjaberg",
+			"sub": "Tiki-Taverne"
+		},
 		"Polaris/Interiors/PL_Z00_I05_TowerBot": {
 			"name": "Walrossjaberg",
 			"sub": "Fahnenturm (1/4)"

@@ -1,88 +1,87 @@
 # wizard101rpc 
 
-[![DE](https://img.shields.io/badge/DE-red)](README.md) [![EN](https://img.shields.io/badge/EN-blue)](README.en.md)
+Discord Rich Presence tool for Wizard101.  
+Displays current area, combat status, and playtime.
+Currently only available in German. 
 
-Discord Rich Presence Tool für Wizard101.  
-Zeigt automatisch dein aktuelles Gebiet, Kampfstatus und deine Spielzeit an.
+## 👀 Preview
 
-## 👀 Vorschau
-
-| Erkunden | Kampf |
-|---------|-------|
+| Roaming | Combat |
+|--------|--------|
 | ![Roaming](public/presence_roaming.png) | ![Battle](public/presence_battle.png) |
 
-## ✨ Funktionen
+## ✨ Features
 
-- Anzeige von Gebiet und Welt
-- Kampferkennung (⚔️)
-- Anzeige der Charakterauswahl  
+- Displays current area and world
+- Combat detection
+- Character selection display  
 <br>
 
 - Autostart (optional)
-- Meldung unbekannter Gebiete (optional)
+- Reporting of unknown areas (optional)
 
 ---
 
-## 📥 Download & Nutzung
-
-1. Lade die aktuelle Version aus dem Bereich **Releases** herunter
-2. Starte `wizard101rpc.exe`
-3. Verwaltung über das System-Tray  
-![System Tray](public/presence_tray.png)
-
-### Manuelle Pfadauswahl (optional)
-
-Sollte Wizard101 nicht im Standardverzeichnis installiert sein, kann wizard101rpc das Spiel nicht automatisch erkennen.
-
-In diesem Fall wähle im System-Tray die Option  
-**„Pfad manuell auswählen“** und navigiere zum Installationsverzeichnis von Wizard101.  
-Wähle dort die Datei **`Wiz.ico`** aus.
-
-Nach dem Setzen des Pfades startet sich wizard101rpc automatisch neu.
-
-### App-Datenverzeichnis
-
-Je nach Nutzung wird automatisch ein Verzeichnis unter  
-**`%APPDATA%\wizard101rpc`** angelegt.
-
-Darin speichert die Anwendung:
-- eine Konfigurationsdatei
-- ein Logfile, falls unbekannte Gebiete erkannt werden
-
----
-## 🛡️ Hinweis zu Windows Defender
-
-Diese Anwendung ist **nicht signiert**.  
-Beim ersten Start kann Windows SmartScreen oder Windows Defender eine Warnung anzeigen.
-
-Dies ist ein bekanntes False-Positive bei Tools, die:
-- im Hintergrund laufen
-- Autostart anbieten
-
-Wähle **„Weitere Informationen“ → „Trotzdem ausführen“**.
-
-Der vollständige Quellcode ist in diesem Repository einsehbar.
-
-## 🔒 Datenschutz
-
-- Es werden **keine Daten gesammelt oder übertragen**
-- Es werden **keine Accounts** benötigt
-- Es findet **keine Netzwerkkommunikation** statt  
-  (ausgenommen lokale Kommunikation mit Discord)
-- Alle Daten werden **lokal auf deinem PC verarbeitet**
-
-## 🖥️ Unterstützte Plattformen
+## 🖥️ Supported platforms
 
 - Windows
+
+## 📥 Download & Usage
+
+1. Download the latest version from the **Releases** section
+2. Start `wizard101rpc.exe`
+3. Manage the application via the system tray  
+![System Tray](public/presence_tray.png)
+
+### Manual path selection (optional)
+
+If Wizard101 is not installed in the default directory, wizard101rpc may not be able to detect the game automatically.
+
+In this case, select  
+**“Select path manually”** from the system tray menu and navigate to the Wizard101 installation directory.  
+There, select the file **`Wiz.ico`**.
+
+After setting the path, wizard101rpc will automatically restart.
+
+### App data directory
+
+Depending on usage, a directory will be created automatically under  
+**`%APPDATA%\wizard101rpc`**.
+
+The application stores the following files there:
+- a configuration file (config.json)
+- a log file if unknown areas are detected (missing_zones.log)
+
 ---
-## 🤝 Mitwirken
 
-Beiträge sind willkommen – egal ob Bugfixes, Feature-Ideen oder neue Gebietsübersetzungen.
+## 🛡️ Windows Defender notice
 
-👉 Details zur Mitarbeit findest du [hier](CONTRIBUTING.md).
+This application is **not signed**.  
+On first launch, Windows SmartScreen or Windows Defender may display a warning.
 
-## 📄 Lizenz
+This may occur because the application runs in the background, supports autostart, accesses local files, and monitors a scheduled task as part of its watchdog functionality.
+
+Select **“More info” → “Run anyway”**.
+
+The full source code is available in this repository.
+
+## 🔒 Privacy
+
+- **No data is collected or transmitted**
+- **No accounts** are required
+- **No network communication** takes place  
+  (except for local communication with Discord)
+- All data is processed **locally on your PC**
+
+
+---
+
+## 🤝 Contributing
+
+👉 Details on how to contribute can be found [here](CONTRIBUTING.md).
+
+## 📄 License
 
 MIT License
 
-> Dieses Projekt steht in keiner Verbindung zu KingsIsle Entertainment oder Wizard101.
+> This project is not affiliated with KingsIsle Entertainment or Wizard101.

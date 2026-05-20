@@ -89,20 +89,21 @@ func cacheEmpty(worldKey string) {
 func extractWorldKey(zoneKey string) string {
 	base := strings.SplitN(zoneKey, "/", 2)[0]
 
+	if strings.Contains(zoneKey, "WC_Catacombs") {
+		return "Catacombs"
+	}
+
 	switch {
+	case strings.HasPrefix(base, "G14_DM"):
+		return "Darkmoor"
 	case strings.HasPrefix(base, "G14"):
 		return "Dungeons"
 	case strings.HasPrefix(base, "DD"):
 		return "Dungeons"
-
 	case strings.HasPrefix(base, "Housing"):
 		return "Housing"
-
 	case strings.HasPrefix(base, "ThePhantomZoneWorld"):
 		return "Minigames"
-
-	case strings.HasPrefix(base, "WL_"):
-		return "Wallaru"
 	}
 
 	// Fallback: prefix before first underscore

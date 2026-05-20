@@ -10,11 +10,23 @@
 		"Arcanum/Interiors/AR_Dunes": {
 			"name": "Sandmeer"
 		},
+		"Arcanum/Interiors/AR_ShadowTricksterLair_01": {
+			"name": "Schattentrickser"
+		},
+		"Arcanum/Interiors/AR_Z01_ArbitersArena": {
+			"name": "Cyrio Cassini"
+		},
+		"Arcanum/Interiors/AR_Z01_ArbitersArena02": {
+			"name": "Elementar der Leere"
+		},
 		"Arcanum/Interiors/AR_Z01_DeadArchive": {
 			"name": "Totenarchiv"
 		},
 		"Arcanum/Interiors/AR_Z01_DeathSchool": {
 			"name": "Kammer der Nekromantie"
+		},
+		"Arcanum/Interiors/AR_Z01_I01_DryDock": {
+			"name": "Trockendock"
 		},
 		"Arcanum/Interiors/AR_Z01_FireSchool": {
 			"name": "Kammer der Pyromantie"
@@ -31,8 +43,21 @@
 		"Arcanum/Interiors/AR_Z01_MythSchool": {
 			"name": "Kammer der Beschwörung"
 		},
+		"Arcanum/Interiors/AR_Z01_SchismReadingRoom": {
+			"name": "Lesesaal der Spaltung"
+		},
+		"Arcanum/Interiors/AR_Z01_ShadowSchool": {
+			"name": "Kammer der Schatten"
+		},
 		"Arcanum/Interiors/AR_Z01_StormSchool": {
 			"name": "Kammer der Zerstörung"
+		},
+		"Arcanum/Interiors/AR_Z03_ArkCrashCinematic": {
+			"name": "Spiralarche",
+			"sub": "Flug nach Empyrea"
+		},
+		"Arcanum/Interiors/AR_Z03_ArkShip": {
+			"name": "Spiralarche"
 		}
 	
 	}

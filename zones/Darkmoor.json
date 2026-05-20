@@ -1,0 +1,26 @@
+{
+	"meta": {
+		"world": "Schloss Düstermoor",
+		"image": "darkmoor"
+	},
+	"zones": {
+	    "G14_DM/DM_Z01_CastleDarkmoor": {
+			"name": "Schloss Düstermoor"
+		},
+		"G14_DM/DM_Z06_Bridge": {
+			"name": "Friedhof"
+		},
+        "G14_DM/DM_Z07_Graveyard": {
+            "name": "Friedhof",
+            "sub": "Yevgeny Nachtschleicher"
+        },
+        "G14_DM/Interiors/DM_Z08_I02_Mausoleum_Lower": {
+            "name": "Friedhof",
+            "sub": "Schannt von Schannt"
+        },
+        "G14_DM/Interiors/DM_Z08_I01_MausoleumTop": {
+            "name": "Friedhof",
+            "sub": "Malistaire der Todtrotzer"
+        }
+	}
+}

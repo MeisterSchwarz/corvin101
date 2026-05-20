@@ -29,6 +29,14 @@
 		"Celestia/CL_Z10_Kingdom_Of_The_Crabs": {
 			"name": "Krustianisches Reich"
 		},
+		"Celestia/Interiors/CL_SkeleKey_Center_01": {
+			"name": "Forschungszentrum",
+			"sub": "Kammer von Wasser-Dan"
+		},
+		"Celestia/Interiors/CL_SkeleKey_Center_02": {
+			"name": "Forschungszentrum",
+			"sub": "Wasser-Dan"
+		},
 		"Celestia/Interiors/CL_Z03i4_District_of_the_Stars": {
 			"name": "Sternenquartier",
 			"sub": "Mahon Sternensucher"

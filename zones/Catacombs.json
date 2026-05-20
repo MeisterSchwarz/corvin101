@@ -1,0 +1,23 @@
+{
+	"meta": {
+		"world": "Katakomben",
+		"image": "catacombs"
+	},
+	"zones": {
+        
+        "WizardCity/WC_Streets/Interiors/WC_Catacombs_RealityEdge": {
+			"name": "Untere Katakomben",
+			"sub": "Der Verschlinger"
+		}, 
+        "WizardCity/WC_Streets/Interiors/WC_Catacombs_ViggorsTomb": {
+			"name": "Untere Katakomben",
+			"sub": "Prinz Viggor"
+		},
+        "WizardCity/WC_Streets/WC_Catacombs": {
+			"name": "Obere Katakomben"
+		},
+        "WizardCity/WC_Streets/WC_Catacombs_B": {
+			"name": "Untere Katakomben"
+		}
+	}
+}

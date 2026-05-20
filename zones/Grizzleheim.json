@@ -4,8 +4,19 @@
 		"image": "grizzleheim"
 	},
 	"zones": {
+		"Grizzleheim/GH_HFjord/Interiors/GH_Sud_Cave03": {
+			"name": "Sudrilund",
+			"sub": "Kormak Donklaklau"
+		},
+		"Grizzleheim/GH_HFjord/GH_HFjord": {
+			"name": "Hrundelfjord"
+		},
+		"Grizzleheim/GH_HFjord/GH_Sudrilund": {
+			"name": "Sudrilund"
+		},
 		"Grizzleheim/GH_MainHub": {
 			"name": "Nordwacht"
 		}
+
 	}
 }

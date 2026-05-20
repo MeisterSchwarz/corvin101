@@ -54,7 +54,7 @@
 		},
 		"WizardCity/Interiors/WC_Headmaster_Tower": {
 			"name": "Stadtmitte",
-			"sub": "Gammas Turm"
+			"sub": "Gammas Turmzimmer"
 		},
 		"WizardCity/Interiors/WC_Headmistress_House": {
 			"name": "Stadtmitte",
@@ -115,6 +115,10 @@
 			"name": "Kaufmannsviertel",
 			"sub": "Robenverkäufer"
 		},
+		"WizardCity/Interiors/WC_Spiral_Cinematic": {
+			"name": "Stadtmitte",
+			"sub": "Gammas Turmzimmer"
+		},
 		"WizardCity/Interiors/WC_TowerFire": {
 			"name": "Rabenhain",
 			"sub": "Turm des Feuers"
@@ -168,6 +172,10 @@
 			"name": "Kolossusboulevard",
 			"sub": "Prinz Schlunderstein"
 		},
+		"WizardCity/WC_Streets/Interiors/WC_Cyclops_H1": {
+			"name": "Zyklopenweg",
+			"sub": "Haus des Diebes"
+		},
 		"WizardCity/WC_Streets/Interiors/WC_Cyclops_T1": {
 			"name": "Zyklopenweg",
 			"sub": "Visus Maximus"
@@ -175,6 +183,10 @@
 		"WizardCity/WC_Streets/Interiors/WC_Cyclops_T2": {
 			"name": "Zyklopenweg",
 			"sub": "General Akilles"
+		},
+		"WizardCity/WC_Streets/Interiors/WC_DarkCave_H1": {
+			"name": "Dunkle Höhle",
+			"sub": "Haus des Diebes"
 		},
 		"WizardCity/WC_Streets/Interiors/WC_DarkCave_MalistairesHouse": {
 			"name": "Dunkle Höhle",
@@ -212,9 +224,33 @@
 			"name": "Feuerkatzenallee",
 			"sub": "Avid Flinkpfeil"
 		},
+		"WizardCity/WC_Streets/Interiors/WC_HauntedCave_T1": {
+			"name": "Spukhöhle",
+			"sub": "Graf Nachtschatten"
+		},
 		"WizardCity/WC_Streets/Interiors/WC_OldeTown_AuctionHouse": {
 			"name": "Altes Viertel",
 			"sub": "Basar"
+		},
+		"WizardCity/WC_Streets/Interiors/WC_OldeTown_T2": {
+			"name": "Altes Viertel",
+			"sub": "Garstblick"
+		},
+		"WizardCity/WC_Streets/Interiors/WC_Sunken_City_T1": {
+			"name": "Versunkene Stadt",
+			"sub": "Nortons Turm"
+		},
+		"WizardCity/WC_Streets/Interiors/WC_Sunken_City_T2": {
+			"name": "Versunkene Stadt",
+			"sub": "Turm am Eingang"
+		},
+		"WizardCity/WC_Streets/Interiors/WC_Sunken_City_T3": {
+			"name": "Versunkene Stadt",
+			"sub": "Paulson"
+		},
+		"WizardCity/WC_Streets/Interiors/WC_Triton_H3": {
+			"name": "Tritonenstraße",
+			"sub": "Haus des Diebes"
 		},
 		"WizardCity/WC_Streets/Interiors/WC_Unicorn_H2": {
 			"name": "Einhornweg",
@@ -254,8 +290,14 @@
 		"WizardCity/WC_Streets/WC_Firecat": {
 			"name": "Feuerkatzenallee"
 		},
+		"WizardCity/WC_Streets/WC_HauntedCave": {
+			"name": "Spukhöhle"
+		},
 		"WizardCity/WC_Streets/WC_OldeTown": {
 			"name": "Altes Viertel"
+		},
+		"WizardCity/WC_Streets/WC_Sunken_City": {
+			"name": "Versunkene Stadt"
 		},
 		"WizardCity/WC_Streets/WC_Triton": {
 			"name": "Tritonenstraße"
