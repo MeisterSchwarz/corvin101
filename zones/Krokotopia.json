@@ -108,24 +108,6 @@
         "Krokotopia/KT_Pyramid/KT_PalaceOfFire": {
             "name": "Palast des Feuers"
         },
-        "Krokotopia/KT_Selenopolis/Interiors/KT_Z04_Pyramid": {
-            "name": "Selenopolis",
-            "sub": "Himmelspyramide"
-        },
-        "Krokotopia/KT_Selenopolis/Interiors/KT_Z04_Sanctum": {
-            "name": "Selenopolis",
-            "sub": "Khonshu"
-        },
-        "Krokotopia/KT_Selenopolis/Interiors/KT_Z07I04_MoonShrine": {
-            "name": "Garten des Khonshu",
-            "sub": "Mondstrahl-Tyrann"
-        },
-        "Krokotopia/KT_Selenopolis/KT_Z04_Selenopolis": {
-            "name": "Selenopolis"
-        },
-        "Krokotopia/KT_Selenopolis/KT_Z07_Garden": {
-            "name": "Garten des Khonshu"
-        },
         "Krokotopia/KT_Tomb/KT_DjeseritTomb": {
             "name": "Djeserit-Familiengruft"
         },

@@ -4,9 +4,35 @@
 		"image": "marleybone"
 	},
 	"zones": {
+        "Marleybone/Interiors/MB_Event_Maestro/MB_Z00_TelepgraphBox": {
+            "name": "Telegraphenbox"
+        },
+        "Marleybone/Interiors/MB_Event_Maestro/MB_Z01_Museum": {
+            "name": "Telegraphenbox",
+            "sub": "Royal Museum"
+        },
+        "Marleybone/Interiors/MB_Event_Maestro/MB_Z02_Prison": {
+            "name": "Telegraphenbox",
+            "sub": "Newgate-Gefängnis"
+        },
+        "Marleybone/Interiors/MB_Event_Maestro/MB_Z03_MeowiartysLair": {
+            "name": "Telegraphenbox",
+            "sub": "Miauriartys Unterschlupf"
+        },
+        "MB_Event_Maestro/MB_Z04_ClandestineTower": {
+            "name": "Telegraphenbox",
+            "sub": "Emil Softpaw"
+        },
+        "Marleybone/Interiors/MB_Event_Maestro/MB_Z05_PreTowerFight": {
+            "name": "Telegraphenbox",
+            "sub": "Big Ben"
+        },
         "Marleybone/Interiors/MB_PostOffice1": {
             "name": "Regent's Square",
             "sub": "Postbüro"
+        },
+        "Marleybone/Interiors/MB_PreAZ_HalleysTowerInt": {
+            "name": "Halleys Observatorium"
         },
         "Marleybone/Interiors/MB_Pubs": {
             "name": "Regent's Square",
@@ -46,11 +72,17 @@
             "name": "Regent's Square",
             "sub": "Schurkischer Ingenieur"
         },
+        "Marleybone/MB_BigBen/MB_CounterweightWest": {
+            "name": "Westliches Gegengewicht"
+        },
 		"Marleybone/MB_BigBen/MB_Museum": {
             "name": "Royal Museum"
         },
         "Marleybone/MB_Hub": {
             "name": "Regent's Square"
+        },
+        "Marleybone/MB_PreAZ_HalleysTower": {
+            "name": "Halleys Observatorium"
         },
         "Marleybone/MB_ScotlandYard/Interiors/MB_Prison_T4": {
             "name": "Newgate-Gefängnis",

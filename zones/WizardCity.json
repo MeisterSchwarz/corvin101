@@ -40,6 +40,10 @@
 			"name": "Wasserwerk",
 			"sub": "4. Turm (2/2)"
 		},
+		"WizardCity/Interiors/WC_AltarChamber": {
+			"name": "Rabenhain",
+			"sub": "Altarraum"
+		},
 		"WizardCity/Interiors/WC_CastleTours": {
 			"name": "Stadtmitte",
 			"sub": "Schlossbesichtigungen"
@@ -74,6 +78,10 @@
 		"WizardCity/Interiors/WC_Park_Snackshop": {
 			"name": "Platz der Tiere",
 			"sub": "Futterladen"
+		},
+		"WizardCity/Interiors/WC_RootSystem": {
+			"name": "Rabenhain",
+			"sub": "Wurzelwerk"
 		},
 		"WizardCity/Interiors/WC_SchoolDeath": {
 			"name": "Schattenbruch",
@@ -110,6 +118,10 @@
 		"WizardCity/Interiors/WC_Shop_Jeweler": {
 			"name": "Kaufmannsviertel",
 			"sub": "Juwelenschleiferin"
+		},
+		"WizardCity/Interiors/WC_Shop_Makeup": {
+			"name": "Kaufmannsviertel",
+			"sub": "Zauberspiegel"
 		},
 		"WizardCity/Interiors/WC_Shop_Robes": {
 			"name": "Kaufmannsviertel",

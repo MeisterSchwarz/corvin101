@@ -25,6 +25,78 @@
 		"Avalon/AV_Z06_DunDara": {
 			"name": "Dun Dara"
 		},
+		"Avalon/AV_Z07_OuterYard": {
+			"name": "Schloss Avalon",
+			"sub": "Schlosshof"
+		},
+		"Avalon/AV_Z08_LakeShore": {
+			"name": "Seeufer"
+		},
+		"Avalon/AV_Z09_DeepWater": {
+			"name": "Tiefer Grund"
+		},
+		"Avalon/AV_Z10_Catacombs": {
+			"name": "Katakomben"
+		},
+		"Avalon/AV_Z11_CrystalCaves": {
+			"name": "Kristallkavernen"
+		},
+		"Avalon/AV_Z12_GhostAvalon": {
+			"name": "Geister-Avalon"
+		},
+		"Avalon/AV_Z13_KeepOfGanelon": {
+			"name": "Festung von Ganelon"
+		},
+		"Avalon/AV_Z14_RestoredKeep": {
+			"name": "Festung von Ganelon"
+		},
+		"Avalon/Interiors/AV_MaestroEvent/AV_Z00_LandingZone": {
+			"name": "Telegraphenbox"
+		},
+		"Avalon/Interiors/AV_MaestroEvent/AV_Z01_School": {
+			"name": "Telegraphenbox",
+			"sub": "Vasek Schattenflecht"
+		},
+		"Avalon/Interiors/AV_MaestroEvent/AV_Z02_DrakesCottage": {
+			"name": "Telegraphenbox",
+			"sub": "Cyrus Drake"
+		},
+		"Avalon/Interiors/AV_MaestroEvent/AV_Z03_MalistairsHouse": {
+			"name": "Telegraphenbox",
+			"sub": "Malistaire Drake"
+		},
+		"Avalon/Interiors/AV_MaestroEvent/AV_Z04_TowerBottom": {
+			"name": "Telegraphenbox",
+			"sub": "Laslo Sternenschwert"
+		},
+		"Avalon/Interiors/AV_MaestroEvent/AV_Z04_TowerBottom_B": {
+			"name": "Telegraphenbox",
+			"sub": "Laslo Sternenschwert"
+		},
+		"Avalon/Interiors/AV_MaestroEvent/AZ_Z04_TowerBottom_C": {
+			"name": "Telegraphenbox",
+			"sub": "Drachenklauen-Wache"
+		},
+		"Avalon/Interiors/AV_MaestroEvent/AV_Z05_TowerTop": {
+			"name": "Telegraphenbox",
+			"sub": "Sagenhüterin"
+		},
+		"Avalon/Interiors/AV_MaestroEvent/AZ_Z05_TowerTop_B": {
+			"name": "Telegraphenbox",
+			"sub": "Elite-Kampfmagier"
+		},
+		"Avalon/Interiors/AV_MaestroEvent/AZ_Z06_ArtOfWar": {
+			"name": "Telegraphenbox",
+			"sub": "Der Maestro"
+		},
+		"Avalon/Interiors/AV_Z00_FairyCircle_Cave": {
+			"name": "Calibur",
+			"sub": "Schreckenswurm"
+		},
+		"Avalon/Interiors/AV_Z01_KnightsHall": {
+			"name": "Alte Abtei",
+			"sub": "Halle der Ritter"
+		},
 		"Avalon/Interiors/AV_Z01_Library": {
 			"name": "Alte Abtei",
 			"sub": "Bibliothek"
@@ -80,6 +152,10 @@
 		"Avalon/Interiors/AV_Z03_TowerDarkKnight": {
 			"name": "Carlyon",
 			"sub": "Dunkler Ritter"
+		},
+		"Avalon/Interiors/AV_Z03_TowerMalgrins": {
+			"name": "Carlyon",
+			"sub": "Malgrin der Peiniger"
 		},
 		"Avalon/Interiors/AV_Z03_TowerRuined": {
 			"name": "Carlyon",
@@ -149,9 +225,74 @@
 			"name": "Dun Dara",
 			"sub": "Kattalas der Gewitterwurm"
 		},
+		"Avalon/Interiors/AV_Z06_Cave02": {
+			"name": "Dun Dara",
+			"sub": "Willi Wumms' Höhle"
+		},
 		"Avalon/Interiors/AV_Z06_TowerBelleRegard": {
 			"name": "Dun Dara",
 			"sub": "Turm der schönen Aussicht"
+		},
+		"Avalon/Interiors/AV_Z07_Library": {
+			"name": "Schloss Avalon",
+			"sub": "Königliche Bibliothek"
+		},
+		"Avalon/Interiors/AV_Z07_TowerBroken": {
+			"name": "Schloss Avalon",
+			"sub": "Flazithus Haudrauf"
+		},
+		"Avalon/Interiors/AV_Z07_TowerOverlook": {
+			"name": "Schloss Avalon",
+			"sub": "Polternde Pia"
+		},
+		"Avalon/Interiors/AV_Z07_TowerPrison": {
+			"name": "Schloss Avalon",
+			"sub": "Gefängnisturm"
+		},
+		"Avalon/Interiors/AV_Z07_TowerSworn": {
+			"name": "Schloss Avalon",
+			"sub": "Moros Blunt"
+		},
+		"Avalon/Interiors/AV_Z08_BogWitch": {
+			"name": "Seeufer",
+			"sub": "Schwarze Anne"
+		},
+		"Avalon/Interiors/AV_Z08_TowerDolorous": {
+			"name": "Seeufer",
+			"sub": "Nicoles Stele"
+		},
+		"Avalon/Interiors/AV_Z09_Cave01": {
+			"name": "Tiefer Grund",
+			"sub": "Ertrunkener Ritter"
+		},
+		"Avalon/Interiors/AV_Z09_Cave02": {
+			"name": "Tiefer Grund",
+			"sub": "Kerra Knöchelweiß"
+		},
+		"Avalon/Interiors/AV_Z09_Cave03": {
+			"name": "Tiefer Grund",
+			"sub": "Sumpfhexe"
+		},
+		"Avalon/Interiors/AV_Z09_Cave04": {
+			"name": "Tiefer Grund",
+			"sub": "Taran der Ertrunkene"
+		},
+		"Avalon/Interiors/AV_Z10_CptnChamber": {
+			"name": "Katakomben",
+			"sub": "Kammer des Blutmeisters"
+		},
+		"Avalon/Interiors/AV_Z10_TombOfArtorius_Ruined": {
+			"name": "Katakomben",
+			"sub": "Grabmal des Königs"
+		},
+		"Avalon/Interiors/AV_Z12_TombOfArtorius": {
+			"name": "Geister-Avalon",
+			"sub": "Sir Malory"
+		},
+		"Avalon/Interiors/AV_Z13_CrystalCave_Int": {
+			"name": "Festung von Ganelon",
+			"sub": "Drachenhöhle"
 		}
+
 	}
 }

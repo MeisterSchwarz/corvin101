@@ -92,6 +92,9 @@ func extractWorldKey(zoneKey string) string {
 	if strings.Contains(zoneKey, "WC_Catacombs") {
 		return "Catacombs"
 	}
+	if strings.Contains(zoneKey, "Selenopolis") {
+		return "Selenopolis"
+	}
 
 	switch {
 	case strings.HasPrefix(base, "G14_DM"):

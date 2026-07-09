@@ -483,6 +483,10 @@
             "name": "Schattenpalast",
             "sub": "Morganthe"
         },
+        "Khrysalis/KR_Tutorial_Tower": {
+            "name": "Turm der Mondfinsternis",
+            "sub": "Fahler Weber"
+        },
         "Khrysalis/KR_Z00_Hub": {
             "name": "Bastei"
         },

@@ -10,6 +10,15 @@
         "Aquila/AQ_Z01_MountOlympus": {
             "name": "Olymp"
         },
+        "Aquila/AQ_Z02_Atlantea": {
+            "name": "Atlantea"
+        },
+        "Aquila/AQ_Z02_Atlantea02": {
+            "name": "Atlantea"
+        },
+        "Aquila/AQ_Z03_Tartarus": {
+            "name": "Tartarus"
+        },
         "Aquila/Interiors/AQ_Z01_Apollo_Room": {
             "name": "Olymp",
             "sub": "Apollo"
@@ -30,9 +39,44 @@
             "name": "Olymp",
             "sub": "Hephaistos Schmiede"
         },
+        "Aquila/Interiors/AQ_Z01_TempleOfSisyphus": {
+            "name": "Sisyphos"
+        },
         "Aquila/Interiors/AQ_Z01_Throne_Room": {
             "name": "Olymp",
             "sub": "Zeus Himmelsvater"
+        },
+        "Aquila/Interiors/AQ_Z02_HallOfContriver": {
+            "name": "Atlantea",
+            "sub": "Akheilos der Blender"
+        },
+        "Aquila/Interiors/AQ_Z02_HouseOfFury": {
+            "name": "Atlantea",
+            "sub": "Arion Stachelhengst"
+        },
+        "Aquila/Interiors/AQ_Z02_HouseOfLostSaliors": {
+            "name": "Atlantea",
+            "sub": "Lamia"
+        },
+        "Aquila/Interiors/AQ_Z02_SirenPuzzleRoom": {
+            "name": "Atlantea",
+            "sub": "Korallenorgel"
+        },
+        "Aquila/Interiors/AQ_Z02_ThroneRoom": {
+            "name": "Atlantea",
+            "sub": "Poseidon Weltenbeber"
+        },
+        "Aquila/Interiors/AQ_Z03_HallOfHades": {
+            "name": "Tartarus",
+            "sub": "Hades"
+        },
+        "Aquila/Interiors/AQ_Z03_HouseOfFaun": {
+            "name": "Tartarus",
+            "sub": "Todes-Satyr"
+        },
+        "Aquila/Interiors/AQ_Z03_TempleOfLonging": {
+            "name": "Tartarus",
+            "sub": "Labyrinth"
         }
 	}
 }

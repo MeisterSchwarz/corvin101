@@ -127,6 +127,24 @@
 			"name": "Einsame Taiga",
 			"sub": "Schneebart"
 		},
+		"Polaris/Interiors/PL_Z03I02_SunlessTempleMid": {
+			"name": "Sonnenferner Schrein"
+		},
+		"Polaris/Interiors/PL_Z03I03_SunlessTempleTop": {
+			"name": "Sonnenferner Schrein",
+			"sub": "Wachsamer Jarilo"
+		},
+		"Polaris/Interiors/PL_Z03I04_SunlessShrineEnt": {
+			"name": "Sonnenferner Schrein"
+		},
+		"Polaris/Interiors/PL_Z03I05_AuroracleChamber": {
+			"name": "Sonnenferner Schrein",
+			"sub": "Aurorakel"
+		},
+		"Polaris/Interiors/PL_Z03_MommothCave02": {
+			"name": "Fluss der gefrorenen Tränen",
+			"sub": "Wächter des zerbrochenen Himmels"
+		},
 		"Polaris/Interiors/Z03_AlornasCave": {
 			"name": "Fluss der gefrorenen Tränen",
 			"sub": "Alorna"
@@ -134,10 +152,6 @@
 		"Polaris/Interiors/Z03_GroffsCave": {
 			"name": "Fluss der gefrorenen Tränen",
 			"sub": "Herzog Gruff"
-		},
-		"Polaris/Interiors/PL_Z03_MommothCave02": {
-			"name": "Fluss der gefrorenen Tränen",
-			"sub": "Wächter des zerbrochenen Himmels"
 		},
 		"Polaris/Interiors/Z03_ZootsCave": {
 			"name": "Fluss der gefrorenen Tränen",

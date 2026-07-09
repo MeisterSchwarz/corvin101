@@ -4,13 +4,44 @@
 		"image": "zafaria"
 	},
 	"zones": {
+		"Zafaria/Interiors/ZF_Event_Maestro/ZF_Z00_TelegraphBox": {
+			"name": "Telegraphenbox"
+		},
+		"Zafaria/Interiors/ZF_Event_Maestro/ZF_Z01_IslandTavern": {
+			"name": "Telegraphenbox",
+			"sub": "Rumper Ruck"
+		},
+		"Zafaria/Interiors/ZF_Event_Maestro/ZF_Z02_CaveHideout": {
+			"name": "Telegraphenbox",
+			"sub": "Strandhöhlen-Versteck"
+		},
+		"Zafaria/Interiors/ZF_Event_Maestro/ZF_Z03_PirateShipInt": {
+			"name": "Telegraphenbox",
+			"sub": "Klackernde Kokosnuss"
+		},
+		"Zafaria/Interiors/ZF_Event_Maestro/ZF_Z04_PirateShipDeck": {
+			"name": "Telegraphenbox",
+			"sub": "Custos Decimus"
+		},
 		"Zafaria/Interiors/ZF_Z00_I01_Witch_Doctors_Hut": {
 			"name": "Baobab-Kreuzung",
 			"sub": "Hüttes des Hexers"
 		},
+		"Zafaria/Interiors/ZF_Z01_I01_Safari_Lodge_Dormitory": {
+			"name": "Baobab-Krone",
+			"sub": "Goliath-Bra'Kym'Tra"
+		},
 		"Zafaria/Interiors/ZF_Z01_I02_Library_Classroom": {
 			"name": "Baobab-Krone",
 			"sub": "Bibliothek"
+		},
+		"Zafaria/Interiors/ZF_Z03_I02_Redbands_Hut": {
+			"name": "Savanne",
+			"sub": "Hütte"
+		},
+		"Zafaria/Interiors/ZF_Z03_I03_Snaketongues_Hut": {
+			"name": "Savanne",
+			"sub": "Certorr"
 		},
 		"Zafaria/Interiors/ZF_Z04_CavePainting": {
 			"name": "Savanne",
@@ -19,6 +50,14 @@
 		"Zafaria/Interiors/ZF_Z04_I01_Queens_Cave": {
 			"name": "Savanne",
 			"sub": "Königin Tanei Geistermähne"
+		},
+		"Zafaria/Interiors/ZF_Z04_I02_Nemean_Rock_Cave": {
+			"name": "Savanne",
+			"sub": "Felsen von Nemea"
+		},
+		"Zafaria/Interiors/ZF_Z04_I03_Top_of_the_Rock": {
+			"name": "Savanne",
+			"sub": "Nergal der Verbrannte Löwe"
 		},
 		"Zafaria/Interiors/ZF_Z06_I01_Barracks": {
 			"name": "Zamunda",
@@ -103,6 +142,10 @@
 		"Zafaria/Interiors/ZF_Z09_Oya_Redstorm_Cave": {
 			"name": "Congadschungel",
 			"sub": "Oya Blutsturm"
+		},
+		"Zafaria/Interiors/ZF_Z10_Crypt_Of_Ages": {
+			"name": "Elefantenfriedhof",
+			"sub": "Krypta der Zeitläufe"
 		},
 		"Zafaria/Interiors/ZF_Z10_I01_Little_Mausoleum": {
 			"name": "Elefantenfriedhof",

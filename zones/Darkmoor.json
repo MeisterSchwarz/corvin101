@@ -1,9 +1,207 @@
 {
 	"meta": {
-		"world": "Schloss Düstermoor",
+		"world": "Düstermoor",
 		"image": "darkmoor"
 	},
 	"zones": {
+        "Darkmoor/DM_Z00_OutsidersCamp": {
+			"name": "Außenseiterlager"
+		},
+        "Darkmoor/DM_Z01_Graveholm": {
+			"name": "Grabheim"
+		},
+		"Darkmoor/DM_Z02_MortalPlain": {
+			"name": "Ebene der Sterblichen"
+		},
+		"Darkmoor/DM_Z03_HowlingLands": {
+			"name": "Heulende Lande"
+		},
+		"Darkmoor/DM_Z04_BlackLagoon": {
+			"name": "Schwarze Lagune"
+		},
+		"Darkmoor/DM_Z05_ScholomanceEntrance": {
+			"name": "Scholomantie"
+		},
+        "Darkmoor/Interiors/DM_Z00I01_Fortune_A": {
+			"name": "Außenseiterlager",
+            "sub": "Zone des Schicksals"
+		},
+		"Darkmoor/Interiors/DM_Z01I01_FangAndClawInn": {
+			"name": "Grabheim",
+            "sub": "Gasthaus Zahn & Klaue"
+		},
+        "Darkmoor/Interiors/DM_Z01I02_InnRoom": {
+			"name": "Grabheim",
+            "sub": "Gruffus"
+		},
+        "Darkmoor/Interiors/DM_Z01I03_EastonHouse": {
+			"name": "Grabheim",
+            "sub": "Easton-Haus"
+		},
+        "Darkmoor/Interiors/DM_Z01I04_GargoyleWatchtower": {
+			"name": "Grabheim",
+            "sub": "Kommandantin Ahk'To"
+		},
+        "Darkmoor/Interiors/DM_Z01I05_BrokenBranchHovel": {
+			"name": "Grabheim",
+            "sub": "Hütte des zerbrochenen Zweigs"
+		},
+        "Darkmoor/Interiors/DM_Z01I06_EastonHouseDayEncounter": {
+			"name": "Grabheim",
+            "sub": "Gästequartier der Eastons"
+		},
+        "Darkmoor/Interiors/DM_Z01I07_Wereden": {
+			"name": "Grabheim",
+            "sub": "Knurr"
+		},
+        "Darkmoor/Interiors/DM_Z01I08_SafehouseCourtyardDay_01": {
+			"name": "Grabheim",
+            "sub": "Hof des Zufluchtsorts"
+		},
+        "Darkmoor/Interiors/DM_Z01I08_SafehouseCourtyardDay_02": {
+			"name": "Grabheim",
+            "sub": "Zufluchtsort"
+		},
+        "Darkmoor/Interiors/DM_Z01I08_SafehouseCourtyardDay_04": {
+			"name": "Grabheim",
+            "sub": "Zufluchtsort"
+		},
+        "Darkmoor/Interiors/DM_Z01I09_Safehouse": {
+			"name": "Grabheim",
+            "sub": "Zufluchtsort"
+		},
+        "Darkmoor/Interiors/DM_Z01I10_SafehouseCourtyardNight": {
+			"name": "Grabheim",
+            "sub": "Lord Arthur Easton"
+		},
+        "Darkmoor/Interiors/DM_Z01I11_ParliamentOfNightThroneRoom": {
+			"name": "Parlament der Nacht",
+            "sub": "Thronsaal"
+		},
+        "Darkmoor/Interiors/DM_Z01I12_DarkHallway": {
+			"name": "Parlament der Nacht",
+            "sub": "Finstere Flure"
+		},
+		"Darkmoor/Interiors/DM_Z01I13_SecretLab": {
+			"name": "Parlament der Nacht",
+            "sub": "Geheimlabor"
+		},
+		"Darkmoor/Interiors/DM_Z02_AscensionChapel": {
+			"name": "Ebene der Sterblichen",
+            "sub": "Kapelle des Aufstiegs"
+		},
+		"Darkmoor/Interiors/DM_Z02_Castle_A": {
+			"name": "Ebene der Sterblichen",
+            "sub": "Schloss Strigoi"
+		},
+		"Darkmoor/Interiors/DM_Z02_DeeperWoods_A": {
+			"name": "Ebene der Sterblichen",
+            "sub": "Tieferer Wald"
+		},
+		"Darkmoor/Interiors/DM_Z02_LutherHouse": {
+			"name": "Ebene der Sterblichen",
+            "sub": "Luther Tillmas Haus"
+		},
+		"Darkmoor/Interiors/DM_Z02_MayorHouse_A": {
+			"name": "Ebene der Sterblichen",
+            "sub": "Bürgermeisterhaus"
+		},
+		"Darkmoor/Interiors/DM_Z02_SanguineHouse": {
+			"name": "Ebene der Sterblichen",
+            "sub": "Blutrotes Haus"
+		},
+		"Darkmoor/Interiors/DM_Z02_VictimHouse_A": {
+			"name": "Ebene der Sterblichen",
+            "sub": "Mina Clarkes Haus"
+		},
+		"Darkmoor/Interiors/DM_Z02_WoodedClearing_A": {
+			"name": "Ebene der Sterblichen",
+            "sub": "Bewachsene Lichtung"
+		},
+		"Darkmoor/Interiors/DM_Z03_Hideout": {
+			"name": "Heulende Lande",
+            "sub": "Hochmagier des Zerbrochenen Zweigs"
+		},
+		"Darkmoor/Interiors/DM_Z03_HuntingGrounds": {
+			"name": "Heulende Lande",
+            "sub": "Jagdgründe"
+		},
+		"Darkmoor/Interiors/DM_Z03_OvergrownEstate": {
+			"name": "Heulende Lande",
+            "sub": "Zugewachsenes Anwesen"
+		},
+		"Darkmoor/Interiors/DM_Z03_WoodedClearing": {
+			"name": "Heulende Lande",
+            "sub": "Wolfsmensch"
+		},
+		"Darkmoor/Interiors/DM_Z04101_Shrine": {
+			"name": "Schwarze Lagune",
+            "sub": "Scholomonar-Schrein"
+		},
+		"Darkmoor/Interiors/DM_Z04I03_DarkBog": {
+			"name": "Schwarze Lagune",
+            "sub": "Schattenbildzauberer"
+		},
+		"Darkmoor/Interiors/DM_Z04I04_MusicRoom": {
+			"name": "Schwarze Lagune",
+            "sub": "Feenkreis"
+		},
+		"Darkmoor/Interiors/DM_Z04I05_BogOfSwords": {
+			"name": "Schwarze Lagune",
+            "sub": "Sumpf der Schwerter"
+		},
+		"Darkmoor/Interiors/DM_Z04I06_BogOfCups": {
+			"name": "Schwarze Lagune",
+            "sub": "Sumpf der Kelche"
+		},
+		"Darkmoor/Interiors/DM_Z04I07_ShadowSchool": {
+			"name": "Schwarze Lagune",
+            "sub": "Schule der Schatten"
+		},
+		"Darkmoor/Interiors/DM_Z04I08_BogOfVengeance": {
+			"name": "Schwarze Lagune",
+            "sub": "Hierophantin der Zerstörung"
+		},
+		"Darkmoor/Interiors/DM_Z04I10_LiarsGrove": {
+			"name": "Schwarze Lagune",
+            "sub": "Hain der Lügner"
+		},
+		"Darkmoor/Interiors/DM_Z04I11_Shack": {
+			"name": "Schwarze Lagune",
+            "sub": "Alte Hütte"
+		},
+		"Darkmoor/Interiors/DM_Z04I12_FirstBog": {
+			"name": "Schwarze Lagune",
+            "sub": "Schattentrickser"
+		},
+		"Darkmoor/Interiors/DM_Z04I16_Music2": {
+			"name": "Schwarze Lagune",
+            "sub": "Feenkreis"
+		},
+		"Darkmoor/Interiors/DM_Z04I18_Music4": {
+			"name": "Schwarze Lagune",
+            "sub": "Feenkreis"
+		},
+		"Darkmoor/Interiors/DM_Z04I20ScholoMusicRoom": {
+			"name": "Schwarze Lagune",
+            "sub": "Scholomantie-Musikzimmer"
+		},
+		"Darkmoor/Interiors/DM_Z04I21_ShrineSideWindow": {
+			"name": "Schwarze Lagune",
+            "sub": "Hierophantin"
+		},
+		"Darkmoor/Interiors/DM_Z05_HereticalAcademy": {
+			"name": "Scholomantie",
+            "sub": "Ketzer-Akademie"
+		},
+		"Darkmoor/Interiors/DM_Z05I02_Parlor": {
+			"name": "Scholomantie",
+            "sub": "Miranda Dorn"
+		},
+		"Darkmoor/Interiors/DM_Z05I03_HallOfDefilement": {
+			"name": "Scholomantie",
+            "sub": "Rindenruhe"
+		},
 	    "G14_DM/DM_Z01_CastleDarkmoor": {
 			"name": "Schloss Düstermoor"
 		},
@@ -14,13 +212,18 @@
             "name": "Friedhof",
             "sub": "Yevgeny Nachtschleicher"
         },
+		"G14_DM/Interiors/DM_Z08_I01_MausoleumTop": {
+            "name": "Friedhof",
+            "sub": "Malistaire der Todtrotzer"
+        },
         "G14_DM/Interiors/DM_Z08_I02_Mausoleum_Lower": {
             "name": "Friedhof",
             "sub": "Schannt von Schannt"
         },
-        "G14_DM/Interiors/DM_Z08_I01_MausoleumTop": {
+		"G14_DM/Interiors/DM_Z08_I03_SkeletonKey2": {
             "name": "Friedhof",
-            "sub": "Malistaire der Todtrotzer"
+            "sub": "Aphrodite II"
         }
+
 	}
 }

@@ -16,6 +16,37 @@
 			"name": "Jadepalast",
             "sub": "Mika Skarka"
 		},
+		"MooShu/Interiors/MS_MaestroEvent/MS_Z00_LandingZone": {
+			"name": "Telegraphenbox"
+		},
+		"MooShu/Interiors/MS_MaestroEvent/MS_Z01_GammaTower": {
+			"name": "Telegraphenbox",
+			"sub": "Gamma"
+		},
+		"MooShu/Interiors/MS_MaestroEvent/MS_Z02_SpiritSchool": {
+			"name": "Telegraphenbox",
+			"sub": "Jaxon Schlussakkord"
+		},
+		"MooShu/Interiors/MS_MaestroEvent/MS_Z03_DimwoodVale": {
+			"name": "Telegraphenbox",
+			"sub": "Funzelholztal"
+		},
+		"MooShu/Interiors/MS_MaestroEvent/MS_Z04_CornuHouse": {
+			"name": "Telegraphenbox",
+			"sub": "Schneckenhaus"
+		},
+		"MooShu/Interiors/MS_MaestroEvent/MS_Z05_DimwoodShack": {
+			"name": "Telegraphenbox",
+			"sub": "Dworgyns Hütte"
+		},
+		"MooShu/Interiors/MS_MaestroEvent/MS_Z06_DeathTower01": {
+			"name": "Telegraphenbox",
+			"sub": "Turm des Todes"
+		},
+		"MooShu/Interiors/MS_MaestroEvent/MS_Z06_DeathTower02": {
+			"name": "Telegraphenbox",
+			"sub": "Ostrame"
+		},
 		"MooShu/Interiors/MS_RockDojoT2": {
 			"name": "Jadepalast",
             "sub": "Felsen-Dojo"
