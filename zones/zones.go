@@ -1,15 +1,12 @@
 package zones
 
 import (
-	"embed"
 	"encoding/json"
 	"log"
 	"strings"
 	"sync"
+	"wizard101rpc/filesystem"
 )
-
-//go:embed *.json
-var fs embed.FS
 
 // Cached zones per world key
 var (
@@ -47,7 +44,7 @@ func loadWorld(worldKey string) {
 	}
 
 	filename := worldKey + ".json"
-	raw, err := fs.ReadFile(filename)
+	raw, err := filesystem.ReadJSON("de", "zones", filename)
 	if err != nil {
 		log.Printf("[ZONES] missing world file: %s", worldKey)
 		cacheEmpty(worldKey)
