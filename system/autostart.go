@@ -10,7 +10,7 @@ import (
 	"syscall"
 )
 
-const shortcutName = "Wizard101RPC.lnk"
+const shortcutName = "wizlink.lnk"
 
 // returns the Windows startup directory
 func startupFolder() string {

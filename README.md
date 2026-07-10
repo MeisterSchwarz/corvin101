@@ -1,4 +1,4 @@
-# wizard101rpc 
+# wizlink 
 
 Discord Rich Presence tool for Wizard101.  
 Displays current area, combat status, and playtime.
@@ -29,24 +29,24 @@ Currently only available in German.
 ## 📥 Download & Usage
 
 1. Download the latest version from the **Releases** section
-2. Start `wizard101rpc.exe`
+2. Start `wizlink.exe`
 3. Manage the application via the system tray  
 ![System Tray](public/presence_tray.png)
 
 ### Manual path selection (optional)
 
-If Wizard101 is not installed in the default directory, wizard101rpc may not be able to detect the game automatically.
+If Wizard101 is not installed in the default directory, wizlink may not be able to detect the game automatically.
 
 In this case, select  
 **“Select path manually”** from the system tray menu and navigate to the Wizard101 installation directory.  
 There, select the file **`Wiz.ico`**.
 
-After setting the path, wizard101rpc will automatically restart.
+After setting the path, wizlink will automatically restart.
 
 ### App data directory
 
 Depending on usage, a directory will be created automatically under  
-**`%APPDATA%\wizard101rpc`**.
+**`%APPDATA%\wizlink`**.
 
 The application stores the following files there:
 - a configuration file (config.json)

@@ -1,4 +1,4 @@
-module wizard101rpc
+module wizlink
 
 go 1.25.5
 

@@ -7,9 +7,9 @@ import (
 
 	"github.com/hugolgst/rich-go/client"
 
-	"wizard101rpc/config"
-	"wizard101rpc/state"
-	"wizard101rpc/zones"
+	"wizlink/config"
+	"wizlink/state"
+	"wizlink/zones"
 )
 
 /*
@@ -157,6 +157,12 @@ func baseActivity() client.Activity {
 	return client.Activity{
 		Timestamps: &client.Timestamps{
 			Start: state.SessionStart(),
+		},
+		Buttons: []*client.Button{
+			{
+				Label: "Herunterladen",
+				Url:   "https://github.com/MeisterSchwarz",
+			},
 		},
 	}
 }

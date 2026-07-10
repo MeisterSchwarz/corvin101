@@ -10,18 +10,18 @@ import (
 	"time"
 )
 
+type LineHandler func(string)
+
 var (
 	stopChan chan struct{}
 	doneChan chan struct{}
 	mu       sync.Mutex
 )
 
-// tails the file and emits new lines
-func watchLoop(path string, onLine func(string)) {
+func watchLoop(path string, handlers []LineHandler) {
 	defer close(doneChan)
 
 	openFile := func() (*os.File, *bufio.Reader, int64, error) {
-
 		f, err := os.Open(path)
 		if err != nil {
 			return nil, nil, 0, err
@@ -33,7 +33,6 @@ func watchLoop(path string, onLine func(string)) {
 			return nil, nil, 0, err
 		}
 
-		// Start at end of file
 		if _, err := f.Seek(0, io.SeekEnd); err != nil {
 			f.Close()
 			return nil, nil, 0, err
@@ -55,7 +54,6 @@ func watchLoop(path string, onLine func(string)) {
 			return
 
 		default:
-			// Check for truncation or rotation
 			info, err := file.Stat()
 			if err != nil || info.Size() < lastSize {
 				file.Close()
@@ -68,7 +66,6 @@ func watchLoop(path string, onLine func(string)) {
 				}
 			}
 
-			// Read next line with timeout
 			_ = file.SetReadDeadline(time.Now().Add(200 * time.Millisecond))
 			line, err := reader.ReadString('\n')
 			if err != nil {
@@ -76,12 +73,15 @@ func watchLoop(path string, onLine func(string)) {
 			}
 
 			lastSize += int64(len(line))
-			onLine(strings.TrimSpace(line))
+			line = strings.TrimSpace(line)
+
+			for _, handler := range handlers {
+				handler(line)
+			}
 		}
 	}
 }
 
-// reads a file and returns all lines
 func ReadAllLines(path string) []string {
 	data, err := os.ReadFile(path)
 	if err != nil {
@@ -94,18 +94,16 @@ func ReadAllLines(path string) []string {
 	)
 }
 
-// starts watching the log file
-func Watch(path string, onLine func(string)) {
+func Watch(path string, handlers ...LineHandler) {
 	mu.Lock()
 	defer mu.Unlock()
 
 	stopChan = make(chan struct{})
 	doneChan = make(chan struct{})
 
-	go watchLoop(path, onLine)
+	go watchLoop(path, handlers)
 }
 
-// stops the active log watcher
 func Stop() {
 	mu.Lock()
 	defer mu.Unlock()

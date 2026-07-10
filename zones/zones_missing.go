@@ -7,8 +7,8 @@ import (
 	"sync"
 	"time"
 
-	"wizard101rpc/filesystem"
-	"wizard101rpc/state"
+	"wizlink/filesystem"
+	"wizlink/state"
 
 	"github.com/go-toast/toast"
 )

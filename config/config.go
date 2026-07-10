@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
-	"wizard101rpc/filesystem"
+	"wizlink/filesystem"
 )
 
 const (

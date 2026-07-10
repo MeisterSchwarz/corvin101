@@ -4,13 +4,14 @@ import (
 	"log"
 	"time"
 
-	"wizard101rpc/config"
-	"wizard101rpc/discord"
-	"wizard101rpc/logreader"
-	"wizard101rpc/state"
-	"wizard101rpc/system"
-	"wizard101rpc/tray"
-	"wizard101rpc/watchdog"
+	"wizlink/config"
+	"wizlink/discord"
+	"wizlink/enemy"
+	"wizlink/logreader"
+	"wizlink/state"
+	"wizlink/system"
+	"wizlink/tray"
+	"wizlink/watchdog"
 )
 
 func main() {
@@ -49,9 +50,13 @@ func main() {
 				logreader.Stop()
 				time.Sleep(300 * time.Millisecond)
 
-				logreader.Watch(logPath, func(line string) {
-					discord.HandleLogLine(line)
-				})
+				enemyTracker := enemy.NewEnemyTracker()
+
+				logreader.Watch(
+					logPath,
+					discord.HandleLogLine,
+					enemyTracker.HandleLogLine,
+				)
 
 			case <-watchdog.GameStopped:
 				logreader.Stop()

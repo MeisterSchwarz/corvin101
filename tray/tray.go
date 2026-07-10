@@ -6,17 +6,17 @@ import (
 	"os"
 	"path/filepath"
 
-	"wizard101rpc/config"
-	"wizard101rpc/filesystem"
-	"wizard101rpc/logreader"
-	"wizard101rpc/system"
-	"wizard101rpc/zones"
+	"wizlink/config"
+	"wizlink/filesystem"
+	"wizlink/logreader"
+	"wizlink/system"
+	"wizlink/zones"
 
 	"github.com/getlantern/systray"
 	"github.com/sqweek/dialog"
 )
 
-//go:embed wizard101rpc.ico
+//go:embed wizlink.ico
 var iconData []byte
 
 // starts system tray

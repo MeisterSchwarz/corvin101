@@ -18,7 +18,7 @@ func FileExists(path string) bool {
 func AppDataDir() string {
 	dir := filepath.Join(
 		os.Getenv("APPDATA"),
-		"wizard101rpc",
+		"wizlink",
 	)
 	_ = os.MkdirAll(dir, 0755)
 	return dir

@@ -1,4 +1,4 @@
-# Contributing to wizard101rpc
+# Contributing to wizlink
 
 Contributions of any kind are welcome — whether code, feedback, or translations.
 
@@ -14,11 +14,11 @@ Contributions of any kind are welcome — whether code, feedback, or translation
 
 ### 🌍 Reporting missing areas
 
-wizard101rpc automatically detects unknown areas when the option  
+wizlink automatically detects unknown areas when the option  
 **“Fehlende Übersetzungen sammeln”** is enabled in the system tray.
 
 In this case, a local file named *missing_zones.log* is created.  
-The file is located in *%APPDATA%\wizard101rpc* (you can copy this path and paste it into the Windows file explorer).
+The file is located in *%APPDATA%\wizlink* (you can copy this path and paste it into the Windows file explorer).
 
 Please add your translation suggestion **on the same line**, after the existing entry.
 
@@ -39,4 +39,4 @@ Please note:
 
 Build from the terminal:
 ```bash
-go build -ldflags="-H=windowsgui -s -w" -o wizard101rpc.exe
+go build -ldflags="-H=windowsgui -s -w" -o wizlink.exe

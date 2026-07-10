@@ -7,7 +7,7 @@ import "golang.org/x/sys/windows"
 var mutex windows.Handle
 
 func Lock() bool {
-	name, _ := windows.UTF16PtrFromString("Global\\Wizard101RPC_SingleInstance")
+	name, _ := windows.UTF16PtrFromString("Global\\wizlink_SingleInstance")
 
 	h, err := windows.CreateMutex(nil, true, name)
 	if err != nil {

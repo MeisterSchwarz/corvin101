@@ -1,0 +1,14 @@
+{
+  "meta": {
+    "world": "Krokotopia"
+  },
+  "enemies": {
+    "Spider-Crystal-L16": {
+      "name": "Eisweber",
+      "drops": [
+        "reagants/pyrit",
+        "robes/krokotopian_kaftan"
+      ]
+    }
+  }
+}
