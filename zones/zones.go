@@ -12,14 +12,25 @@ import (
 
 const language = "de"
 
-// Cached zones per world key.
+// Cache mit bereits geladenen Zonen pro Welt.
 var (
+	// Welt-Key -> (Zone-Key -> ZoneInfo)
 	cache = make(map[string]map[string]ZoneInfo)
 
-	coreWorlds       map[string]coreWorld
-	translatedWorlds map[string]translatedWorld
-	worldsLoaded     bool
+	// Stellt sicher, dass jede Welt nur einmal geladen wird.
+	worldOnce = make(map[string]*sync.Once)
 
+	// Welt-Metadaten aus core/worlds.json.
+	coreWorlds map[string]coreWorld
+
+	// Übersetzte Weltnamen aus i18n/<lang>/worlds.json.
+	translatedWorlds map[string]translatedWorld
+
+	// Lädt die Welt-Metadaten genau einmal.
+	worldsOnce sync.Once
+	worldsErr  error
+
+	// Schützt alle gemeinsam genutzten Maps.
 	mu sync.RWMutex
 )
 
@@ -48,27 +59,21 @@ type coreZone struct {
 	Repeatable bool   `json:"repeatable,omitempty"`
 }
 
-// Übersetzte Zonendatei aus i18n/<lang>/zones/<world>.json.
-//
-// Das JSON enthält direkt eine Map:
-//
-//	{
-//	  "Zone/Key": "Name",
-//	  "Andere/Zone": ["Name", "Unterbereich"]
-//	}
+// Übersetzungen einer Welt.
+// Der JSON-Inhalt besteht direkt aus einer Map von Zone-Key auf Übersetzung.
 type translatedZoneFile map[string]translatedZone
 
-// Sprachabhängige Eigenschaften einer Zone.
+// Lokalisierter Name einer Zone inklusive optionalem Unterbereich.
 type translatedZone struct {
 	Name string
 	Sub  string
 }
 
-// UnmarshalJSON unterstützt beide kompakten Formate:
+// Unterstützt beide Übersetzungsformate:
 //
 // "Basislager"
 //
-// und:
+// sowie:
 //
 // ["Die Säulenhalle", "Außenbereich"]
 func (z *translatedZone) UnmarshalJSON(data []byte) error {
@@ -107,7 +112,7 @@ func (z *translatedZone) UnmarshalJSON(data []byte) error {
 	}
 }
 
-// Vollständig aufgelöste Zoneninformationen.
+// Vollständig zusammengeführte Informationen einer Zone.
 type ZoneInfo struct {
 	Name  string `json:"name"`
 	Sub   string `json:"sub,omitempty"`
@@ -120,82 +125,92 @@ type ZoneInfo struct {
 	Repeatable bool   `json:"repeatable,omitempty"`
 }
 
-// Lädt die Welt-Metadaten einmalig und cached sie.
+// Lädt die Welt-Metadaten einmalig
 func loadWorldMetadata() error {
-	mu.RLock()
-	loaded := worldsLoaded
-	mu.RUnlock()
+	worldsOnce.Do(func() {
+		corePath := "core/worlds.json"
+		translationPath := fmt.Sprintf(
+			"i18n/%s/worlds.json",
+			language,
+		)
 
-	if loaded {
-		return nil
-	}
+		coreRaw, err := rest.ReadFile(corePath)
+		if err != nil {
+			worldsErr = fmt.Errorf("load %s: %w", corePath, err)
+			return
+		}
 
-	corePath := "core/worlds.json"
-	translationPath := fmt.Sprintf(
-		"i18n/%s/worlds.json",
-		language,
-	)
+		translationRaw, err := rest.ReadFile(translationPath)
+		if err != nil {
+			worldsErr = fmt.Errorf("load %s: %w", translationPath, err)
+			return
+		}
 
-	coreRaw, err := rest.ReadFile(corePath)
-	if err != nil {
-		return fmt.Errorf("load %s: %w", corePath, err)
-	}
+		var loadedCoreWorlds map[string]coreWorld
+		if err := json.Unmarshal(coreRaw, &loadedCoreWorlds); err != nil {
+			worldsErr = fmt.Errorf("parse %s: %w", corePath, err)
+			return
+		}
 
-	translationRaw, err := rest.ReadFile(translationPath)
-	if err != nil {
-		return fmt.Errorf("load %s: %w", translationPath, err)
-	}
+		var loadedTranslatedWorlds map[string]translatedWorld
+		if err := json.Unmarshal(
+			translationRaw,
+			&loadedTranslatedWorlds,
+		); err != nil {
+			worldsErr = fmt.Errorf(
+				"parse %s: %w",
+				translationPath,
+				err,
+			)
+			return
+		}
 
-	var loadedCoreWorlds map[string]coreWorld
-	if err := json.Unmarshal(coreRaw, &loadedCoreWorlds); err != nil {
-		return fmt.Errorf("parse %s: %w", corePath, err)
-	}
+		coreWorlds = loadedCoreWorlds
+		translatedWorlds = loadedTranslatedWorlds
 
-	var loadedTranslatedWorlds map[string]translatedWorld
-	if err := json.Unmarshal(
-		translationRaw,
-		&loadedTranslatedWorlds,
-	); err != nil {
-		return fmt.Errorf("parse %s: %w", translationPath, err)
-	}
+		log.Printf(
+			"[ZONES] loaded world metadata (%d worlds)",
+			len(coreWorlds),
+		)
+	})
 
-	mu.Lock()
-	defer mu.Unlock()
-
-	// Ein anderer Goroutine-Aufruf könnte die Daten inzwischen geladen haben.
-	if worldsLoaded {
-		return nil
-	}
-
-	coreWorlds = loadedCoreWorlds
-	translatedWorlds = loadedTranslatedWorlds
-	worldsLoaded = true
-
-	log.Printf(
-		"[ZONES] loaded world metadata (%d worlds)",
-		len(coreWorlds),
-	)
-
-	return nil
+	return worldsErr
 }
 
-// Lädt und cached alle Zonen einer Welt.
+// Lädt die Zonen einer Welt einmalig
 func loadWorld(worldKey string) {
-	mu.RLock()
-	_, alreadyLoaded := cache[worldKey]
-	mu.RUnlock()
+	mu.Lock()
 
-	if alreadyLoaded {
-		return
+	once, exists := worldOnce[worldKey]
+	if !exists {
+		once = &sync.Once{}
+		worldOnce[worldKey] = once
 	}
 
+	mu.Unlock()
+
+	once.Do(func() {
+		zones, err := readWorld(worldKey)
+		if err != nil {
+			log.Printf(
+				"[ZONES] failed loading %s: %v",
+				worldKey,
+				err,
+			)
+
+			zones = map[string]ZoneInfo{}
+		}
+
+		mu.Lock()
+		cache[worldKey] = zones
+		mu.Unlock()
+	})
+}
+
+// Liest und kombiniert alle Daten einer Welt aus Core- und Übersetzungsdateien.
+func readWorld(worldKey string) (map[string]ZoneInfo, error) {
 	if err := loadWorldMetadata(); err != nil {
-		log.Printf(
-			"[ZONES] failed loading world metadata: %v",
-			err,
-		)
-		cacheEmpty(worldKey)
-		return
+		return nil, fmt.Errorf("load world metadata: %w", err)
 	}
 
 	corePath := fmt.Sprintf(
@@ -211,35 +226,21 @@ func loadWorld(worldKey string) {
 
 	coreRaw, err := rest.ReadFile(corePath)
 	if err != nil {
-		log.Printf(
-			"[ZONES] missing core zone file %s: %v",
-			corePath,
-			err,
-		)
-		cacheEmpty(worldKey)
-		return
+		return nil, fmt.Errorf("load %s: %w", corePath, err)
 	}
 
 	translationRaw, err := rest.ReadFile(translationPath)
 	if err != nil {
-		log.Printf(
-			"[ZONES] missing translation file %s: %v",
+		return nil, fmt.Errorf(
+			"load %s: %w",
 			translationPath,
 			err,
 		)
-		cacheEmpty(worldKey)
-		return
 	}
 
 	var coreFile coreZoneFile
 	if err := json.Unmarshal(coreRaw, &coreFile); err != nil {
-		log.Printf(
-			"[ZONES] invalid core zone file %s: %v",
-			corePath,
-			err,
-		)
-		cacheEmpty(worldKey)
-		return
+		return nil, fmt.Errorf("parse %s: %w", corePath, err)
 	}
 
 	var translations translatedZoneFile
@@ -247,13 +248,11 @@ func loadWorld(worldKey string) {
 		translationRaw,
 		&translations,
 	); err != nil {
-		log.Printf(
-			"[ZONES] invalid translation file %s: %v",
+		return nil, fmt.Errorf(
+			"parse %s: %w",
 			translationPath,
 			err,
 		)
-		cacheEmpty(worldKey)
-		return
 	}
 
 	mu.RLock()
@@ -263,8 +262,8 @@ func loadWorld(worldKey string) {
 	mu.RUnlock()
 
 	if !coreWorldExists {
-		log.Printf(
-			"[ZONES] missing world metadata in core/worlds.json: %s",
+		return nil, fmt.Errorf(
+			"missing world metadata in core/worlds.json: %s",
 			worldKey,
 		)
 	}
@@ -294,6 +293,7 @@ func loadWorld(worldKey string) {
 			if translation.Name != "" {
 				name = translation.Name
 			}
+
 			sub = translation.Sub
 		} else {
 			log.Printf(
@@ -315,7 +315,6 @@ func loadWorld(worldKey string) {
 		}
 	}
 
-	// Hilft dabei, Übersetzungen zu erkennen, für die keine Core-Zone existiert.
 	for zoneKey := range translations {
 		if _, exists := coreFile.Zones[zoneKey]; !exists {
 			log.Printf(
@@ -325,45 +324,27 @@ func loadWorld(worldKey string) {
 		}
 	}
 
-	mu.Lock()
-	cache[worldKey] = zones
-	mu.Unlock()
-
 	log.Printf(
 		"[ZONES] loaded %s (%d zones)",
 		worldKey,
 		len(zones),
 	)
+
+	return zones, nil
 }
 
-// Speichert einen leeren Cache-Eintrag, damit fehlerhafte Dateien nicht bei
-// jedem Resolve-Aufruf erneut heruntergeladen werden.
-func cacheEmpty(worldKey string) {
-	mu.Lock()
-	cache[worldKey] = map[string]ZoneInfo{}
-	mu.Unlock()
-}
-
-// extractWorldKey derives the world key from a zone key.
+// Ermittelt den Welt-Key aus einem Zone-Key
 func extractWorldKey(zoneKey string) string {
-	base := strings.SplitN(zoneKey, "/", 2)[0]
-
-	if strings.Contains(zoneKey, "WC_Catacombs") {
-		return "Catacombs"
-	}
-
-	if strings.Contains(zoneKey, "Selenopolis") {
-		return "Selenopolis"
-	}
+	base, _, _ := strings.Cut(zoneKey, "/")
 
 	switch {
-	case strings.HasPrefix(base, "G14_DM"):
-		return "Darkmoor"
+	case strings.Contains(zoneKey, "WC_Catacombs"):
+		return "Catacombs"
+
+	case strings.Contains(zoneKey, "Selenopolis"):
+		return "Selenopolis"
 
 	case strings.HasPrefix(base, "G14"):
-		return "Dungeons"
-
-	case strings.HasPrefix(base, "DD"):
 		return "Dungeons"
 
 	case strings.HasPrefix(base, "Housing"):
@@ -371,42 +352,35 @@ func extractWorldKey(zoneKey string) string {
 
 	case strings.HasPrefix(base, "ThePhantomZoneWorld"):
 		return "Minigames"
-	}
 
-	// Fallback: Prefix vor dem ersten Unterstrich.
-	if i := strings.Index(base, "_"); i != -1 {
-		return base[:i]
+	default:
+		return base
 	}
-
-	return base
 }
 
+// Public Wrapper für extractWorldKey
 func WorldKey(zoneKey string) string {
 	return extractWorldKey(zoneKey)
 }
 
-// Resolve gibt sichtbare Informationen für einen Zone-Key zurück.
+// Liefert die aufgelösten Informationen zu einem Zone-Key
 func Resolve(zoneKey string) (ZoneInfo, bool) {
 	if zoneKey == "" {
 		return ZoneInfo{}, false
 	}
 
 	worldKey := extractWorldKey(zoneKey)
-
 	loadWorld(worldKey)
 
 	mu.RLock()
-	worldZones, worldExists := cache[worldKey]
-	z, zoneExists := worldZones[zoneKey]
+	info, exists := cache[worldKey][zoneKey]
 	mu.RUnlock()
 
-	if worldExists && zoneExists {
-		return z, true
-	}
-
-	return ZoneInfo{}, false
+	return info, exists
 }
 
+// ResolveOrFallback liefert Zone-Informationen oder einen einfachen Fallback,
+// falls die Zone unbekannt ist
 func ResolveOrFallback(zoneKey string) ZoneInfo {
 	if info, ok := Resolve(zoneKey); ok {
 		return info
@@ -414,7 +388,6 @@ func ResolveOrFallback(zoneKey string) ZoneInfo {
 
 	return ZoneInfo{
 		Name:  zoneKey,
-		Sub:   "",
 		World: zoneKey,
 		Image: "dungeons",
 	}

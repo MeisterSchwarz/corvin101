@@ -27,7 +27,7 @@ func main() {
 
 	enemyTracker := enemy.NewEnemyTracker()
 
-	server := web.NewServer(enemyTracker)
+	server := web.NewServer(enemyTracker, "de")
 	go func() {
 		if err := server.Start("127.0.0.1:8101"); err != nil {
 			log.Println("[web]", err)

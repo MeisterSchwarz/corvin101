@@ -1,14 +1,10 @@
 package filesystem
 
 import (
-	"embed"
+	"fmt"
 	"os"
-	"path"
 	"path/filepath"
 )
-
-//go:embed json/**
-var FS embed.FS
 
 func FileExists(path string) bool {
 	info, err := os.Stat(path)
@@ -26,27 +22,36 @@ func AppDataDir() string {
 	return dir
 }
 
-func PendingEnemyNamesPath() string {
-	return filepath.Join(
-		AppDataDir(),
-		"pending",
-		"enemy_names.json",
-	)
-}
-
-func PendingEnemyZonesPath() string {
-	return filepath.Join(
-		AppDataDir(),
-		"pending",
-		"enemy_zones.json",
-	)
-}
-
-func ReadJSON(language, category, file string) ([]byte, error) {
-	return FS.ReadFile(path.Join(
-		"json",
+func PendingEnemyNamesPath(
+	language string,
+	world string,
+) string {
+	filename := fmt.Sprintf(
+		"enemy_names__%s__%s.json",
+		world,
 		language,
-		category,
-		file,
-	))
+	)
+
+	return filepath.Join(
+		AppDataDir(),
+		"pending",
+		filename,
+	)
+}
+
+func PendingEnemyZonesPath(
+	language string,
+	world string,
+) string {
+	filename := fmt.Sprintf(
+		"enemy_zones__%s__%s.json",
+		world,
+		language,
+	)
+
+	return filepath.Join(
+		AppDataDir(),
+		"pending",
+		filename,
+	)
 }

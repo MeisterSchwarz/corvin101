@@ -16,14 +16,24 @@ import (
 )
 
 type Server struct {
-	tracker *enemy.EnemyTracker
+	tracker  *enemy.EnemyTracker
+	language string
 
-	pendingNamesPath string
-	pendingZonesPath string
+	pendingMu sync.RWMutex
 
-	pendingMu    sync.RWMutex
-	pendingNames map[string]string
-	seenZones    map[string]map[string]struct{}
+	// Schlüssel: "<language>/<world>"
+	// Wert: enemyID -> übersetzter Name
+	pendingNames map[string]map[string]string
+
+	// Merkt sich, welche Sprach-/Welt-Dateien bereits geladen wurden.
+	loadedNameScopes map[string]struct{}
+
+	// Schlüssel: "<language>/<world>"
+	// Wert: enemyID -> zoneKey -> vorhanden
+	pendingZones map[string]map[string]map[string]struct{}
+
+	// Merkt sich, welche Sprach-/Welt-Zonendateien bereits geladen wurden.
+	loadedZoneScopes map[string]struct{}
 }
 
 type CombatEnemy struct {
@@ -54,21 +64,23 @@ type EnemyNameRequest struct {
 	EnemyName string `json:"enemyName"`
 }
 
-func NewServer(tracker *enemy.EnemyTracker) *Server {
-	server := &Server{
-		tracker: tracker,
+// NewServer erwartet die aktuell eingestellte Sprache, beispielsweise "de" oder "en".
+func NewServer(
+	tracker *enemy.EnemyTracker,
+	language string,
+) *Server {
+	language = strings.TrimSpace(language)
 
-		pendingNamesPath: filesystem.PendingEnemyNamesPath(),
-		pendingZonesPath: filesystem.PendingEnemyZonesPath(),
+	return &Server{
+		tracker:  tracker,
+		language: language,
 
-		pendingNames: make(map[string]string),
-		seenZones:    make(map[string]map[string]struct{}),
+		pendingNames:     make(map[string]map[string]string),
+		loadedNameScopes: make(map[string]struct{}),
+
+		pendingZones:     make(map[string]map[string]map[string]struct{}),
+		loadedZoneScopes: make(map[string]struct{}),
 	}
-
-	server.loadPendingNames()
-	server.loadPendingZones()
-
-	return server
 }
 
 func (s *Server) Start(address string) error {
@@ -79,14 +91,7 @@ func (s *Server) Start(address string) error {
 	mux.HandleFunc("/api/enemy-name", s.handleEnemyName)
 
 	log.Printf("[WEB] listening on http://%s", address)
-	log.Printf(
-		"[WEB] pending enemy names: %s",
-		s.pendingNamesPath,
-	)
-	log.Printf(
-		"[WEB] pending enemy zones: %s",
-		s.pendingZonesPath,
-	)
+	log.Printf("[WEB] pending language: %s", s.language)
 
 	return http.ListenAndServe(address, mux)
 }
@@ -157,9 +162,21 @@ func (s *Server) handleEnemies(
 		}
 	}
 
-	duelWorldKey := zones.WorldKey(
-		snapshot.DuelZoneKey,
-	)
+	duelWorldKey := zones.WorldKey(snapshot.DuelZoneKey)
+
+	if duelWorldKey != "" {
+		if err := s.ensurePendingNamesLoaded(
+			s.language,
+			duelWorldKey,
+		); err != nil {
+			log.Printf(
+				"[WEB] load pending enemy names for language %q, world %q: %v",
+				s.language,
+				duelWorldKey,
+				err,
+			)
+		}
+	}
 
 	enemies := make(
 		[]CombatEnemy,
@@ -178,10 +195,17 @@ func (s *Server) handleEnemies(
 			name == enemyID ||
 			name == info.ID
 
-		// Lokal eingetragene Übersetzungen direkt verwenden.
-		if pendingName, ok := s.pendingEnemyName(enemyID); ok {
-			name = pendingName
-			nameMissing = false
+		// Lokal eingetragene Übersetzungen nur für die aktuelle
+		// Sprache und Welt verwenden.
+		if duelWorldKey != "" {
+			if pendingName, ok := s.pendingEnemyName(
+				s.language,
+				duelWorldKey,
+				enemyID,
+			); ok {
+				name = pendingName
+				nameMissing = false
+			}
 		}
 
 		if name == "" {
@@ -306,15 +330,52 @@ func (s *Server) handleEnemyName(
 		return
 	}
 
-	// Nur die Namensdatei wird verändert.
+	world := zones.WorldKey(snapshot.DuelZoneKey)
+
+	if world == "" {
+		http.Error(
+			w,
+			"could not determine current world",
+			http.StatusConflict,
+		)
+		return
+	}
+
+	if err := s.ensurePendingNamesLoaded(
+		s.language,
+		world,
+	); err != nil {
+		log.Printf(
+			"[WEB] load pending enemy names for language %q, world %q: %v",
+			s.language,
+			world,
+			err,
+		)
+
+		http.Error(
+			w,
+			"could not load enemy names",
+			http.StatusInternalServerError,
+		)
+		return
+	}
+
+	pendingNamesPath := filesystem.PendingEnemyNamesPath(
+		s.language,
+		world,
+	)
+
+	// Nur die zur Sprache und Welt gehörende Namensdatei wird verändert.
 	if err := SetPendingEnemyName(
-		s.pendingNamesPath,
+		pendingNamesPath,
 		request.EnemyID,
 		request.EnemyName,
 	); err != nil {
 		log.Printf(
-			"[WEB] save enemy name %q: %v",
+			"[WEB] save enemy name %q for language %q, world %q: %v",
 			request.EnemyID,
+			s.language,
+			world,
 			err,
 		)
 
@@ -327,9 +388,29 @@ func (s *Server) handleEnemyName(
 	}
 
 	s.pendingMu.Lock()
-	s.pendingNames[request.EnemyID] =
+
+	scope := pendingScope(
+		s.language,
+		world,
+	)
+
+	if s.pendingNames[scope] == nil {
+		s.pendingNames[scope] =
+			make(map[string]string)
+	}
+
+	s.pendingNames[scope][request.EnemyID] =
 		request.EnemyName
+
 	s.pendingMu.Unlock()
+
+	log.Printf(
+		"[WEB] saved enemy name %q -> %q for language %q, world %q",
+		request.EnemyID,
+		request.EnemyName,
+		s.language,
+		world,
+	)
 
 	w.WriteHeader(http.StatusNoContent)
 }
@@ -344,56 +425,256 @@ func (s *Server) recordEnemyZones(
 		return
 	}
 
+	world := strings.TrimSpace(
+		zones.WorldKey(zoneKey),
+	)
+	if world == "" {
+		log.Printf(
+			"[WEB] could not determine world for zone %q",
+			zoneKey,
+		)
+		return
+	}
+
+	if err := s.ensurePendingZonesLoaded(
+		s.language,
+		world,
+	); err != nil {
+		log.Printf(
+			"[WEB] load pending enemy zones for language %q, world %q: %v",
+			s.language,
+			world,
+			err,
+		)
+		return
+	}
+
+	pendingZonesPath := filesystem.PendingEnemyZonesPath(
+		s.language,
+		world,
+	)
+
 	for enemyID := range enemies {
-		if s.zoneWasSeen(enemyID, zoneKey) {
+		if s.zoneWasSeen(
+			s.language,
+			world,
+			enemyID,
+			zoneKey,
+		) {
 			continue
 		}
 
-		// Nur die Zonendatei wird verändert.
 		if err := AddPendingEnemyZone(
-			s.pendingZonesPath,
+			pendingZonesPath,
 			enemyID,
 			zoneKey,
 		); err != nil {
 			log.Printf(
-				"[WEB] save enemy zone %q -> %q: %v",
+				"[WEB] save enemy zone %q -> %q for language %q, world %q: %v",
 				enemyID,
 				zoneKey,
+				s.language,
+				world,
 				err,
 			)
 			continue
 		}
 
 		s.pendingMu.Lock()
-		s.markZoneSeenLocked(enemyID, zoneKey)
+		s.markZoneSeenLocked(
+			s.language,
+			world,
+			enemyID,
+			zoneKey,
+		)
 		s.pendingMu.Unlock()
 
 		log.Printf(
-			"[WEB] recorded enemy zone %q -> %q",
+			"[WEB] recorded enemy zone %q -> %q for language %q, world %q",
 			enemyID,
 			zoneKey,
+			s.language,
+			world,
 		)
 	}
 }
 
 func (s *Server) pendingEnemyName(
+	language string,
+	world string,
 	enemyID string,
 ) (string, bool) {
+	scope := pendingScope(
+		language,
+		world,
+	)
+
 	s.pendingMu.RLock()
 	defer s.pendingMu.RUnlock()
 
-	name, ok := s.pendingNames[enemyID]
+	namesForScope := s.pendingNames[scope]
+	if namesForScope == nil {
+		return "", false
+	}
+
+	name, ok := namesForScope[enemyID]
 	return name, ok
 }
 
+// ensurePendingNamesLoaded lädt eine Sprach-/Welt-Datei genau einmal.
+//
+// Das Laden geschieht unter dem Write-Lock. Dadurch können nicht zwei
+// Requests dieselbe Datei gleichzeitig initialisieren.
+func (s *Server) ensurePendingNamesLoaded(
+	language string,
+	world string,
+) error {
+	language = strings.TrimSpace(language)
+	world = strings.TrimSpace(world)
+
+	if language == "" || world == "" {
+		return nil
+	}
+
+	scope := pendingScope(
+		language,
+		world,
+	)
+
+	s.pendingMu.Lock()
+	defer s.pendingMu.Unlock()
+
+	if _, loaded := s.loadedNameScopes[scope]; loaded {
+		return nil
+	}
+
+	names := make(map[string]string)
+
+	path := filesystem.PendingEnemyNamesPath(
+		language,
+		world,
+	)
+
+	if err := readJSONIfExists(path, &names); err != nil {
+		return err
+	}
+
+	cleanNames := make(map[string]string)
+
+	for enemyID, name := range names {
+		enemyID = strings.TrimSpace(enemyID)
+		name = strings.TrimSpace(name)
+
+		if enemyID == "" || name == "" {
+			continue
+		}
+
+		cleanNames[enemyID] = name
+	}
+
+	s.pendingNames[scope] = cleanNames
+	s.loadedNameScopes[scope] = struct{}{}
+
+	log.Printf(
+		"[WEB] loaded %d pending enemy names for language %q, world %q from %s",
+		len(cleanNames),
+		language,
+		world,
+		path,
+	)
+
+	return nil
+}
+
+func (s *Server) ensurePendingZonesLoaded(
+	language string,
+	world string,
+) error {
+	language = strings.TrimSpace(language)
+	world = strings.TrimSpace(world)
+
+	if language == "" || world == "" {
+		return nil
+	}
+
+	scope := pendingScope(language, world)
+
+	s.pendingMu.Lock()
+	defer s.pendingMu.Unlock()
+
+	if _, loaded := s.loadedZoneScopes[scope]; loaded {
+		return nil
+	}
+
+	zonesFile := EnemyZonesFile{
+		Enemies: make(map[string]EnemyZones),
+	}
+
+	path := filesystem.PendingEnemyZonesPath(
+		language,
+		world,
+	)
+
+	if err := readJSONIfExists(path, &zonesFile); err != nil {
+		return err
+	}
+
+	zonesForScope := make(
+		map[string]map[string]struct{},
+	)
+
+	for enemyID, entry := range zonesFile.Enemies {
+		enemyID = strings.TrimSpace(enemyID)
+		if enemyID == "" {
+			continue
+		}
+
+		for _, zoneKey := range entry.Zones {
+			zoneKey = strings.TrimSpace(zoneKey)
+			if zoneKey == "" {
+				continue
+			}
+
+			if zonesForScope[enemyID] == nil {
+				zonesForScope[enemyID] =
+					make(map[string]struct{})
+			}
+
+			zonesForScope[enemyID][zoneKey] = struct{}{}
+		}
+	}
+
+	s.pendingZones[scope] = zonesForScope
+	s.loadedZoneScopes[scope] = struct{}{}
+
+	log.Printf(
+		"[WEB] loaded pending enemy zones for %d enemies, language %q, world %q from %s",
+		len(zonesForScope),
+		language,
+		world,
+		path,
+	)
+
+	return nil
+}
+
 func (s *Server) zoneWasSeen(
+	language string,
+	world string,
 	enemyID string,
 	zoneKey string,
 ) bool {
+	scope := pendingScope(language, world)
+
 	s.pendingMu.RLock()
 	defer s.pendingMu.RUnlock()
 
-	zonesForEnemy := s.seenZones[enemyID]
+	zonesForScope := s.pendingZones[scope]
+	if zonesForScope == nil {
+		return false
+	}
+
+	zonesForEnemy := zonesForScope[enemyID]
 	if zonesForEnemy == nil {
 		return false
 	}
@@ -403,74 +684,31 @@ func (s *Server) zoneWasSeen(
 }
 
 func (s *Server) markZoneSeenLocked(
+	language string,
+	world string,
 	enemyID string,
 	zoneKey string,
 ) {
-	if s.seenZones[enemyID] == nil {
-		s.seenZones[enemyID] =
+	scope := pendingScope(language, world)
+
+	if s.pendingZones[scope] == nil {
+		s.pendingZones[scope] =
+			make(map[string]map[string]struct{})
+	}
+
+	if s.pendingZones[scope][enemyID] == nil {
+		s.pendingZones[scope][enemyID] =
 			make(map[string]struct{})
 	}
 
-	s.seenZones[enemyID][zoneKey] = struct{}{}
+	s.pendingZones[scope][enemyID][zoneKey] = struct{}{}
 }
 
-func (s *Server) loadPendingNames() {
-	names := make(map[string]string)
-
-	if err := readJSONIfExists(
-		s.pendingNamesPath,
-		&names,
-	); err != nil {
-		log.Printf(
-			"[WEB] load pending enemy names: %v",
-			err,
-		)
-		return
-	}
-
-	s.pendingMu.Lock()
-	defer s.pendingMu.Unlock()
-
-	for enemyID, name := range names {
-		name = strings.TrimSpace(name)
-		if name == "" {
-			continue
-		}
-
-		s.pendingNames[enemyID] = name
-	}
-}
-
-func (s *Server) loadPendingZones() {
-	zonesFile := EnemyZonesFile{
-		Enemies: make(map[string]EnemyZones),
-	}
-
-	if err := readJSONIfExists(
-		s.pendingZonesPath,
-		&zonesFile,
-	); err != nil {
-		log.Printf(
-			"[WEB] load pending enemy zones: %v",
-			err,
-		)
-		return
-	}
-
-	s.pendingMu.Lock()
-	defer s.pendingMu.Unlock()
-
-	for enemyID, entry := range zonesFile.Enemies {
-		for _, zoneKey := range entry.Zones {
-			zoneKey = strings.TrimSpace(zoneKey)
-			if zoneKey == "" {
-				continue
-			}
-
-			s.markZoneSeenLocked(
-				enemyID,
-				zoneKey,
-			)
-		}
-	}
+func pendingScope(
+	language string,
+	world string,
+) string {
+	return strings.TrimSpace(language) +
+		"/" +
+		strings.TrimSpace(world)
 }
