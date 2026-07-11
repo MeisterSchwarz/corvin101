@@ -10,7 +10,6 @@ import (
 	"wizlink/filesystem"
 	"wizlink/logreader"
 	"wizlink/system"
-	"wizlink/zones"
 
 	"github.com/getlantern/systray"
 	"github.com/sqweek/dialog"
@@ -34,16 +33,10 @@ func onReady() {
 	if _, ok := logreader.ResolveLogPath(); !ok {
 		systray.AddSeparator()
 		mSelectLog = systray.AddMenuItem(
-			"Pfad manuell auswählen",
+			"Select Path manually",
 			"Automatische Pfadsuche fehlgeschlagen",
 		)
 	}
-
-	mContribute := systray.AddMenuItemCheckbox(
-		"Fehlende Übersetzungen sammeln",
-		"Unbekannte Zonen loggen",
-		false,
-	)
 	systray.AddSeparator()
 	mAutostart := systray.AddMenuItem("Autostart aktivieren", "")
 	systray.AddSeparator()
@@ -85,15 +78,6 @@ func onReady() {
 
 			case <-mAutostart.ClickedCh:
 				toggleAutostart(mAutostart)
-			case <-mContribute.ClickedCh:
-				enabled := !mContribute.Checked()
-				zones.SetContributing(enabled)
-
-				if enabled {
-					mContribute.Check()
-				} else {
-					mContribute.Uncheck()
-				}
 			case <-mQuit.ClickedCh:
 				systray.Quit()
 				os.Exit(0)

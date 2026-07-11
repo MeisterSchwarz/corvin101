@@ -160,8 +160,8 @@ func baseActivity() client.Activity {
 		},
 		Buttons: []*client.Button{
 			{
-				Label: "Herunterladen",
-				Url:   "https://github.com/MeisterSchwarz",
+				Label: "Projektseite",
+				Url:   "https://github.com/MeisterSchwarz/wizlink",
 			},
 		},
 	}
@@ -169,15 +169,27 @@ func baseActivity() client.Activity {
 
 // sets roaming presence
 func updateRoaming() {
-	name, sub, world, image := zones.Resolve(state.LastZone())
+	zoneKey := state.LastZone()
+
+	zone, ok := zones.Resolve(zoneKey)
+	if !ok {
+		zone = zones.ZoneInfo{
+			Name:  zoneKey,
+			World: zones.WorldKey(zoneKey),
+			Image: "dungeons",
+		}
+	}
 
 	a := baseActivity()
-	a.Details = name
-	a.State = sub
+	a.Details = zone.Name
 
-	if image != "" {
-		a.LargeImage = image
-		a.LargeText = world
+	if zone.Sub != "" {
+		a.State = zone.Sub
+	}
+
+	if zone.Image != "" {
+		a.LargeImage = zone.Image
+		a.LargeText = zone.World
 	}
 
 	client.SetActivity(a)
@@ -185,19 +197,29 @@ func updateRoaming() {
 
 // sets battle presence
 func updateBattle() {
-	name, sub, world, image := zones.Resolve(state.LastZone())
+	zoneKey := state.LastZone()
+
+	zone, ok := zones.Resolve(zoneKey)
+	if !ok {
+		zone = zones.ZoneInfo{
+			Name:  zoneKey,
+			World: zones.WorldKey(zoneKey),
+			Image: "dungeons",
+		}
+	}
 
 	a := baseActivity()
 	a.Timestamps.Start = state.BattleStart()
 
-	a.Details = name
-	if sub != "" {
-		a.State = sub
+	a.Details = zone.Name
+
+	if zone.Sub != "" {
+		a.State = zone.Sub
 	}
 
-	if image != "" {
-		a.LargeImage = image
-		a.LargeText = world
+	if zone.Image != "" {
+		a.LargeImage = zone.Image
+		a.LargeText = zone.World
 	}
 
 	a.SmallImage = "battle"

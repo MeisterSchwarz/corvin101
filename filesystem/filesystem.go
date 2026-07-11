@@ -20,10 +20,33 @@ func AppDataDir() string {
 		os.Getenv("APPDATA"),
 		"wizlink",
 	)
+
 	_ = os.MkdirAll(dir, 0755)
+
 	return dir
 }
 
+func PendingEnemyNamesPath() string {
+	return filepath.Join(
+		AppDataDir(),
+		"pending",
+		"enemy_names.json",
+	)
+}
+
+func PendingEnemyZonesPath() string {
+	return filepath.Join(
+		AppDataDir(),
+		"pending",
+		"enemy_zones.json",
+	)
+}
+
 func ReadJSON(language, category, file string) ([]byte, error) {
-	return FS.ReadFile(path.Join("json", language, category, file))
+	return FS.ReadFile(path.Join(
+		"json",
+		language,
+		category,
+		file,
+	))
 }

@@ -49,14 +49,62 @@ type coreZone struct {
 }
 
 // Übersetzte Zonendatei aus i18n/<lang>/zones/<world>.json.
-type translatedZoneFile struct {
-	Zones map[string]translatedZone `json:"zones"`
-}
+//
+// Das JSON enthält direkt eine Map:
+//
+//	{
+//	  "Zone/Key": "Name",
+//	  "Andere/Zone": ["Name", "Unterbereich"]
+//	}
+type translatedZoneFile map[string]translatedZone
 
 // Sprachabhängige Eigenschaften einer Zone.
 type translatedZone struct {
-	Name string `json:"name"`
-	Sub  string `json:"sub,omitempty"`
+	Name string
+	Sub  string
+}
+
+// UnmarshalJSON unterstützt beide kompakten Formate:
+//
+// "Basislager"
+//
+// und:
+//
+// ["Die Säulenhalle", "Außenbereich"]
+func (z *translatedZone) UnmarshalJSON(data []byte) error {
+	var name string
+
+	if err := json.Unmarshal(data, &name); err == nil {
+		z.Name = name
+		z.Sub = ""
+		return nil
+	}
+
+	var values []string
+	if err := json.Unmarshal(data, &values); err != nil {
+		return fmt.Errorf(
+			"translation must be a string or string array: %w",
+			err,
+		)
+	}
+
+	switch len(values) {
+	case 1:
+		z.Name = values[0]
+		z.Sub = ""
+		return nil
+
+	case 2:
+		z.Name = values[0]
+		z.Sub = values[1]
+		return nil
+
+	default:
+		return fmt.Errorf(
+			"translation array must contain 1 or 2 strings, got %d",
+			len(values),
+		)
+	}
 }
 
 // Vollständig aufgelöste Zoneninformationen.
@@ -237,7 +285,7 @@ func loadWorld(worldKey string) {
 	)
 
 	for zoneKey, coreData := range coreFile.Zones {
-		translation, translated := translations.Zones[zoneKey]
+		translation, translated := translations[zoneKey]
 
 		name := "???"
 		sub := ""
@@ -268,7 +316,7 @@ func loadWorld(worldKey string) {
 	}
 
 	// Hilft dabei, Übersetzungen zu erkennen, für die keine Core-Zone existiert.
-	for zoneKey := range translations.Zones {
+	for zoneKey := range translations {
 		if _, exists := coreFile.Zones[zoneKey]; !exists {
 			log.Printf(
 				"[ZONES] translation without core zone: %s",
@@ -333,15 +381,16 @@ func extractWorldKey(zoneKey string) string {
 	return base
 }
 
+func WorldKey(zoneKey string) string {
+	return extractWorldKey(zoneKey)
+}
+
 // Resolve gibt sichtbare Informationen für einen Zone-Key zurück.
-func Resolve(
-	zoneKey string,
-) (
-	name string,
-	sub string,
-	world string,
-	image string,
-) {
+func Resolve(zoneKey string) (ZoneInfo, bool) {
+	if zoneKey == "" {
+		return ZoneInfo{}, false
+	}
+
 	worldKey := extractWorldKey(zoneKey)
 
 	loadWorld(worldKey)
@@ -352,10 +401,21 @@ func Resolve(
 	mu.RUnlock()
 
 	if worldExists && zoneExists {
-		return z.Name, z.Sub, z.World, z.Image
+		return z, true
 	}
 
-	reportMissingZone(zoneKey)
+	return ZoneInfo{}, false
+}
 
-	return "???", "", "???", "dungeons"
+func ResolveOrFallback(zoneKey string) ZoneInfo {
+	if info, ok := Resolve(zoneKey); ok {
+		return info
+	}
+
+	return ZoneInfo{
+		Name:  zoneKey,
+		Sub:   "",
+		World: zoneKey,
+		Image: "dungeons",
+	}
 }
