@@ -1,91 +1,132 @@
 # RavenDex
-Discord Rich Presence tool for Wizard101.
-Displays your current location, combat status, playtime, and recent battle information.
+
+A companion application for **Wizard101** featuring Discord Rich Presence, a local knowledge base, and community-driven game data collection.
+
+RavenDex displays your current in-game status while helping build an open database of Wizard101 information.
 
 > **Note:** Currently only available in German.
 
+---
+
 ## 👀 Preview
 
-| Roaming                                 | Combat                                |
-| --------------------------------------- | ------------------------------------- |
+| Roaming | Combat |
+| ------- | ------ |
 | ![Roaming](public/presence_roaming.png) | ![Battle](public/presence_battle.png) |
+
+---
 
 ## ✨ Features
 
-* Displays current area and world
+### 🎮 Discord Rich Presence
 
-* Combat detection
+- Displays your current world and area
+- Detects combat automatically
+- Shows your most recently defeated enemy
 
-* Character selection display
+### 🌐 Local Web Interface
 
-* Playtime tracking
+The integrated Web UI provides live information about your current game session and allows you to contribute to the shared RavenDex dataset.
 
-* Web UI with live status information
+Current functionality:
 
-* Displays the most recently defeated enemy
+- Live game status
+- Current world and area
+- Combat status
+- Recently defeated enemy
+- Rename unknown enemies
+- Rename unknown areas
 
-* Automatic translation data updates from a separate repository <br>
+### 📚 Shared Community Data
 
-* Autostart (optional)
+RavenDex uses the separate **[ravendex-data](https://github.com/MeisterSchwarz/ravendex-data)** repository for all game data.
 
-* Reporting of unknown areas (optional)
+This includes:
+
+- Game IDs
+- Localizations
+- Community translations
+
+Newly identified entities can be prepared for submission to the shared repository directly from the Web UI.
+
+### ⚙️ Additional Features
+
+- Optional autostart
+- Automatic game detection
+- Local configuration
 
 ---
 
-## 🖥️ Supported platforms
+## 🚧 Planned Features
 
-* Windows
+The following features are planned for future releases:
+
+- 🔎 Item search
+- 📦 Community-driven drop reporting
+- 🌍 Improved area naming workflow
+- 🌐 Additional language support
+- 📊 Community statistics
+
+---
+
+## 🖥️ Supported Platforms
+
+- Windows
+
+---
 
 ## 📥 Download & Usage
 
-1. Download the latest version from the **Releases** section.
+1. Download the latest version from the **Releases** page.
 2. Start `RavenDex.exe`.
-3. Manage the application via the system tray.
+3. Manage the application through the system tray.
 
 ![System Tray](public/presence_tray.png)
 
-### Web UI
+---
 
-RavenDex starts a local web interface, available at:
+## 🌐 Web Interface
+
+RavenDex hosts a local web interface available at:
 
 **http://localhost:8081**
 
-The Web UI provides live information about the current game session, including:
+The Web UI is designed to become the central place for interacting with community data.
 
-* Current character
-* Current world and area
-* Combat status
-* Session playtime
-* Most recently defeated enemy
+Current pages include:
 
-### Manual path selection (optional)
+- Live session overview
+- Unknown enemy identification
+- Unknown area identification
 
-If Wizard101 is not installed in the default directory, RavenDex may not be able to detect the game automatically.
+Future versions will expand the Web UI with additional tools such as item search and drop reporting.
 
-Select **"Select path manually"** from the system tray menu and navigate to your Wizard101 installation directory. Then select **`Wiz.ico`**.
+---
 
-After setting the path, RavenDex will restart automatically.
+## 📂 Game Data
 
-### Translation data
+Game data is **not bundled** with RavenDex.
 
-Translation data is no longer bundled with the application.
+Instead, RavenDex automatically downloads the latest dataset from the dedicated **[ravendex-data](https://github.com/MeisterSchwarz/ravendex-data)** repository.
 
-Instead, RavenDex automatically downloads and updates the latest translation data from the dedicated [ravendex-data](https://github.com/MeisterSchwarz/ravendex-data) repository.
+Separating the application from the data allows both projects to evolve independently while making the data available for other community projects as well.
 
-### App data directory
+---
 
-Depending on usage, a directory is created automatically under:
+## 📁 App Data Directory
+
+Depending on usage, RavenDex creates the following directory:
 
 **`%APPDATA%\ravendex`**
 
-The application stores data such as:
+Typical files include:
 
-- `config.json`      – application configuration
-- `enemy_names.json` – local name translations (not yet synchronized with the repository)
-- `enemy_zones.json` – local zone translations (not yet synchronized with the repository)
+- `config.json` – application configuration
+- `enemy_names____.json` – local enemy names awaiting submission
+
 ---
 
-## 🛡️ Windows Defender notice
+## 🛡️ Windows Defender Notice
 
 This application is **not code signed**.
 
@@ -93,13 +134,12 @@ On first launch, Windows SmartScreen or Windows Defender may display a warning.
 
 This is expected because the application:
 
-* runs in the background
-* supports autostart
-* accesses local Wizard101 files
-* hosts a local web interface
-* monitors a scheduled task as part of its watchdog functionality
+- runs in the background
+- supports autostart
+- accesses local Wizard101 files
+- hosts a local web interface
 
-Select **"More info" → "Run anyway"** to continue.
+Select **More info → Run anyway** to continue.
 
 The complete source code is available in this repository.
 
@@ -107,24 +147,32 @@ The complete source code is available in this repository.
 
 ## 🔒 Privacy
 
-* **No personal data is collected**
-* **No user accounts** are required
-* **No gameplay information is sent to external services**
-* Network communication is limited to:
+RavenDex is designed to process everything locally.
 
-  * Discord Rich Presence
-  * Downloading translation data
-  * The local Web UI (`localhost`)
-* All processing is performed **locally on your PC**
+- No personal data is collected.
+- No user accounts are required.
+- No gameplay information is sent to external services.
+
+Network communication is limited to:
+
+- Discord Rich Presence
+- Downloading community data from `ravendex-data`
+- Accessing the local Web UI (`localhost`)
 
 ---
 
 ## 🤝 Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines.
+Contributions are always welcome.
+
+Game data contributions are handled through the **ravendex-data** repository, while application improvements can be submitted here.
+
+Please see **CONTRIBUTING.md** for more information.
+
+---
 
 ## 📄 License
 
 MIT License
 
-> This project is not affiliated with KingsIsle Entertainment or Wizard101.
+> RavenDex is an independent community project and is not affiliated with KingsIsle Entertainment or Wizard101.
