@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-const baseURL = "https://raw.githubusercontent.com/MeisterSchwarz/wizlink-data/master/"
+const baseURL = "https://raw.githubusercontent.com/MeisterSchwarz/ravendex-data/master/"
 
 var client = &http.Client{
 	Timeout: 10 * time.Second,

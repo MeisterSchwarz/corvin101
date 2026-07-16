@@ -9,7 +9,7 @@ const indexHTML = `<!doctype html>
 		content="width=device-width, initial-scale=1"
 	>
 
-	<title>WizLink Enemy Tracker</title>
+	<title>ravendex Enemy Tracker</title>
 
 	<style>
 		:root {
@@ -615,13 +615,28 @@ const indexHTML = `<!doctype html>
 					continue;
 				}
 
-				const itemGrid = document.createElement("div");
-				itemGrid.className = "item-grid";
-
 				const selections =
 					getEnemySelections(enemy.enemyId);
 
+				const groupedItems = new Map();
+
 				for (const item of items) {
+					const category = (item.id || "").slice(0, 2) || "??";
+					if (!groupedItems.has(category)) {
+						groupedItems.set(category, []);
+					}
+					groupedItems.get(category).push(item);
+				}
+
+				for (const [category, categoryItems] of groupedItems) {
+					const heading = document.createElement("h4");
+					heading.textContent = category;
+					card.appendChild(heading);
+
+					const itemGrid = document.createElement("div");
+					itemGrid.className = "item-grid";
+
+					for (const item of categoryItems) {
 					const option =
 						document.createElement("label");
 
@@ -713,10 +728,11 @@ const indexHTML = `<!doctype html>
 						quantity
 					);
 
-					itemGrid.appendChild(option);
-				}
+						itemGrid.appendChild(option);
+					}
 
-				card.appendChild(itemGrid);
+					card.appendChild(itemGrid);
+				}
 				enemyListElement.appendChild(card);
 			}
 		}

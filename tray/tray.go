@@ -8,10 +8,10 @@ import (
 	"path/filepath"
 	"runtime"
 
-	"wizlink/config"
-	"wizlink/filesystem"
-	"wizlink/logreader"
-	"wizlink/system"
+	"ravendex/config"
+	"ravendex/filesystem"
+	"ravendex/logreader"
+	"ravendex/system"
 
 	"github.com/getlantern/systray"
 	"github.com/sqweek/dialog"
@@ -19,7 +19,7 @@ import (
 
 const webUIURL = "http://127.0.0.1:8101"
 
-//go:embed wizlink.ico
+//go:embed ravendex.ico
 var iconData []byte
 
 // Run starts the system tray application.

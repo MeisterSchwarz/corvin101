@@ -3,8 +3,8 @@ package logreader
 import (
 	"path/filepath"
 
-	"wizlink/config"
-	"wizlink/filesystem"
+	"ravendex/config"
+	"ravendex/filesystem"
 )
 
 // Resolve returns the first existing Wizard101 log path

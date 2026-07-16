@@ -1,4 +1,4 @@
-module wizlink
+module ravendex
 
 go 1.25.5
 

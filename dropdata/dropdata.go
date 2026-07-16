@@ -4,10 +4,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"ravendex/rest"
 	"sort"
 	"strings"
 	"sync"
-	"wizlink/rest"
 )
 
 const language = "de"
@@ -19,8 +19,12 @@ var (
 	// Verhindert paralleles mehrfaches Laden derselben Welt.
 	worldLoading = make(map[string]chan struct{})
 
-	// Itemübersetzungen werden einmalig geladen.
-	itemNames        = make(map[string]string)
+	// Übersetzte Itemnamen: Item-ID -> übersetzter Name.
+	itemNames = make(map[string]string)
+
+	// Kategorie -> Index -> Item-ID.
+	itemIDsByCategory = make(map[string]map[int]string)
+
 	loadedItemFiles  = make(map[string]bool)
 	loadingItemFiles = make(map[string]chan struct{})
 
@@ -28,31 +32,35 @@ var (
 )
 
 var itemFiles = map[string]string{
-	"rg": "reagents",
-	"ht": "hats",
-	"rb": "robes",
-	"bt": "boots",
-	"at": "athames",
-	"wd": "wands",
-	"dk": "decks",
-	"sn": "snacks",
-	"jw": "jewels",
-	"tc": "treasurecards",
+	"RG": "reagents",
+	"RN": "rings",
+	"HT": "hats",
+	"RB": "robes",
+	"BT": "boots",
+	"AT": "athames",
+	"WD": "wands",
+	"DK": "decks",
+	"SN": "snacks",
+	"JW": "jewels",
+	"TC": "treasurecards",
 }
 
-// core/enemies/<world>.json
-type coreEnemyFile struct {
-	Enemies map[string]coreEnemy `json:"enemies"`
+// core/items/<category>.json
+type coreItemMetadata struct {
+	ID int `json:"id"`
 }
 
-type coreEnemy struct {
-	Zones []string `json:"zones,omitempty"`
-}
+type coreItemFile map[string]coreItemMetadata
 
 // core/drops/<world>.json
-type coreDropFile struct {
-	Drops map[string][]string `json:"drops"`
-}
+//
+// enemyID -> category -> item indexes
+type coreDropFile map[string]map[string][]int
+
+// core/enemies/<world>.json
+type coreEnemyMetadata struct{}
+
+type coreEnemyFile map[string]coreEnemyMetadata
 
 // i18n/<lang>/enemies/<world>.json
 type translatedEnemyFile map[string]string
@@ -67,8 +75,57 @@ type ItemInfo struct {
 type EnemyInfo struct {
 	ID    string     `json:"id"`
 	Name  string     `json:"name"`
-	Zones []string   `json:"zones,omitempty"`
 	Items []ItemInfo `json:"items"`
+}
+
+func resolveEnemyDrops(
+	worldKey string,
+	enemyID string,
+	dropsByCategory map[string][]int,
+	itemTables map[string]map[int]string,
+) []string {
+	totalDrops := 0
+
+	for _, indexes := range dropsByCategory {
+		totalDrops += len(indexes)
+	}
+
+	dropIDs := make([]string, 0, totalDrops)
+
+	for rawCategory, indexes := range dropsByCategory {
+		category := strings.ToUpper(
+			strings.TrimSpace(rawCategory),
+		)
+
+		itemsByIndex, exists := itemTables[category]
+		if !exists {
+			log.Printf(
+				"[DROPS] missing item table for %s/%s category %s",
+				worldKey,
+				enemyID,
+				category,
+			)
+			continue
+		}
+
+		for _, index := range indexes {
+			itemID, exists := itemsByIndex[index]
+			if !exists {
+				log.Printf(
+					"[DROPS] invalid item index for %s/%s: %s/%d",
+					worldKey,
+					enemyID,
+					category,
+					index,
+				)
+				continue
+			}
+
+			dropIDs = append(dropIDs, itemID)
+		}
+	}
+
+	return dropIDs
 }
 
 func itemFileForID(itemID string) (string, bool) {
@@ -81,26 +138,29 @@ func itemFileForID(itemID string) (string, bool) {
 	return fileName, ok
 }
 
-func loadItemFile(fileName string) error {
+func loadItemFile(
+	category string,
+	fileName string,
+) error {
 	mu.Lock()
 
-	if loadedItemFiles[fileName] {
+	if loadedItemFiles[category] {
 		mu.Unlock()
 		return nil
 	}
 
-	if wait, loading := loadingItemFiles[fileName]; loading {
+	if wait, loading := loadingItemFiles[category]; loading {
 		mu.Unlock()
 		<-wait
 
 		mu.RLock()
-		loaded := loadedItemFiles[fileName]
+		loaded := loadedItemFiles[category]
 		mu.RUnlock()
 
 		if !loaded {
 			return fmt.Errorf(
-				"item file %s could not be loaded",
-				fileName,
+				"item category %s could not be loaded",
+				category,
 			)
 		}
 
@@ -108,84 +168,169 @@ func loadItemFile(fileName string) error {
 	}
 
 	wait := make(chan struct{})
-	loadingItemFiles[fileName] = wait
+	loadingItemFiles[category] = wait
 	mu.Unlock()
 
 	defer func() {
 		mu.Lock()
 		close(wait)
-		delete(loadingItemFiles, fileName)
+		delete(loadingItemFiles, category)
 		mu.Unlock()
 	}()
 
-	path := fmt.Sprintf(
+	corePath := fmt.Sprintf(
+		"core/items/%s.json",
+		fileName,
+	)
+
+	translationPath := fmt.Sprintf(
 		"i18n/%s/items/%s.json",
 		language,
 		fileName,
 	)
 
-	raw, err := rest.ReadFile(path)
+	coreRaw, err := rest.ReadFile(corePath)
 	if err != nil {
-		return fmt.Errorf("load %s: %w", path, err)
+		return fmt.Errorf("load %s: %w", corePath, err)
 	}
 
-	var loadedItems map[string]string
+	translationRaw, translationErr := rest.ReadFile(translationPath)
+	if translationErr != nil {
+		log.Printf(
+			"[DROPS] optional item translation file %s unavailable: %v",
+			translationPath,
+			translationErr,
+		)
+	}
 
-	if err := json.Unmarshal(raw, &loadedItems); err != nil {
-		return fmt.Errorf("parse %s: %w", path, err)
+	var coreItems coreItemFile
+	if err := json.Unmarshal(coreRaw, &coreItems); err != nil {
+		return fmt.Errorf("parse %s: %w", corePath, err)
+	}
+
+	translations := make(map[string]string)
+
+	if translationErr == nil {
+		if err := json.Unmarshal(
+			translationRaw,
+			&translations,
+		); err != nil {
+			log.Printf(
+				"[DROPS] invalid optional item translation file %s: %v",
+				translationPath,
+				err,
+			)
+
+			translations = make(map[string]string)
+		}
+	}
+
+	indexToItemID := make(map[int]string, len(coreItems))
+
+	for itemID, metadata := range coreItems {
+		if metadata.ID < 0 {
+			return fmt.Errorf(
+				"negative item index %d for %q in %s",
+				metadata.ID,
+				itemID,
+				corePath,
+			)
+		}
+
+		if existingID, exists := indexToItemID[metadata.ID]; exists {
+			return fmt.Errorf(
+				"duplicate item index %d for %q and %q in %s",
+				metadata.ID,
+				existingID,
+				itemID,
+				corePath,
+			)
+		}
+
+		indexToItemID[metadata.ID] = itemID
 	}
 
 	mu.Lock()
 	defer mu.Unlock()
 
-	if loadedItemFiles[fileName] {
+	if loadedItemFiles[category] {
 		return nil
 	}
 
-	for itemID, name := range loadedItems {
+	itemIDsByCategory[category] = indexToItemID
+
+	for itemID := range coreItems {
+		name := strings.TrimSpace(translations[itemID])
+
+		if name == "" {
+			log.Printf(
+				"[DROPS] missing %s item translation: %s",
+				language,
+				itemID,
+			)
+
+			name = itemID
+		}
+
 		if existing, exists := itemNames[itemID]; exists &&
 			existing != name {
 			return fmt.Errorf(
-				"duplicate item ID %q in %s",
+				"duplicate item ID %q with conflicting translations",
 				itemID,
-				path,
 			)
 		}
 
 		itemNames[itemID] = name
 	}
 
-	loadedItemFiles[fileName] = true
+	for itemID := range translations {
+		if _, exists := coreItems[itemID]; !exists {
+			log.Printf(
+				"[DROPS] item translation without core item: %s",
+				itemID,
+			)
+		}
+	}
+
+	loadedItemFiles[category] = true
 
 	log.Printf(
-		"[DROPS] loaded item file %s (%d items)",
-		fileName,
-		len(loadedItems),
+		"[DROPS] loaded item category %s (%d items)",
+		category,
+		len(coreItems),
 	)
 
 	return nil
 }
 
 func loadRequiredItemFiles(dropFile coreDropFile) error {
-	requiredFiles := make(map[string]struct{})
+	requiredCategories := make(map[string]struct{})
 
-	for _, itemIDs := range dropFile.Drops {
-		for _, itemID := range itemIDs {
-			fileName, ok := itemFileForID(itemID)
-			if !ok {
-				log.Printf(
-					"[DROPS] unknown item prefix: %s",
-					itemID,
-				)
+	for _, categories := range dropFile {
+		for category := range categories {
+			category = strings.ToUpper(
+				strings.TrimSpace(category),
+			)
+
+			if category == "" {
 				continue
 			}
 
-			requiredFiles[fileName] = struct{}{}
+			requiredCategories[category] = struct{}{}
 		}
 	}
 
-	for fileName := range requiredFiles {
-		if err := loadItemFile(fileName); err != nil {
+	for category := range requiredCategories {
+		fileName, ok := itemFiles[category]
+		if !ok {
+			log.Printf(
+				"[DROPS] unknown item category: %s",
+				category,
+			)
+			continue
+		}
+
+		if err := loadItemFile(category, fileName); err != nil {
 			return err
 		}
 	}
@@ -335,14 +480,32 @@ func loadWorld(worldKey string) {
 		loadedItemNames[itemID] = name
 	}
 
+	loadedItemTables := make(
+		map[string]map[int]string,
+		len(itemIDsByCategory),
+	)
+
+	for category, sourceTable := range itemIDsByCategory {
+		tableCopy := make(
+			map[int]string,
+			len(sourceTable),
+		)
+
+		for index, itemID := range sourceTable {
+			tableCopy[index] = itemID
+		}
+
+		loadedItemTables[category] = tableCopy
+	}
+
 	mu.RUnlock()
 
 	enemies := make(
 		map[string]EnemyInfo,
-		len(enemyFile.Enemies),
+		len(enemyFile),
 	)
 
-	for enemyID, coreData := range enemyFile.Enemies {
+	for enemyID := range enemyFile {
 		name := enemyID
 
 		if translatedName, exists := translations[enemyID]; exists {
@@ -357,7 +520,18 @@ func loadWorld(worldKey string) {
 			)
 		}
 
-		dropIDs := dropFile.Drops[enemyID]
+		dropData, hasDropData := dropFile[enemyID]
+
+		dropIDs := []string{}
+
+		if hasDropData {
+			dropIDs = resolveEnemyDrops(
+				worldKey,
+				enemyID,
+				dropData,
+				loadedItemTables,
+			)
+		}
 
 		items := make(
 			[]ItemInfo,
@@ -390,13 +564,12 @@ func loadWorld(worldKey string) {
 		enemies[enemyID] = EnemyInfo{
 			ID:    enemyID,
 			Name:  name,
-			Zones: append([]string(nil), coreData.Zones...),
 			Items: items,
 		}
 	}
 
-	for enemyID := range dropFile.Drops {
-		if _, exists := enemyFile.Enemies[enemyID]; !exists {
+	for enemyID := range dropFile {
+		if _, exists := enemyFile[enemyID]; !exists {
 			log.Printf(
 				"[DROPS] drop pool without core enemy: %s",
 				enemyID,
@@ -405,7 +578,7 @@ func loadWorld(worldKey string) {
 	}
 
 	for enemyID := range translations {
-		if _, exists := enemyFile.Enemies[enemyID]; !exists {
+		if _, exists := enemyFile[enemyID]; !exists {
 			log.Printf(
 				"[DROPS] translation without core enemy: %s",
 				enemyID,
@@ -449,7 +622,6 @@ func Resolve(
 		return EnemyInfo{}, false
 	}
 
-	info.Zones = append([]string(nil), info.Zones...)
 	info.Items = append([]ItemInfo(nil), info.Items...)
 
 	return info, true

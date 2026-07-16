@@ -7,9 +7,9 @@ import (
 
 	"github.com/hugolgst/rich-go/client"
 
-	"wizlink/config"
-	"wizlink/state"
-	"wizlink/zones"
+	"ravendex/config"
+	"ravendex/state"
+	"ravendex/zones"
 )
 
 /*
@@ -161,7 +161,7 @@ func baseActivity() client.Activity {
 		Buttons: []*client.Button{
 			{
 				Label: "Projektseite",
-				Url:   "https://github.com/MeisterSchwarz/wizlink",
+				Url:   "https://github.com/MeisterSchwarz/ravendex",
 			},
 		},
 	}

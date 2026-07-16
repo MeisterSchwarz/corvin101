@@ -6,29 +6,11 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"sort"
 	"strings"
 	"sync"
 )
 
 var enemyUpdateMu sync.Mutex
-
-// EnemyZonesFile entspricht der vorhandenen Zieldatei:
-//
-//	{
-//	  "enemies": {
-//	    "Enemy-Key": {
-//	      "zones": ["Zone/Key"]
-//	    }
-//	  }
-//	}
-type EnemyZonesFile struct {
-	Enemies map[string]EnemyZones `json:"enemies"`
-}
-
-type EnemyZones struct {
-	Zones []string `json:"zones"`
-}
 
 // SetPendingEnemyName speichert oder aktualisiert eine deutsche
 // Gegnerübersetzung in der separaten Namensdatei.
@@ -93,89 +75,10 @@ func SetPendingEnemyName(
 	return nil
 }
 
-// AddPendingEnemyZone ergänzt eine Zone in der separaten Zonendatei.
-//
-// Dateiformat:
-//
-//	{
-//	  "enemies": {
-//	    "Skeleton-Pirate-L01": {
-//	      "zones": [
-//	        "WizardCity/WC_Streets/WC_Unicorn"
-//	      ]
-//	    }
-//	  }
-//	}
-func AddPendingEnemyZone(
-	zonesPath string,
-	enemyKey string,
-	zoneKey string,
+func readJSONIfExists(
+	path string,
+	target any,
 ) error {
-	enemyUpdateMu.Lock()
-	defer enemyUpdateMu.Unlock()
-
-	enemyKey = strings.TrimSpace(enemyKey)
-	zoneKey = strings.TrimSpace(zoneKey)
-
-	if enemyKey == "" {
-		return errors.New("enemy key must not be empty")
-	}
-
-	if zoneKey == "" {
-		return errors.New("zone key must not be empty")
-	}
-
-	zonesFile := EnemyZonesFile{
-		Enemies: make(map[string]EnemyZones),
-	}
-
-	if err := readJSONIfExists(
-		zonesPath,
-		&zonesFile,
-	); err != nil {
-		return fmt.Errorf(
-			"read pending enemy zones: %w",
-			err,
-		)
-	}
-
-	if zonesFile.Enemies == nil {
-		zonesFile.Enemies =
-			make(map[string]EnemyZones)
-	}
-
-	entry := zonesFile.Enemies[enemyKey]
-
-	// Keine Datei neu schreiben, wenn die Zuordnung schon existiert.
-	for _, existingZone := range entry.Zones {
-		if existingZone == zoneKey {
-			return nil
-		}
-	}
-
-	entry.Zones = append(
-		entry.Zones,
-		zoneKey,
-	)
-
-	sort.Strings(entry.Zones)
-
-	zonesFile.Enemies[enemyKey] = entry
-
-	if err := writeJSONAtomic(
-		zonesPath,
-		zonesFile,
-	); err != nil {
-		return fmt.Errorf(
-			"write pending enemy zones: %w",
-			err,
-		)
-	}
-
-	return nil
-}
-
-func readJSONIfExists(path string, target any) error {
 	data, err := os.ReadFile(path)
 	if err != nil {
 		if errors.Is(err, os.ErrNotExist) {
@@ -190,14 +93,22 @@ func readJSONIfExists(path string, target any) error {
 	}
 
 	if err := json.Unmarshal(data, target); err != nil {
-		return fmt.Errorf("invalid JSON in %s: %w", path, err)
+		return fmt.Errorf(
+			"invalid JSON in %s: %w",
+			path,
+			err,
+		)
 	}
 
 	return nil
 }
 
 func marshalJSON(value any) ([]byte, error) {
-	data, err := json.MarshalIndent(value, "", "  ")
+	data, err := json.MarshalIndent(
+		value,
+		"",
+		"  ",
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -205,7 +116,10 @@ func marshalJSON(value any) ([]byte, error) {
 	return append(data, '\n'), nil
 }
 
-func writeJSONAtomic(path string, value any) error {
+func writeJSONAtomic(
+	path string,
+	value any,
+) error {
 	data, err := marshalJSON(value)
 	if err != nil {
 		return err
@@ -214,14 +128,24 @@ func writeJSONAtomic(path string, value any) error {
 	return writeBytesAtomic(path, data)
 }
 
-func writeBytesAtomic(path string, data []byte) error {
+func writeBytesAtomic(
+	path string,
+	data []byte,
+) error {
 	dir := filepath.Dir(path)
 
 	if err := os.MkdirAll(dir, 0o755); err != nil {
-		return fmt.Errorf("create directory %s: %w", dir, err)
+		return fmt.Errorf(
+			"create directory %s: %w",
+			dir,
+			err,
+		)
 	}
 
-	tempFile, err := os.CreateTemp(dir, ".json-update-*")
+	tempFile, err := os.CreateTemp(
+		dir,
+		".json-update-*",
+	)
 	if err != nil {
 		return err
 	}

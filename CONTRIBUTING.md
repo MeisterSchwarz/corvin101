@@ -1,4 +1,4 @@
-# Contributing to wizlink
+# Contributing to ravendex
 
 Contributions of any kind are welcome — whether code, feedback, or translations.
 
@@ -16,9 +16,9 @@ Contributions of any kind are welcome — whether code, feedback, or translation
 
 ### 🌍 Translation data
 
-Area and enemy translations are maintained in the dedicated **wizlink-data** repository:
+Area and enemy translations are maintained in the dedicated **ravendex-data** repository:
 
-https://github.com/MeisterSchwarz/wizlink-data
+https://github.com/MeisterSchwarz/ravendex-data
 ---
 
 ### 🧑‍💻 Local development
@@ -34,5 +34,5 @@ Please note:
 Build from the terminal:
 
 ```bash
-go build -ldflags="-H=windowsgui -s -w" -o wizlink.exe
+go build -ldflags="-H=windowsgui -s -w" -o ravendex.exe
 ```

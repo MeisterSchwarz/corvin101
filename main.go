@@ -4,15 +4,15 @@ import (
 	"log"
 	"time"
 
-	"wizlink/config"
-	"wizlink/discord"
-	"wizlink/enemy"
-	"wizlink/logreader"
-	"wizlink/state"
-	"wizlink/system"
-	"wizlink/tray"
-	"wizlink/watchdog"
-	"wizlink/web"
+	"ravendex/config"
+	"ravendex/discord"
+	"ravendex/enemy"
+	"ravendex/logreader"
+	"ravendex/state"
+	"ravendex/system"
+	"ravendex/tray"
+	"ravendex/watchdog"
+	"ravendex/web"
 )
 
 func main() {

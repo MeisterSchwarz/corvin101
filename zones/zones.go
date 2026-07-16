@@ -7,7 +7,7 @@ import (
 	"strings"
 	"sync"
 
-	"wizlink/rest"
+	"ravendex/rest"
 )
 
 const language = "de"

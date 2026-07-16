@@ -1,5 +1,4 @@
-# wizlink
-
+# RavenDex
 Discord Rich Presence tool for Wizard101.
 Displays your current location, combat status, playtime, and recent battle information.
 
@@ -40,14 +39,14 @@ Displays your current location, combat status, playtime, and recent battle infor
 ## 📥 Download & Usage
 
 1. Download the latest version from the **Releases** section.
-2. Start `wizlink.exe`.
+2. Start `RavenDex.exe`.
 3. Manage the application via the system tray.
 
 ![System Tray](public/presence_tray.png)
 
 ### Web UI
 
-wizlink starts a local web interface, available at:
+RavenDex starts a local web interface, available at:
 
 **http://localhost:8081**
 
@@ -61,23 +60,23 @@ The Web UI provides live information about the current game session, including:
 
 ### Manual path selection (optional)
 
-If Wizard101 is not installed in the default directory, wizlink may not be able to detect the game automatically.
+If Wizard101 is not installed in the default directory, RavenDex may not be able to detect the game automatically.
 
 Select **"Select path manually"** from the system tray menu and navigate to your Wizard101 installation directory. Then select **`Wiz.ico`**.
 
-After setting the path, wizlink will restart automatically.
+After setting the path, RavenDex will restart automatically.
 
 ### Translation data
 
 Translation data is no longer bundled with the application.
 
-Instead, wizlink automatically downloads and updates the latest translation data from the dedicated [wizlink-data](https://github.com/MeisterSchwarz/wizlink-data) repository.
+Instead, RavenDex automatically downloads and updates the latest translation data from the dedicated [ravendex-data](https://github.com/MeisterSchwarz/ravendex-data) repository.
 
 ### App data directory
 
 Depending on usage, a directory is created automatically under:
 
-**`%APPDATA%\wizlink`**
+**`%APPDATA%\ravendex`**
 
 The application stores data such as:
 

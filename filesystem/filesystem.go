@@ -14,7 +14,7 @@ func FileExists(path string) bool {
 func AppDataDir() string {
 	dir := filepath.Join(
 		os.Getenv("APPDATA"),
-		"wizlink",
+		"ravendex",
 	)
 
 	_ = os.MkdirAll(dir, 0755)
@@ -28,23 +28,6 @@ func PendingEnemyNamesPath(
 ) string {
 	filename := fmt.Sprintf(
 		"enemy_names__%s__%s.json",
-		world,
-		language,
-	)
-
-	return filepath.Join(
-		AppDataDir(),
-		"pending",
-		filename,
-	)
-}
-
-func PendingEnemyZonesPath(
-	language string,
-	world string,
-) string {
-	filename := fmt.Sprintf(
-		"enemy_zones__%s__%s.json",
 		world,
 		language,
 	)
