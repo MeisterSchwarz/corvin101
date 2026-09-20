@@ -159,8 +159,17 @@ func (s *Store) handleCombatPhaseChanged(event events.Event) {
 		return
 	}
 
+	previousPhase := s.combat.Phase
+	nextPhase := event.Combat.Phase
+
 	s.combat.Active = true
-	s.combat.Phase = event.Combat.Phase
+	s.combat.Phase = nextPhase
+
+	if nextPhase == events.PhasePlanning &&
+		previousPhase != events.PhasePlanning {
+
+		s.combat.Round++
+	}
 
 	if event.Combat.ClientDuelID != "" {
 		s.combat.ClientDuelID = event.Combat.ClientDuelID

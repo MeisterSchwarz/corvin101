@@ -15,11 +15,39 @@ import (
 	"corvin101/internal/game/parser"
 	"corvin101/internal/game/state"
 	"corvin101/internal/logreader"
+	"corvin101/internal/overlay"
+	overlaywindows "corvin101/internal/overlay/windows"
 	"corvin101/internal/presence/discord"
 	"corvin101/internal/rest"
+	"corvin101/internal/system"
 )
 
 func main() {
+	// --------------------------------------------------------
+	// Single instance
+	// --------------------------------------------------------
+
+	if !system.Lock() {
+		log.Println("[main] Corvin is already running")
+		return
+	}
+	defer system.Unlock()
+
+	// --------------------------------------------------------
+	// Application context
+	// --------------------------------------------------------
+
+	ctx, cancel := signal.NotifyContext(
+		context.Background(),
+		os.Interrupt,
+		syscall.SIGTERM,
+	)
+	defer cancel()
+
+	// --------------------------------------------------------
+	// Configuration
+	// --------------------------------------------------------
+
 	cfg, err := config.Load()
 	if err != nil {
 		log.Fatal(
@@ -27,25 +55,6 @@ func main() {
 			err,
 		)
 	}
-
-	logPath, ok := logreader.ResolveLogPath(cfg)
-	if !ok {
-		log.Fatal(
-			"[main] could not resolve Wizard101 log path",
-		)
-	}
-
-	fmt.Printf(
-		"Using log: %s\n",
-		logPath,
-	)
-
-	// --------------------------------------------------------
-	// Core game components
-	// --------------------------------------------------------
-
-	gameParser := parser.New()
-	gameState := state.New()
 
 	// --------------------------------------------------------
 	// Zone data
@@ -70,8 +79,177 @@ func main() {
 		config.DiscordClientID,
 		zoneRepository,
 	)
-
 	defer presence.Close()
+
+	// --------------------------------------------------------
+	// Overlay
+	// --------------------------------------------------------
+
+	overlayWindow := overlaywindows.New()
+
+	gameOverlay := overlay.New(
+		overlayWindow,
+	)
+
+	go func() {
+		if err := gameOverlay.Run(ctx); err != nil &&
+			ctx.Err() == nil {
+
+			log.Printf(
+				"[overlay] %v",
+				err,
+			)
+		}
+	}()
+
+	// --------------------------------------------------------
+	// Wizard101 Watchdog
+	// --------------------------------------------------------
+
+	watcher := system.NewGameWatcher()
+
+	if err := watcher.Start(ctx); err != nil {
+		log.Fatal(
+			"[system] start game watcher failed: ",
+			err,
+		)
+	}
+
+	fmt.Println("Corvin is running.")
+	fmt.Println("Waiting for Wizard101...")
+	fmt.Println("Press Ctrl+C to stop.")
+	fmt.Println()
+
+	// --------------------------------------------------------
+	// Session lifecycle
+	// --------------------------------------------------------
+
+	var sessionCancel context.CancelFunc
+	var sessionDone <-chan struct{}
+
+	for {
+		select {
+		case <-ctx.Done():
+			if sessionCancel != nil {
+				sessionCancel()
+			}
+
+			if sessionDone != nil {
+				<-sessionDone
+			}
+
+			return
+
+		case event, ok := <-watcher.Events():
+			if !ok {
+				return
+			}
+
+			switch event {
+			case system.GameStarted:
+				if sessionCancel != nil {
+					continue
+				}
+
+				fmt.Println()
+				fmt.Println("========================================")
+				fmt.Println(" WIZARD101 STARTED")
+				fmt.Println("========================================")
+				fmt.Println()
+
+				sessionCtx, cancelSession :=
+					context.WithCancel(ctx)
+
+				done := make(chan struct{})
+
+				sessionCancel = cancelSession
+				sessionDone = done
+
+				go func() {
+					defer close(done)
+
+					if err := runGameSession(
+						sessionCtx,
+						cfg,
+						presence,
+						gameOverlay,
+					); err != nil &&
+						sessionCtx.Err() == nil {
+
+						log.Printf(
+							"[session] %v",
+							err,
+						)
+					}
+				}()
+
+			case system.GameStopped:
+				if sessionCancel == nil {
+					continue
+				}
+
+				fmt.Println()
+				fmt.Println("========================================")
+				fmt.Println(" WIZARD101 STOPPED")
+				fmt.Println("========================================")
+				fmt.Println()
+
+				// Aktuelle Wizard101-Session beenden.
+				sessionCancel()
+
+				if sessionDone != nil {
+					<-sessionDone
+				}
+
+				sessionCancel = nil
+				sessionDone = nil
+
+				// Discord Presence entfernen.
+				presence.Close()
+
+				// Overlay-State zurücksetzen.
+				//
+				// Dadurch verschwindet insbesondere das
+				// Combat-Widget sofort.
+				gameOverlay.Update(
+					state.Snapshot{},
+				)
+
+				fmt.Println("Waiting for Wizard101...")
+				fmt.Println()
+			}
+		}
+	}
+}
+
+func runGameSession(
+	ctx context.Context,
+	cfg config.Config,
+	presence *discord.Presence,
+	gameOverlay *overlay.Overlay,
+) error {
+	// --------------------------------------------------------
+	// Resolve current log
+	// --------------------------------------------------------
+
+	logPath, ok := logreader.ResolveLogPath(cfg)
+	if !ok {
+		return fmt.Errorf(
+			"could not resolve Wizard101 log path",
+		)
+	}
+
+	fmt.Printf(
+		"Using log: %s\n",
+		logPath,
+	)
+
+	// --------------------------------------------------------
+	// Fresh parser + state for every Wizard101 session
+	// --------------------------------------------------------
+
+	gameParser := parser.New()
+	gameState := state.New()
 
 	// --------------------------------------------------------
 	// Replay
@@ -90,42 +268,39 @@ func main() {
 	}
 
 	fmt.Println()
-	fmt.Println(
-		"Replaying existing log...",
-	)
+	fmt.Println("Replaying existing log...")
 
 	if err := logreader.Replay(
 		logPath,
 		handleReplayLine,
 	); err != nil {
-		log.Fatal(
-			"[main] replay failed: ",
+		return fmt.Errorf(
+			"replay failed: %w",
 			err,
 		)
 	}
 
-	fmt.Println()
-	fmt.Println(
-		"========================================",
-	)
-	fmt.Println(
-		" STATE AFTER REPLAY",
-	)
-	fmt.Println(
-		"========================================",
-	)
+	if ctx.Err() != nil {
+		return nil
+	}
+
+	// --------------------------------------------------------
+	// Initial snapshot
+	// --------------------------------------------------------
 
 	snapshot := gameState.Snapshot()
+
+	fmt.Println()
+	fmt.Println("========================================")
+	fmt.Println(" STATE AFTER REPLAY")
+	fmt.Println("========================================")
 
 	printState(
 		snapshot,
 	)
 
 	// --------------------------------------------------------
-	// Discord erst NACH dem Replay verbinden.
-	//
-	// Dadurch erzeugen historische Events keine unnötigen
-	// Presence-Updates.
+	// Discord
 	// --------------------------------------------------------
 
 	if err := presence.Connect(); err != nil {
@@ -135,47 +310,36 @@ func main() {
 		)
 	} else {
 		presence.Update(
-			context.Background(),
+			ctx,
 			snapshot,
 		)
 	}
 
 	// --------------------------------------------------------
-	// Live Watch
+	// Overlay
+	// --------------------------------------------------------
+
+	gameOverlay.Update(
+		snapshot,
+	)
+
+	// --------------------------------------------------------
+	// Live watch
 	// --------------------------------------------------------
 
 	fmt.Println()
-	fmt.Println(
-		"========================================",
-	)
-	fmt.Println(
-		" LIVE WATCH",
-	)
-	fmt.Println(
-		"========================================",
-	)
+	fmt.Println("========================================")
+	fmt.Println(" LIVE WATCH")
+	fmt.Println("========================================")
 	fmt.Println()
-	fmt.Println(
-		"Watching for new log events...",
-	)
-	fmt.Println(
-		"Press Ctrl+C to stop.",
-	)
+	fmt.Println("Watching for new log events...")
 	fmt.Println()
-
-	ctx, cancel := signal.NotifyContext(
-		context.Background(),
-		os.Interrupt,
-		syscall.SIGTERM,
-	)
-
-	defer cancel()
 
 	reader := logreader.New(
 		logPath,
 	)
 
-	err = reader.Watch(
+	err := reader.Watch(
 		ctx,
 		func(line string) {
 			parsedEvents := gameParser.Feed(line)
@@ -192,27 +356,24 @@ func main() {
 				)
 			}
 
-			// Einen Snapshot NACH Verarbeitung aller Events
-			// dieser Logzeile erstellen.
+			// Ein gemeinsamer Snapshot für alle Consumer.
 			snapshot := gameState.Snapshot()
 
-			// Discord entscheidet selbst, ob sich überhaupt
-			// etwas Presence-Relevantes geändert hat.
+			// Discord Rich Presence.
 			presence.Update(
 				ctx,
 				snapshot,
 			)
 
+			// In-Game Overlay.
+			gameOverlay.Update(
+				snapshot,
+			)
+
 			fmt.Println()
-			fmt.Println(
-				"----------------------------------------",
-			)
-			fmt.Println(
-				" CURRENT STATE",
-			)
-			fmt.Println(
-				"----------------------------------------",
-			)
+			fmt.Println("----------------------------------------")
+			fmt.Println(" CURRENT STATE")
+			fmt.Println("----------------------------------------")
 
 			printState(
 				snapshot,
@@ -222,31 +383,14 @@ func main() {
 		},
 	)
 
-	if err != nil {
-		log.Fatal(
-			"[main] watch failed: ",
+	if err != nil && ctx.Err() == nil {
+		return fmt.Errorf(
+			"watch failed: %w",
 			err,
 		)
 	}
 
-	// --------------------------------------------------------
-	// Final State
-	// --------------------------------------------------------
-
-	fmt.Println()
-	fmt.Println(
-		"========================================",
-	)
-	fmt.Println(
-		" FINAL STATE",
-	)
-	fmt.Println(
-		"========================================",
-	)
-
-	printState(
-		gameState.Snapshot(),
-	)
+	return nil
 }
 
 func printEvent(
