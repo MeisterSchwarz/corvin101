@@ -34,5 +34,5 @@ Please note:
 Build from the terminal:
 
 ```bash
-go build -ldflags="-H=windowsgui -s -w" -o corvin101.exe
+go build -ldflags="-H=windowsgui" -o corvin.exe ./cmd/corvin101
 ```
