@@ -22,20 +22,24 @@ const (
 
 var (
 	procQueryFullProcessImageNameW = kernel32.NewProc("QueryFullProcessImageNameW")
+
+	enumWindowsCallback = syscall.NewCallback(enumWizardWindow)
 )
+
+// findWindowContext wird über lParam an EnumWindows übergeben.
+//
+// Dadurch können wir einen einzigen statischen Callback verwenden,
+// aber trotzdem das Ergebnis eines einzelnen Suchvorgangs speichern.
+type findWindowContext struct {
+	found windows.Handle
+}
 
 // followGameWindow hält das Corvin-Overlay über dem
 // Client-Bereich des Wizard101-Fensters.
-//
-// Position und Größe werden regelmäßig aktualisiert, damit das
-// Overlay auch bei Verschieben oder Skalieren des Spielfensters
-// korrekt sitzt.
 func (w *Window) followGameWindow(ctx context.Context) {
 	ticker := time.NewTicker(followInterval)
 	defer ticker.Stop()
 
-	// Direkt einmal synchronisieren, damit wir nicht erst auf
-	// den ersten Tick warten müssen.
 	w.syncGameWindow()
 
 	for {
@@ -62,7 +66,6 @@ func (w *Window) syncGameWindow() {
 		return
 	}
 
-	// Wizard101-Fenster aktuell nicht gefunden.
 	if gameWindow == 0 {
 		procShowWindow.Call(
 			uintptr(overlayWindow),
@@ -74,51 +77,53 @@ func (w *Window) syncGameWindow() {
 
 	var client rect
 
-	result, _, _ := procGetClientRect.Call(
-		uintptr(gameWindow),
-		uintptr(
-			unsafe.Pointer(
-				&client,
+	result, _, _ :=
+		procGetClientRect.Call(
+			uintptr(gameWindow),
+			uintptr(
+				unsafe.Pointer(
+					&client,
+				),
 			),
-		),
-	)
+		)
 
 	if result == 0 {
 		return
 	}
 
-	// GetClientRect liefert Koordinaten relativ zum
-	// Wizard101-Fenster. Für SetWindowPos benötigen wir
-	// Bildschirmkoordinaten.
 	topLeft := point{
 		X: client.Left,
 		Y: client.Top,
 	}
 
-	result, _, _ = procClientToScreen.Call(
-		uintptr(gameWindow),
-		uintptr(
-			unsafe.Pointer(
-				&topLeft,
+	result, _, _ =
+		procClientToScreen.Call(
+			uintptr(gameWindow),
+			uintptr(
+				unsafe.Pointer(
+					&topLeft,
+				),
 			),
-		),
-	)
+		)
 
 	if result == 0 {
 		return
 	}
 
-	width := client.Right - client.Left
-	height := client.Bottom - client.Top
+	width :=
+		client.Right -
+			client.Left
 
-	if width <= 0 || height <= 0 {
+	height :=
+		client.Bottom -
+			client.Top
+
+	if width <= 0 ||
+		height <= 0 {
+
 		return
 	}
 
-	// Merken, ob sich die Größe geändert hat.
-	//
-	// Das ist wichtig, weil unsere Widget-Positionen und
-	// Skalierung von der aktuellen Client-Größe abhängen.
 	w.mu.Lock()
 
 	sizeChanged :=
@@ -130,11 +135,6 @@ func (w *Window) syncGameWindow() {
 
 	w.mu.Unlock()
 
-	// Overlay exakt über dem Client-Bereich von Wizard101
-	// positionieren.
-	//
-	// SWP_NOACTIVATE verhindert, dass Corvin den Fokus von
-	// Wizard101 übernimmt.
 	procSetWindowPos.Call(
 		uintptr(overlayWindow),
 		hwndTopmost,
@@ -146,8 +146,6 @@ func (w *Window) syncGameWindow() {
 			swpShowWindow,
 	)
 
-	// Bei einer Größenänderung müssen wir neu rendern,
-	// weil sich Position und Scale der Widgets ändern.
 	if sizeChanged {
 		w.render()
 	}
@@ -155,63 +153,82 @@ func (w *Window) syncGameWindow() {
 
 // findWizardWindow sucht nach einem sichtbaren Top-Level-Fenster,
 // das zu einem bekannten Wizard101-Prozess gehört.
+//
+// Wichtig:
+// enumWindowsCallback wird NICHT hier erzeugt.
+// syscall.NewCallback darf nicht bei jedem Poll aufgerufen werden.
 func findWizardWindow() windows.Handle {
-	var found windows.Handle
-
-	callback := syscall.NewCallback(
-		func(
-			hwnd uintptr,
-			lParam uintptr,
-		) uintptr {
-			visible, _, _ :=
-				procIsWindowVisible.Call(
-					hwnd,
-				)
-
-			if visible == 0 {
-				return 1
-			}
-
-			var processID uint32
-
-			procGetWindowThreadProcessId.Call(
-				hwnd,
-				uintptr(
-					unsafe.Pointer(
-						&processID,
-					),
-				),
-			)
-
-			if processID == 0 {
-				return 1
-			}
-
-			processName :=
-				processNameByPID(
-					processID,
-				)
-
-			if !isWizardProcess(
-				processName,
-			) {
-				return 1
-			}
-
-			found =
-				windows.Handle(hwnd)
-
-			// Enumeration abbrechen.
-			return 0
-		},
-	)
+	search := findWindowContext{}
 
 	procEnumWindows.Call(
-		callback,
-		0,
+		enumWindowsCallback,
+		uintptr(
+			unsafe.Pointer(
+				&search,
+			),
+		),
 	)
 
-	return found
+	return search.found
+}
+
+// enumWizardWindow ist der einmalig registrierte Callback
+// für EnumWindows.
+func enumWizardWindow(
+	hwnd uintptr,
+	lParam uintptr,
+) uintptr {
+	if lParam == 0 {
+		return 0
+	}
+
+	search :=
+		(*findWindowContext)(
+			unsafe.Pointer(
+				lParam,
+			),
+		)
+
+	visible, _, _ :=
+		procIsWindowVisible.Call(
+			hwnd,
+		)
+
+	if visible == 0 {
+		return 1
+	}
+
+	var processID uint32
+
+	procGetWindowThreadProcessId.Call(
+		hwnd,
+		uintptr(
+			unsafe.Pointer(
+				&processID,
+			),
+		),
+	)
+
+	if processID == 0 {
+		return 1
+	}
+
+	processName :=
+		processNameByPID(
+			processID,
+		)
+
+	if !isWizardProcess(
+		processName,
+	) {
+		return 1
+	}
+
+	search.found =
+		windows.Handle(hwnd)
+
+	// EnumWindows abbrechen, da wir Wizard101 gefunden haben.
+	return 0
 }
 
 // processNameByPID ermittelt den Dateinamen der ausführbaren
@@ -237,9 +254,10 @@ func processNameByPID(
 	buffer :=
 		make([]uint16, 1024)
 
-	size := uint32(
-		len(buffer),
-	)
+	size :=
+		uint32(
+			len(buffer),
+		)
 
 	result, _, _ :=
 		procQueryFullProcessImageNameW.Call(
@@ -266,7 +284,6 @@ func processNameByPID(
 			buffer[:size],
 		)
 
-	// Sicherheitshalber beide Slash-Varianten vereinheitlichen.
 	path =
 		strings.ReplaceAll(
 			path,
@@ -281,7 +298,8 @@ func processNameByPID(
 		)
 
 	if index >= 0 {
-		path = path[index+1:]
+		path =
+			path[index+1:]
 	}
 
 	return path
