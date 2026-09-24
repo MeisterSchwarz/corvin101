@@ -7,6 +7,10 @@ import (
 	"unsafe"
 
 	"golang.org/x/sys/windows"
+
+	"corvin101/internal/overlay/theme"
+	"corvin101/internal/overlay/widget"
+	"corvin101/internal/overlay/widgets"
 )
 
 const (
@@ -23,8 +27,7 @@ const (
 	dtVCenter    = 0x00000004
 	dtSingleLine = 0x00000020
 
-	fontWeightNormal = 400
-	fontWeightBold   = 700
+	fontWeightBold = 700
 )
 
 func (w *Window) render() {
@@ -33,41 +36,39 @@ func (w *Window) render() {
 	hwnd := w.hwnd
 	width := w.width
 	height := w.height
-	combat := w.combat
+	cursor := w.cursor
+	cursorKnown := w.cursorKnown
+	manager := w.manager
+
+	var entries []widget.Entry
+	if manager != nil {
+		entries = manager.Entries(
+			widget.Viewport{
+				Width:  width,
+				Height: height,
+			},
+			cursor,
+			cursorKnown,
+		)
+	}
 
 	w.mu.RUnlock()
 
-	if hwnd == 0 ||
-		width <= 0 ||
-		height <= 0 {
-
+	if hwnd == 0 || width <= 0 || height <= 0 {
 		return
 	}
 
-	screenDC, _, _ :=
-		user32.NewProc("GetDC").Call(0)
-
+	screenDC, _, _ := user32.NewProc("GetDC").Call(0)
 	if screenDC == 0 {
 		return
 	}
+	defer user32.NewProc("ReleaseDC").Call(0, screenDC)
 
-	defer user32.NewProc("ReleaseDC").Call(
-		0,
-		screenDC,
-	)
-
-	memoryDC, _, _ :=
-		procCreateCompatibleDC.Call(
-			screenDC,
-		)
-
+	memoryDC, _, _ := procCreateCompatibleDC.Call(screenDC)
 	if memoryDC == 0 {
 		return
 	}
-
-	defer procDeleteDC.Call(
-		memoryDC,
-	)
+	defer procDeleteDC.Call(memoryDC)
 
 	info := bitmapInfo{
 		Header: bitmapInfoHeader{
@@ -82,60 +83,40 @@ func (w *Window) render() {
 
 	var pixels unsafe.Pointer
 
-	bitmap, _, _ :=
-		procCreateDIBSection.Call(
-			memoryDC,
-			uintptr(unsafe.Pointer(&info)),
-			dibRGBColors,
-			uintptr(unsafe.Pointer(&pixels)),
-			0,
-			0,
-		)
-
+	bitmap, _, _ := procCreateDIBSection.Call(
+		memoryDC,
+		uintptr(unsafe.Pointer(&info)),
+		dibRGBColors,
+		uintptr(unsafe.Pointer(&pixels)),
+		0,
+		0,
+	)
 	if bitmap == 0 {
 		return
 	}
+	defer procDeleteObject.Call(bitmap)
 
-	defer procDeleteObject.Call(
-		bitmap,
-	)
+	oldBitmap, _, _ := procSelectObject.Call(memoryDC, bitmap)
+	defer procSelectObject.Call(memoryDC, oldBitmap)
 
-	oldBitmap, _, _ :=
-		procSelectObject.Call(
-			memoryDC,
-			bitmap,
-		)
-
-	defer procSelectObject.Call(
-		memoryDC,
-		oldBitmap,
-	)
-
-	// Neue DIBSections sind bereits mit 0 initialisiert:
-	//
-	// A=0 R=0 G=0 B=0
-	//
-	// Das gesamte Overlay ist damit zunächst transparent.
-
-	if combat.Visible {
-		drawCombatWidgetARGB(
-			memoryDC,
-			pixels,
-			width,
-			height,
-			combat.Round,
-		)
+	for _, entry := range entries {
+		switch current := entry.Widget.(type) {
+		case *widgets.Round:
+			drawRoundWidgetARGB(
+				memoryDC,
+				pixels,
+				width,
+				height,
+				entry.Bounds,
+				current.Round(),
+				current.Scale(),
+				current.Highlight(),
+			)
+		}
 	}
 
-	source := point{
-		X: 0,
-		Y: 0,
-	}
-
-	windowSize := size{
-		CX: width,
-		CY: height,
-	}
+	source := point{X: 0, Y: 0}
+	windowSize := size{CX: width, CY: height}
 
 	blend := blendFunction{
 		BlendOp:             acSrcOver,
@@ -147,327 +128,266 @@ func (w *Window) render() {
 		uintptr(hwnd),
 		screenDC,
 		0,
-		uintptr(
-			unsafe.Pointer(
-				&windowSize,
-			),
-		),
+		uintptr(unsafe.Pointer(&windowSize)),
 		memoryDC,
-		uintptr(
-			unsafe.Pointer(
-				&source,
-			),
-		),
+		uintptr(unsafe.Pointer(&source)),
 		0,
-		uintptr(
-			unsafe.Pointer(
-				&blend,
-			),
-		),
+		uintptr(unsafe.Pointer(&blend)),
 		ulwAlpha,
 	)
 }
 
-func drawCombatWidgetARGB(
+func drawRoundWidgetARGB(
 	hdc uintptr,
 	pixels unsafe.Pointer,
 	windowWidth int32,
 	windowHeight int32,
+	bounds widget.Rect,
 	round int,
+	animationScale float64,
+	highlight float64,
 ) {
-	scaleX :=
-		float64(windowWidth) /
-			1920.0
+	scaleX := float64(windowWidth) / 1920.0
+	scaleY := float64(windowHeight) / 1080.0
+	uiScale := min(scaleX, scaleY)
 
-	scaleY :=
-		float64(windowHeight) /
-			1080.0
-
-	scale := min(
-		scaleX,
-		scaleY,
-	)
-
-	if scale < 0.65 {
-		scale = 0.65
+	if uiScale < 0.65 {
+		uiScale = 0.65
 	}
 
-	widgetWidth :=
-		int32(
-			150 * scale,
-		)
-
-	widgetHeight :=
-		int32(
-			58 * scale,
-		)
-
-	centerX :=
-		float64(windowWidth) * 0.5
-
-	topY :=
-		float64(windowHeight) * 0.67
-
-	left :=
-		int32(centerX) -
-			widgetWidth/2
-
-	top :=
-		int32(topY)
-
-	right :=
-		left +
-			widgetWidth
-
-	bottom :=
-		top +
-			widgetHeight
-
-	// Halbtransparenter anthrazitfarbener Hintergrund.
-	fillARGBRect(
-		pixels,
-		windowWidth,
-		windowHeight,
-		left,
-		top,
-		right,
-		bottom,
-		190,
-		24,
-		24,
-		28,
+	fontSize := int32(
+		theme.RoundFontSize *
+			uiScale *
+			animationScale,
 	)
 
-	// Goldene Akzentlinie.
-	accentHeight :=
-		max(
-			int32(2),
-			int32(3*scale),
-		)
+	text := fmt.Sprintf("%d", round)
 
-	fillARGBRect(
-		pixels,
-		windowWidth,
-		windowHeight,
-		left,
-		top,
-		right,
-		top+accentHeight,
-		255,
-		201,
-		168,
-		62,
-	)
-
-	drawRoundText(
+	drawOutlinedText(
 		hdc,
-		left,
-		top,
-		right,
-		bottom,
-		round,
-		scale,
+		pixels,
+		windowWidth,
+		windowHeight,
+		bounds,
+		text,
+		fontSize,
+		uiScale,
+		highlight,
 	)
 }
 
-func drawRoundText(
+func drawOutlinedText(
 	hdc uintptr,
-	left int32,
-	top int32,
-	right int32,
-	bottom int32,
-	round int,
+	pixels unsafe.Pointer,
+	windowWidth int32,
+	windowHeight int32,
+	bounds widget.Rect,
+	text string,
+	fontSize int32,
 	scale float64,
+	highlight float64,
 ) {
-	text :=
-		fmt.Sprintf(
-			"RUNDE  %d",
-			round,
-		)
+	textUTF16, err := windows.UTF16FromString(text)
+	if err != nil || len(textUTF16) == 0 {
+		return
+	}
 
-	textUTF16, err :=
-		windows.UTF16FromString(
-			text,
-		)
-
+	fontName, err := windows.UTF16PtrFromString(theme.DisplayFontFamily)
 	if err != nil {
 		return
 	}
 
-	fontName, err :=
-		windows.UTF16PtrFromString(
-			"Segoe UI",
-		)
-
-	if err != nil {
-		return
-	}
-
-	fontHeight :=
-		int32(
-			-20 * scale,
-		)
-
-	font, _, _ :=
-		procCreateFontW.Call(
-			uintptr(fontHeight),
-			0,
-			0,
-			0,
-			fontWeightBold,
-			0,
-			0,
-			0,
-			1,
-			0,
-			0,
-			5,
-			0,
-			uintptr(
-				unsafe.Pointer(
-					fontName,
-				),
-			),
-		)
-
+	font, _, _ := procCreateFontW.Call(
+		uintptr(-fontSize),
+		0,
+		0,
+		0,
+		fontWeightBold,
+		0,
+		0,
+		0,
+		1,
+		0,
+		0,
+		5,
+		0,
+		uintptr(unsafe.Pointer(fontName)),
+	)
 	if font == 0 {
 		return
 	}
+	defer procDeleteObject.Call(font)
 
-	defer procDeleteObject.Call(
-		font,
+	oldFont, _, _ := procSelectObject.Call(hdc, font)
+	defer procSelectObject.Call(hdc, oldFont)
+
+	procSetBkMode.Call(hdc, transparentBackground)
+
+	outline := max(
+		int32(2),
+		int32(float64(theme.RoundOutlineSize)*scale),
 	)
 
-	oldFont, _, _ :=
-		procSelectObject.Call(
-			hdc,
-			font,
-		)
+	shadowX := int32(float64(theme.RoundShadowX) * scale)
+	shadowY := int32(float64(theme.RoundShadowY) * scale)
 
-	defer procSelectObject.Call(
+	// Schatten.
+	drawTextPass(
 		hdc,
-		oldFont,
+		textUTF16,
+		bounds,
+		shadowX,
+		shadowY,
+		theme.RoundShadowColor,
 	)
 
-	procSetBkMode.Call(
+	// Outline.
+	for y := -outline; y <= outline; y++ {
+		for x := -outline; x <= outline; x++ {
+			if x == 0 && y == 0 {
+				continue
+			}
+
+			if x*x+y*y > outline*outline {
+				continue
+			}
+
+			drawTextPass(
+				hdc,
+				textUTF16,
+				bounds,
+				x,
+				y,
+				theme.RoundOutlineColor,
+			)
+		}
+	}
+
+	// Goldene Zahl. Während des Bounce kurz heller.
+	mainColor := interpolateColor(
+		theme.RoundColor,
+		theme.RoundHighlightColor,
+		highlight,
+	)
+
+	drawTextPass(
 		hdc,
-		transparentBackground,
+		textUTF16,
+		bounds,
+		0,
+		0,
+		mainColor,
 	)
 
+	ensureTextAlpha(
+		pixels,
+		windowWidth,
+		windowHeight,
+		bounds,
+	)
+}
+
+func drawTextPass(
+	hdc uintptr,
+	text []uint16,
+	bounds widget.Rect,
+	offsetX int32,
+	offsetY int32,
+	color theme.RGB,
+) {
 	procSetTextColor.Call(
 		hdc,
-		rgb(
-			255,
-			255,
-			255,
-		),
+		rgb(color.R, color.G, color.B),
 	)
 
 	textRect := rect{
-		Left:   left,
-		Top:    top,
-		Right:  right,
-		Bottom: bottom,
+		Left:   bounds.Left + offsetX,
+		Top:    bounds.Top + offsetY,
+		Right:  bounds.Right + offsetX,
+		Bottom: bounds.Bottom + offsetY,
 	}
 
 	procDrawTextW.Call(
 		hdc,
-		uintptr(
-			unsafe.Pointer(
-				&textUTF16[0],
-			),
-		),
-		uintptr(
-			len(textUTF16)-1,
-		),
-		uintptr(
-			unsafe.Pointer(
-				&textRect,
-			),
-		),
-		dtCenter|
-			dtVCenter|
-			dtSingleLine,
+		uintptr(unsafe.Pointer(&text[0])),
+		uintptr(len(text)-1),
+		uintptr(unsafe.Pointer(&textRect)),
+		dtCenter|dtVCenter|dtSingleLine,
 	)
 }
 
-func fillARGBRect(
+func ensureTextAlpha(
 	pixels unsafe.Pointer,
 	width int32,
 	height int32,
-	left int32,
-	top int32,
-	right int32,
-	bottom int32,
-	alpha byte,
-	red byte,
-	green byte,
-	blue byte,
+	bounds widget.Rect,
 ) {
-	if pixels == nil {
+	if pixels == nil || width <= 0 || height <= 0 {
 		return
 	}
 
-	left = max(left, 0)
-	top = max(top, 0)
+	// Etwas Platz für Outline, Schatten und Bounce.
+	padding := int32(20)
 
-	right = min(
-		right,
-		width,
-	)
+	left := max(bounds.Left-padding, int32(0))
+	top := max(bounds.Top-padding, int32(0))
+	right := min(bounds.Right+padding, width)
+	bottom := min(bounds.Bottom+padding, height)
 
-	bottom = min(
-		bottom,
-		height,
-	)
-
-	if left >= right ||
-		top >= bottom {
-
+	if left >= right || top >= bottom {
 		return
 	}
 
-	// UpdateLayeredWindow erwartet premultiplied alpha.
-	a := uint32(alpha)
-
-	r :=
-		uint32(red) *
-			a /
-			255
-
-	g :=
-		uint32(green) *
-			a /
-			255
-
-	b :=
-		uint32(blue) *
-			a /
-			255
-
-	color :=
-		a<<24 |
-			r<<16 |
-			g<<8 |
-			b
-
-	pixelCount :=
-		int(width * height)
-
-	buffer :=
-		unsafe.Slice(
-			(*uint32)(pixels),
-			pixelCount,
-		)
+	buffer := unsafe.Slice(
+		(*uint32)(pixels),
+		int(width*height),
+	)
 
 	for y := top; y < bottom; y++ {
-		offset :=
-			int(y * width)
+		offset := int(y * width)
 
 		for x := left; x < right; x++ {
-			buffer[offset+int(x)] = color
+			index := offset + int(x)
+			pixel := buffer[index]
+
+			if pixel&0x00FFFFFF == 0 {
+				continue
+			}
+
+			buffer[index] = 0xFF000000 | (pixel & 0x00FFFFFF)
 		}
 	}
+}
+
+func interpolateColor(
+	from theme.RGB,
+	to theme.RGB,
+	t float64,
+) theme.RGB {
+	if t < 0 {
+		t = 0
+	}
+
+	if t > 1 {
+		t = 1
+	}
+
+	return theme.RGB{
+		R: interpolateByte(from.R, to.R, t),
+		G: interpolateByte(from.G, to.G, t),
+		B: interpolateByte(from.B, to.B, t),
+	}
+}
+
+func interpolateByte(
+	from byte,
+	to byte,
+	t float64,
+) byte {
+	value := float64(from) +
+		(float64(to)-float64(from))*t
+
+	return byte(value)
 }
 
 func rgb(

@@ -48,6 +48,7 @@ func (s *Store) HandleEvent(event events.Event) {
 
 	case events.CharacterSelected:
 		s.game.Mode = ModeCharacterSelect
+		s.resetCombat()
 
 	case events.CombatJoined:
 		s.game.Mode = ModeBattle

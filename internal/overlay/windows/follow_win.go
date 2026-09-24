@@ -17,13 +17,28 @@ const (
 
 	processQueryLimitedInformation = 0x1000
 
-	hwndTopmost = ^uintptr(0)
+	// GetWindow constants.
+	gwHwndPrev = 3
+
+	// IsIconic prüft, ob ein Fenster minimiert ist.
 )
 
 var (
-	procQueryFullProcessImageNameW = kernel32.NewProc("QueryFullProcessImageNameW")
+	procQueryFullProcessImageNameW = kernel32.NewProc(
+		"QueryFullProcessImageNameW",
+	)
 
-	enumWindowsCallback = syscall.NewCallback(enumWizardWindow)
+	procGetWindow = user32.NewProc(
+		"GetWindow",
+	)
+
+	procIsIconic = user32.NewProc(
+		"IsIconic",
+	)
+
+	enumWindowsCallback = syscall.NewCallback(
+		enumWizardWindow,
+	)
 )
 
 // findWindowContext wird über lParam an EnumWindows übergeben.
@@ -36,8 +51,29 @@ type findWindowContext struct {
 
 // followGameWindow hält das Corvin-Overlay über dem
 // Client-Bereich des Wizard101-Fensters.
-func (w *Window) followGameWindow(ctx context.Context) {
-	ticker := time.NewTicker(followInterval)
+//
+// Wichtig:
+//
+// Das Overlay wird NICHT global TOPMOST gemacht.
+//
+// Stattdessen wird es relativ zum Wizard101-Fenster in der
+// normalen Windows-Z-Order positioniert.
+//
+// Dadurch:
+//
+//   - bleibt das Overlay über Wizard101,
+//   - bleibt es sichtbar, wenn auf einem anderen Monitor
+//     ein anderes Fenster aktiv ist,
+//   - liegt es aber nicht über Fenstern, die Wizard101
+//     tatsächlich überdecken.
+func (w *Window) followGameWindow(
+	ctx context.Context,
+) {
+	ticker :=
+		time.NewTicker(
+			followInterval,
+		)
+
 	defer ticker.Stop()
 
 	w.syncGameWindow()
@@ -53,23 +89,44 @@ func (w *Window) followGameWindow(ctx context.Context) {
 	}
 }
 
-// syncGameWindow sucht das Wizard101-Fenster und passt das
-// Overlay an dessen Client-Bereich an.
+// syncGameWindow sucht das Wizard101-Fenster und passt
+// Position, Größe und Z-Order des Overlays an.
 func (w *Window) syncGameWindow() {
-	gameWindow := findWizardWindow()
+	gameWindow :=
+		findWizardWindow()
 
 	w.mu.RLock()
-	overlayWindow := w.hwnd
+
+	overlayWindow :=
+		w.hwnd
+
 	w.mu.RUnlock()
 
 	if overlayWindow == 0 {
 		return
 	}
 
+	// Wizard101 wurde nicht gefunden.
 	if gameWindow == 0 {
-		procShowWindow.Call(
-			uintptr(overlayWindow),
-			swHide,
+		hideOverlay(
+			overlayWindow,
+		)
+
+		return
+	}
+
+	// Ein minimiertes Wizard101 besitzt zwar weiterhin ein HWND,
+	// soll aber natürlich kein sichtbares Overlay haben.
+	minimized, _, _ :=
+		procIsIconic.Call(
+			uintptr(
+				gameWindow,
+			),
+		)
+
+	if minimized != 0 {
+		hideOverlay(
+			overlayWindow,
 		)
 
 		return
@@ -79,7 +136,9 @@ func (w *Window) syncGameWindow() {
 
 	result, _, _ :=
 		procGetClientRect.Call(
-			uintptr(gameWindow),
+			uintptr(
+				gameWindow,
+			),
 			uintptr(
 				unsafe.Pointer(
 					&client,
@@ -88,6 +147,10 @@ func (w *Window) syncGameWindow() {
 		)
 
 	if result == 0 {
+		hideOverlay(
+			overlayWindow,
+		)
+
 		return
 	}
 
@@ -98,7 +161,9 @@ func (w *Window) syncGameWindow() {
 
 	result, _, _ =
 		procClientToScreen.Call(
-			uintptr(gameWindow),
+			uintptr(
+				gameWindow,
+			),
 			uintptr(
 				unsafe.Pointer(
 					&topLeft,
@@ -107,6 +172,10 @@ func (w *Window) syncGameWindow() {
 		)
 
 	if result == 0 {
+		hideOverlay(
+			overlayWindow,
+		)
+
 		return
 	}
 
@@ -120,6 +189,10 @@ func (w *Window) syncGameWindow() {
 
 	if width <= 0 ||
 		height <= 0 {
+
+		hideOverlay(
+			overlayWindow,
+		)
 
 		return
 	}
@@ -135,13 +208,52 @@ func (w *Window) syncGameWindow() {
 
 	w.mu.Unlock()
 
+	// ------------------------------------------------------------
+	// Z-Order
+	// ------------------------------------------------------------
+	//
+	// SetWindowPos interpretiert hWndInsertAfter so:
+	//
+	// Das Overlay wird direkt HINTER diesem Fenster einsortiert.
+	//
+	// Wir wollen:
+	//
+	//     Fenster vor Wizard
+	//     Overlay
+	//     Wizard
+	//
+	// Deshalb suchen wir das Fenster, das unmittelbar VOR Wizard
+	// liegt, und setzen unser Overlay dahinter.
+	//
+	// Falls Wizard bereits ganz oben in der normalen Z-Order liegt,
+	// gibt es kein vorheriges Fenster. In diesem Fall verwenden wir
+	// Wizard selbst als InsertAfter-Fenster und korrigieren danach
+	// gegebenenfalls die Reihenfolge.
+	insertAfter :=
+		findWindowDirectlyAbove(
+			gameWindow,
+			overlayWindow,
+		)
+
 	procSetWindowPos.Call(
-		uintptr(overlayWindow),
-		hwndTopmost,
-		uintptr(topLeft.X),
-		uintptr(topLeft.Y),
-		uintptr(width),
-		uintptr(height),
+		uintptr(
+			overlayWindow,
+		),
+		uintptr(
+			insertAfter,
+		),
+		uintptr(
+			topLeft.X,
+		),
+		uintptr(
+			topLeft.Y,
+		),
+		uintptr(
+			width,
+		),
+		uintptr(
+			height,
+		),
 		swpNoActivate|
 			swpShowWindow,
 	)
@@ -151,14 +263,78 @@ func (w *Window) syncGameWindow() {
 	}
 }
 
+// findWindowDirectlyAbove sucht das nächste Fenster oberhalb
+// von Wizard101.
+//
+// Unser eigenes Overlay wird dabei übersprungen.
+//
+// Das Ergebnis wird als hWndInsertAfter für SetWindowPos
+// verwendet.
+func findWindowDirectlyAbove(
+	gameWindow windows.Handle,
+	overlayWindow windows.Handle,
+) windows.Handle {
+	current :=
+		gameWindow
+
+	for {
+		previous, _, _ :=
+			procGetWindow.Call(
+				uintptr(
+					current,
+				),
+				gwHwndPrev,
+			)
+
+		if previous == 0 {
+			// Wizard ist bereits ganz oben.
+			//
+			// In diesem Fall positionieren wir das Overlay
+			// relativ zu Wizard selbst.
+			return gameWindow
+		}
+
+		previousWindow :=
+			windows.Handle(
+				previous,
+			)
+
+		// Unser eigenes Overlay darf nicht als Referenz
+		// verwendet werden.
+		if previousWindow ==
+			overlayWindow {
+
+			current =
+				previousWindow
+
+			continue
+		}
+
+		return previousWindow
+	}
+}
+
+func hideOverlay(
+	overlayWindow windows.Handle,
+) {
+	procShowWindow.Call(
+		uintptr(
+			overlayWindow,
+		),
+		swHide,
+	)
+}
+
 // findWizardWindow sucht nach einem sichtbaren Top-Level-Fenster,
 // das zu einem bekannten Wizard101-Prozess gehört.
 //
 // Wichtig:
+//
 // enumWindowsCallback wird NICHT hier erzeugt.
 // syscall.NewCallback darf nicht bei jedem Poll aufgerufen werden.
 func findWizardWindow() windows.Handle {
-	search := findWindowContext{}
+	search :=
+		findWindowContext{}
 
 	procEnumWindows.Call(
 		enumWindowsCallback,
@@ -225,7 +401,9 @@ func enumWizardWindow(
 	}
 
 	search.found =
-		windows.Handle(hwnd)
+		windows.Handle(
+			hwnd,
+		)
 
 	// EnumWindows abbrechen, da wir Wizard101 gefunden haben.
 	return 0
@@ -252,16 +430,23 @@ func processNameByPID(
 	)
 
 	buffer :=
-		make([]uint16, 1024)
+		make(
+			[]uint16,
+			1024,
+		)
 
 	size :=
 		uint32(
-			len(buffer),
+			len(
+				buffer,
+			),
 		)
 
 	result, _, _ :=
 		procQueryFullProcessImageNameW.Call(
-			uintptr(handle),
+			uintptr(
+				handle,
+			),
 			0,
 			uintptr(
 				unsafe.Pointer(
