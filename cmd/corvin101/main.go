@@ -10,6 +10,7 @@ import (
 	"syscall"
 
 	"corvin101/internal/config"
+	"corvin101/internal/data/enemies"
 	"corvin101/internal/data/zones"
 	"corvin101/internal/game/events"
 	"corvin101/internal/game/parser"
@@ -43,20 +44,20 @@ func main() {
 		syscall.SIGTERM,
 	)
 	defer cancel()
+
 	// --------------------------------------------------------
 	// Tray
 	// --------------------------------------------------------
-	tray :=
-		system.NewTray(
-			cancel,
-		)
+
+	tray := system.NewTray(
+		cancel,
+	)
 
 	go func() {
-		if err :=
-			tray.Run(
-				ctx,
-				"public/corvin.ico",
-			); err != nil &&
+		if err := tray.Run(
+			ctx,
+			"public/corvin.ico",
+		); err != nil &&
 			ctx.Err() == nil {
 
 			log.Printf(
@@ -79,7 +80,7 @@ func main() {
 	}
 
 	// --------------------------------------------------------
-	// Zone data
+	// Game data
 	// --------------------------------------------------------
 
 	restClient := rest.New()
@@ -91,6 +92,15 @@ func main() {
 	zoneRepository := zones.NewRepository(
 		"de",
 		zoneLoader,
+	)
+
+	enemyLoader := enemies.NewRemoteLoader(
+		restClient,
+	)
+
+	enemyRepository := enemies.NewRepository(
+		"de",
+		enemyLoader,
 	)
 
 	// --------------------------------------------------------
@@ -107,7 +117,9 @@ func main() {
 	// Overlay
 	// --------------------------------------------------------
 
-	overlayWindow := overlaywindows.New()
+	overlayWindow := overlaywindows.New(
+		enemyRepository,
+	)
 
 	gameOverlay := overlay.New(
 		overlayWindow,
@@ -216,7 +228,6 @@ func main() {
 				fmt.Println("========================================")
 				fmt.Println()
 
-				// Aktuelle Wizard101-Session beenden.
 				sessionCancel()
 
 				if sessionDone != nil {
@@ -226,13 +237,8 @@ func main() {
 				sessionCancel = nil
 				sessionDone = nil
 
-				// Discord Presence entfernen.
 				presence.Close()
 
-				// Overlay-State zurücksetzen.
-				//
-				// Dadurch verschwindet insbesondere das
-				// Combat-Widget sofort.
 				gameOverlay.Update(
 					state.Snapshot{},
 				)

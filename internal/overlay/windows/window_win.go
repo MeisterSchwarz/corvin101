@@ -11,6 +11,7 @@ import (
 
 	"golang.org/x/sys/windows"
 
+	"corvin101/internal/data/enemies"
 	"corvin101/internal/game/state"
 	"corvin101/internal/overlay/widget"
 	"corvin101/internal/overlay/widgets"
@@ -200,31 +201,24 @@ var (
 //   - Rendering
 //   - Wizard101 Window Tracking
 type Window struct {
-	mu sync.RWMutex
+	mu       sync.RWMutex
+	updateMu sync.Mutex
 
 	hwnd windows.Handle
 
 	width  int32
 	height int32
 
-	// Zentrale Registry aller Overlay-Widgets.
 	manager *widget.Manager
 
-	// Referenz auf das Round/Round-Widget.
-	//
-	// Der Manager besitzt die eigentliche Widget-Liste.
-	// Die Referenz ist praktisch, falls Windows-spezifischer
-	// Code später gezielt auf dieses Widget zugreifen muss.
-	round *widgets.Round
+	round           *widgets.Round
+	enemyAffinities *widgets.EnemyAffinities
 
-	// Cursorposition relativ zum Overlay bzw.
-	// Wizard101-Client.
-	//
-	// Sie wird in input_win.go über GetCursorPos +
-	// ScreenToClient ermittelt.
-	cursor widget.Point
-
+	cursor      widget.Point
 	cursorKnown bool
+
+	lastSnapshot    state.Snapshot
+	hasLastSnapshot bool
 }
 
 // point entspricht Win32 POINT.
@@ -316,35 +310,93 @@ var activeWindow *Window
 //
 // Neue Widgets werden perspektivisch einfach hier bzw.
 // über eine eigene Widget-Registry dem Manager hinzugefügt.
-func New() *Window {
+func New(
+	enemyRepository *enemies.Repository,
+) *Window {
+	w := &Window{}
+
 	round :=
 		widgets.NewRound()
+
+	enemyAffinities :=
+		widgets.NewEnemyAffinities(
+			enemyRepository,
+			w.invalidate,
+		)
 
 	manager :=
 		widget.NewManager(
 			round,
+			enemyAffinities,
 		)
 
-	return &Window{
-		manager: manager,
-		round:   round,
-	}
+	w.manager = manager
+	w.round = round
+	w.enemyAffinities = enemyAffinities
+
+	return w
 }
 
 // Update reicht den aktuellen Game-State an alle Widgets
 // weiter und rendert anschließend einen neuen Frame.
+//
+// updateMu serialisiert diesen Pfad mit invalidate().
+// Dadurch kann der WidgetManager niemals gleichzeitig
+// von einem normalen State-Update und einem asynchronen
+// Widget-Invalidation-Callback aktualisiert werden.
 func (w *Window) Update(
 	snapshot state.Snapshot,
 ) {
+	w.updateMu.Lock()
+	defer w.updateMu.Unlock()
+
 	w.mu.Lock()
 
-	if w.manager != nil {
-		w.manager.Update(
+	w.lastSnapshot = snapshot
+	w.hasLastSnapshot = true
+
+	manager := w.manager
+
+	w.mu.Unlock()
+
+	if manager != nil {
+		manager.Update(
 			snapshot,
 		)
 	}
 
-	w.mu.Unlock()
+	w.render()
+}
+
+// invalidate baut die Widgets aus dem zuletzt bekannten
+// Game-State erneut auf.
+//
+// Das wird z.B. benötigt, wenn Enemy-Daten asynchron geladen
+// wurden und dadurch neue Informationen verfügbar sind,
+// obwohl sich der eigentliche Game-State nicht geändert hat.
+func (w *Window) invalidate() {
+	w.updateMu.Lock()
+	defer w.updateMu.Unlock()
+
+	w.mu.RLock()
+
+	if !w.hasLastSnapshot {
+		w.mu.RUnlock()
+		return
+	}
+
+	snapshot := w.lastSnapshot
+	manager := w.manager
+
+	w.mu.RUnlock()
+
+	if manager == nil {
+		return
+	}
+
+	manager.Update(
+		snapshot,
+	)
 
 	w.render()
 }

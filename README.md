@@ -40,7 +40,7 @@ Currently displayed:
 
 ### 🌍 Localized Game Data
 
-World and zone information is loaded from the separate **corvin-data** repository.
+World and zone information is loaded from the separate **RavenDex** repository.
 
 Corvin:
 
@@ -81,7 +81,7 @@ Support for additional languages is planned, allowing Corvin's game data and Ric
 
 Game data is **not bundled** with Corvin.
 
-World metadata, zone information and translations are downloaded as needed from the separate **ravendex-data** repository.
+World metadata, zone information and translations are downloaded as needed from the separate **[RavenDex](https://github.com/MeisterSchwarz/RavenDex)** repository.
 
 Loaded worlds are kept in memory for the duration of the session, avoiding unnecessary network requests.
 
@@ -106,7 +106,7 @@ Corvin processes Wizard101 log data locally.
 Network communication is limited to:
 
 - Discord Rich Presence
-- Downloading game data from ravendex-data
+- Downloading game data from RavenDex
 
 No user account is required.
 
