@@ -125,7 +125,13 @@ func (w *EnemyAffinities) Update(
 
 	w.mu.RLock()
 
-	for slot, participant := range participants {
+	for _, participant := range participants {
+		if participant.SubCircle < 0 ||
+			participant.SubCircle >= maxEnemyAffinitySlots {
+
+			continue
+		}
+
 		info, ok :=
 			w.loaded[participant.MobID]
 
@@ -144,7 +150,7 @@ func (w *EnemyAffinities) Update(
 		entries = append(
 			entries,
 			EnemyAffinityEntry{
-				Slot:      slot,
+				Slot:      participant.SubCircle,
 				SubCircle: participant.SubCircle,
 				MobID:     participant.MobID,
 				Name:      info.Name,
