@@ -498,10 +498,22 @@ func (s *Store) applyDuelSnapshot(
 			snapshot.ClientDuelID
 	}
 
+	// Der DEBUGDUMPDUEL beschreibt die aktuell vorhandenen
+	// Teilnehmer. Deshalb merken wir uns alle IDs, die im
+	// Snapshot tatsächlich noch vorkommen.
+	present :=
+		make(
+			map[string]struct{},
+			len(snapshot.Participants),
+		)
+
 	for _, incoming := range snapshot.Participants {
 		if incoming.ID == "" {
 			continue
 		}
+
+		present[incoming.ID] =
+			struct{}{}
 
 		participant, ok :=
 			s.combat.Participants[incoming.ID]
@@ -536,6 +548,36 @@ func (s *Store) applyDuelSnapshot(
 				incoming.SubCircle,
 			)
 		}
+	}
+
+	// Alles, was vorher im Combat-State existierte,
+	// aber im vollständigen Duel-Snapshot nicht mehr
+	// vorkommt, ist nicht mehr Teil des Duels.
+	for participantID, participant := range s.combat.Participants {
+
+		if _, ok := present[participantID]; ok {
+			continue
+		}
+
+		// Auch den SC-Index sauber entfernen.
+		if participant != nil &&
+			participant.SubCircle >= 0 {
+
+			if mappedID, ok :=
+				s.combat.ParticipantBySubCircle[participant.SubCircle]; ok &&
+				mappedID == participantID {
+
+				delete(
+					s.combat.ParticipantBySubCircle,
+					participant.SubCircle,
+				)
+			}
+		}
+
+		delete(
+			s.combat.Participants,
+			participantID,
+		)
 	}
 }
 

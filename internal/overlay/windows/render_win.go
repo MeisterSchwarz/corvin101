@@ -297,7 +297,7 @@ func drawEnemyAffinityGroups(
 		return
 	}
 
-	columnWidth := int32(42.0 * scale)
+	columnWidth := int32(52.0 * scale)
 	contentWidth := columnWidth * groupCount
 
 	if contentWidth > availableWidth {
