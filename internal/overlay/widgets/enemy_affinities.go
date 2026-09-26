@@ -100,6 +100,7 @@ func (w *EnemyAffinities) Update(
 		)
 
 		w.ensureLoaded(
+			snapshot.Game.ZoneKey,
 			participant.MobID,
 		)
 	}
@@ -216,9 +217,11 @@ func (w *EnemyAffinities) Entries() []EnemyAffinityEntry {
 }
 
 func (w *EnemyAffinities) ensureLoaded(
+	zoneKey string,
 	mobID string,
 ) {
-	if mobID == "" ||
+	if zoneKey == "" ||
+		mobID == "" ||
 		w.repository == nil {
 
 		return
@@ -246,21 +249,25 @@ func (w *EnemyAffinities) ensureLoaded(
 	w.mu.Unlock()
 
 	go w.load(
+		zoneKey,
 		mobID,
 	)
 }
 
 func (w *EnemyAffinities) load(
+	zoneKey string,
 	mobID string,
 ) {
 	info, found, err :=
 		w.repository.Resolve(
 			context.Background(),
+			zoneKey,
 			mobID,
 		)
 
 	log.Printf(
-		"[affinity] resolved mob=%q found=%v name=%q affinities=%v err=%v",
+		"[affinity] resolved zone=%q mob=%q found=%v name=%q affinities=%v err=%v",
+		zoneKey,
 		mobID,
 		found,
 		info.Name,
@@ -279,8 +286,9 @@ func (w *EnemyAffinities) load(
 		w.mu.Unlock()
 
 		log.Printf(
-			"[overlay] resolve enemy %q: %v",
+			"[overlay] resolve enemy %q in zone %q: %v",
 			mobID,
+			zoneKey,
 			err,
 		)
 
@@ -299,11 +307,6 @@ func (w *EnemyAffinities) load(
 
 	w.mu.Unlock()
 
-	// erst NACH Unlock.
-	//
-	// invalidate() führt EnemyAffinities.Update() erneut aus.
-	// Würden wir den Widget-Lock hier noch halten, gäbe es
-	// einen Deadlock.
 	if invalidate != nil {
 		invalidate()
 	}
@@ -383,6 +386,7 @@ func groupAffinities(
 		enemies.SchoolMoon:    8,
 		enemies.SchoolStar:    9,
 		enemies.SchoolShadow:  10,
+		enemies.SchoolAny:     11,
 	}
 
 	result := make(

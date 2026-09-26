@@ -19,6 +19,7 @@ const (
 	SchoolMoon    School = "moon"
 	SchoolStar    School = "star"
 	SchoolShadow  School = "shadow"
+	SchoolAny     School = "any"
 )
 
 type EnemyInfo struct {

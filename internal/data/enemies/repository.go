@@ -44,14 +44,17 @@ func NewRepository(
 
 func (r *Repository) Resolve(
 	ctx context.Context,
+	zoneKey string,
 	mobID string,
 ) (EnemyInfo, bool, error) {
-	if mobID == "" {
+	if zoneKey == "" ||
+		mobID == "" {
+
 		return EnemyInfo{}, false, nil
 	}
 
 	worldKey := zones.WorldKey(
-		mobID,
+		zoneKey,
 	)
 
 	if worldKey == "" {
@@ -168,7 +171,6 @@ func (r *Repository) loadWorld(
 	r.mu.Lock()
 
 	for mobID, info := range enemyInfos {
-
 		r.enemies[mobID] = info
 	}
 
@@ -196,7 +198,6 @@ func cloneEnemyAffinities(
 	)
 
 	for school, value := range source {
-
 		result[school] = value
 	}
 

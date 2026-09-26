@@ -330,9 +330,29 @@ func (r *Repository) loadWorld(
 		if _, exists :=
 			coreFile.Zones[zoneKey]; !exists {
 
+			for coreKey := range coreFile.Zones {
+				if strings.Contains(coreKey, "PageEvent") {
+					log.Printf(
+						"[zones] CORE KEY: %q bytes=% x",
+						coreKey,
+						[]byte(coreKey),
+					)
+				}
+			}
+
+			for translationKey := range translations {
+				if strings.Contains(translationKey, "PageEvent") {
+					log.Printf(
+						"[zones] TRANSLATION KEY: %q bytes=% x",
+						translationKey,
+						[]byte(translationKey),
+					)
+				}
+			}
 			log.Printf(
-				"[zones] translation without core zone: %s",
+				"[zones] translation without core zone: %q bytes=% x",
 				zoneKey,
+				[]byte(zoneKey),
 			)
 		}
 	}

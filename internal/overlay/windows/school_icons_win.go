@@ -44,6 +44,7 @@ func loadSchoolIcons() {
 				enemies.SchoolMoon:    "moon.png",
 				enemies.SchoolStar:    "star.png",
 				enemies.SchoolShadow:  "shadow.png",
+				enemies.SchoolAny:     "any.png",
 			}
 
 			for school, filename := range paths {
