@@ -3,6 +3,8 @@ package enemies
 import (
 	"context"
 	"log"
+	"sort"
+	"strings"
 	"sync"
 
 	"corvin101/internal/data/zones"
@@ -20,6 +22,7 @@ type Repository struct {
 	loader   *RemoteLoader
 
 	enemies map[string]EnemyInfo
+	worlds  map[string]map[string]EnemyInfo
 
 	worldLoads map[string]*worldLoad
 }
@@ -31,6 +34,7 @@ func NewRepository(
 	return &Repository{
 		language: language,
 		loader:   loader,
+		worlds:   make(map[string]map[string]EnemyInfo),
 
 		enemies: make(
 			map[string]EnemyInfo,
@@ -103,6 +107,13 @@ func (r *Repository) ensureWorld(
 			)
 		},
 	)
+	if load.err != nil {
+		r.mu.Lock()
+		if r.worldLoads[worldKey] == load {
+			delete(r.worldLoads, worldKey)
+		}
+		r.mu.Unlock()
+	}
 
 	return load.err
 }
@@ -132,7 +143,7 @@ func (r *Repository) loadWorld(
 		translation, translated :=
 			translations[mobID]
 
-		name := "???"
+		name := mobID
 
 		if translated &&
 			translation.Name != "" {
@@ -169,6 +180,7 @@ func (r *Repository) loadWorld(
 	}
 
 	r.mu.Lock()
+	r.worlds[worldKey] = enemyInfos
 
 	for mobID, info := range enemyInfos {
 		r.enemies[mobID] = info
@@ -183,6 +195,36 @@ func (r *Repository) loadWorld(
 	)
 
 	return nil
+}
+
+type WorldEnemy struct {
+	Key string
+	EnemyInfo
+}
+
+// ListWorld returns only enemies registered in this world's core file.
+func (r *Repository) ListWorld(ctx context.Context, worldKey string) ([]WorldEnemy, error) {
+	if worldKey == "" {
+		return nil, nil
+	}
+	if err := r.ensureWorld(ctx, worldKey); err != nil {
+		return nil, err
+	}
+	r.mu.RLock()
+	result := make([]WorldEnemy, 0, len(r.worlds[worldKey]))
+	for key, info := range r.worlds[worldKey] {
+		info.Affinities = cloneEnemyAffinities(info.Affinities)
+		result = append(result, WorldEnemy{Key: key, EnemyInfo: info})
+	}
+	r.mu.RUnlock()
+	sort.Slice(result, func(i, j int) bool {
+		a, b := strings.ToLower(result[i].Name), strings.ToLower(result[j].Name)
+		if a == b {
+			return result[i].Key < result[j].Key
+		}
+		return a < b
+	})
+	return result, nil
 }
 
 func cloneEnemyAffinities(

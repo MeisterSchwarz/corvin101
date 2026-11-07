@@ -132,6 +132,9 @@ func (s *Store) handleCombatEvent(event events.Event) {
 	case events.ParticipantMapped:
 		s.handleParticipantMapped(event)
 
+	case events.ParticipantRemoved:
+		s.handleParticipantRemoved(event)
+
 	case events.DuelSnapshotReceived:
 		if event.Snapshot != nil {
 			s.applyDuelSnapshot(*event.Snapshot)
@@ -142,7 +145,20 @@ func (s *Store) handleCombatEvent(event events.Event) {
 	}
 }
 
+func (s *Store) ensureCombatDuel(id string) {
+	if id == "" {
+		return
+	}
+	if s.combat.ClientDuelID != "" && s.combat.ClientDuelID != id {
+		s.resetCombat()
+	}
+	s.combat.ClientDuelID = id
+}
+
 func (s *Store) handleCombatJoined(event events.Event) {
+	if event.Combat != nil {
+		s.ensureCombatDuel(event.Combat.ClientDuelID)
+	}
 	s.combat.Active = true
 
 	if s.combat.StartedAt.IsZero() {
@@ -159,8 +175,13 @@ func (s *Store) handleCombatPhaseChanged(event events.Event) {
 		return
 	}
 
+	s.ensureCombatDuel(event.Combat.ClientDuelID)
 	previousPhase := s.combat.Phase
 	nextPhase := event.Combat.Phase
+	if nextPhase == events.PhaseEnded {
+		s.resetCombat()
+		return
+	}
 
 	s.combat.Active = true
 	s.combat.Phase = nextPhase
@@ -181,6 +202,7 @@ func (s *Store) handleCombatVictory(event events.Event) {
 		return
 	}
 
+	s.ensureCombatDuel(event.Combat.ClientDuelID)
 	s.combat.Active = true
 	s.combat.Phase = events.PhaseVictory
 
@@ -286,6 +308,7 @@ func (s *Store) handleParticipantAdded(event events.Event) {
 		return
 	}
 
+	s.ensureCombatDuel(event.Participant.ClientDuelID)
 	incoming := event.Participant.Participant
 
 	if incoming.ID == "" {
@@ -321,6 +344,7 @@ func (s *Store) handleParticipantMapped(event events.Event) {
 	}
 
 	mapping := event.ParticipantMapping
+	s.ensureCombatDuel(mapping.ClientDuelID)
 
 	if mapping.ParticipantID == "" || mapping.SubCircle < 0 {
 		return
@@ -347,6 +371,46 @@ func (s *Store) handleParticipantMapped(event events.Event) {
 	}
 }
 
+// MSG_CombatRemove enthält nur den Namen, keine Participant-ID.
+// Bei mehreren identischen MobIDs ist das Entfernen mehrdeutig.
+func (s *Store) handleParticipantRemoved(event events.Event) {
+	if event.Participant == nil {
+		return
+	}
+	s.ensureCombatDuel(event.Participant.ClientDuelID)
+	name := event.Participant.RawName
+	if name == "" {
+		return
+	}
+	var match *ParticipantState
+	for _, p := range s.combat.Participants {
+		if name == "Local Player" {
+			if p.Kind != events.ParticipantLocalPlayer {
+				continue
+			}
+		} else if name == "Non-local Player" {
+			if p.Kind != events.ParticipantOtherPlayer {
+				continue
+			}
+		} else if p.MobID != name {
+			continue
+		}
+		if match != nil {
+			return // Nicht eindeutig.
+		}
+		match = p
+	}
+	if match == nil {
+		return
+	}
+	delete(s.combat.Participants, match.ID)
+	if match.SubCircle >= 0 {
+		if s.combat.ParticipantBySubCircle[match.SubCircle] == match.ID {
+			delete(s.combat.ParticipantBySubCircle, match.SubCircle)
+		}
+	}
+}
+
 func (s *Store) assignSubCircle(
 	participant *ParticipantState,
 	subCircle int,
@@ -364,8 +428,12 @@ func (s *Store) assignSubCircle(
 		)
 	}
 
+	if previousID, exists := s.combat.ParticipantBySubCircle[subCircle]; exists && previousID != participant.ID {
+		if previous, ok := s.combat.Participants[previousID]; ok && previous.SubCircle == subCircle {
+			previous.SubCircle = -1
+		}
+	}
 	participant.SubCircle = subCircle
-
 	s.combat.ParticipantBySubCircle[subCircle] = participant.ID
 }
 
@@ -493,27 +561,16 @@ func boolPointersEqual(
 func (s *Store) applyDuelSnapshot(
 	snapshot events.DuelSnapshot,
 ) {
+	s.ensureCombatDuel(snapshot.ClientDuelID)
 	if snapshot.ClientDuelID != "" {
 		s.combat.ClientDuelID =
 			snapshot.ClientDuelID
 	}
 
-	// Der DEBUGDUMPDUEL beschreibt die aktuell vorhandenen
-	// Teilnehmer. Deshalb merken wir uns alle IDs, die im
-	// Snapshot tatsächlich noch vorkommen.
-	present :=
-		make(
-			map[string]struct{},
-			len(snapshot.Participants),
-		)
-
 	for _, incoming := range snapshot.Participants {
 		if incoming.ID == "" {
 			continue
 		}
-
-		present[incoming.ID] =
-			struct{}{}
 
 		participant, ok :=
 			s.combat.Participants[incoming.ID]
@@ -548,36 +605,6 @@ func (s *Store) applyDuelSnapshot(
 				incoming.SubCircle,
 			)
 		}
-	}
-
-	// Alles, was vorher im Combat-State existierte,
-	// aber im vollständigen Duel-Snapshot nicht mehr
-	// vorkommt, ist nicht mehr Teil des Duels.
-	for participantID, participant := range s.combat.Participants {
-
-		if _, ok := present[participantID]; ok {
-			continue
-		}
-
-		// Auch den SC-Index sauber entfernen.
-		if participant != nil &&
-			participant.SubCircle >= 0 {
-
-			if mappedID, ok :=
-				s.combat.ParticipantBySubCircle[participant.SubCircle]; ok &&
-				mappedID == participantID {
-
-				delete(
-					s.combat.ParticipantBySubCircle,
-					participant.SubCircle,
-				)
-			}
-		}
-
-		delete(
-			s.combat.Participants,
-			participantID,
-		)
 	}
 }
 

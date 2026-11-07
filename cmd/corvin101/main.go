@@ -119,6 +119,7 @@ func main() {
 
 	overlayWindow := overlaywindows.New(
 		enemyRepository,
+		zoneRepository,
 	)
 
 	gameOverlay := overlay.New(
@@ -298,10 +299,11 @@ func runGameSession(
 	fmt.Println()
 	fmt.Println("Replaying existing log...")
 
-	if err := logreader.Replay(
+	replayOffset, err := logreader.ReplayWithOffset(
 		logPath,
 		handleReplayLine,
-	); err != nil {
+	)
+	if err != nil {
 		return fmt.Errorf(
 			"replay failed: %w",
 			err,
@@ -365,9 +367,9 @@ func runGameSession(
 
 	reader := logreader.New(
 		logPath,
-	)
+	).FromOffset(replayOffset)
 
-	err := reader.Watch(
+	err = reader.Watch(
 		ctx,
 		func(line string) {
 			parsedEvents := gameParser.Feed(line)

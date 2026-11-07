@@ -27,15 +27,13 @@ type translatedWorld struct {
 	Name string `json:"name"`
 }
 
-type coreZoneFile struct {
-	Zones map[string]coreZone `json:"zones"`
-}
+type coreZoneFile map[string]coreZone
 
 type coreZone struct {
-	Type       string `json:"type,omitempty"`
-	Parent     string `json:"parent,omitempty"`
-	Instance   bool   `json:"instance,omitempty"`
-	Repeatable bool   `json:"repeatable,omitempty"`
+	Type       string `yaml:"type,omitempty"`
+	Parent     string `yaml:"parent,omitempty"`
+	Instance   bool   `yaml:"instance,omitempty"`
+	Repeatable bool   `yaml:"repeatable,omitempty"`
 }
 
 type translatedZoneFile map[string]translatedZone

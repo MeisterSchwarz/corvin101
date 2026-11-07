@@ -106,6 +106,9 @@ func (w *Window) syncGameWindow(
 	}
 
 	gameWindow := resolveWizardWindow(locked)
+	w.mu.Lock()
+	w.gameWindow = gameWindow
+	w.mu.Unlock()
 
 	// Kein Wizard101 verfügbar.
 	if gameWindow == 0 {

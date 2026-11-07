@@ -12,6 +12,7 @@ import (
 	"golang.org/x/sys/windows"
 
 	"corvin101/internal/data/enemies"
+	"corvin101/internal/data/zones"
 	"corvin101/internal/game/state"
 	"corvin101/internal/overlay/widget"
 	"corvin101/internal/overlay/widgets"
@@ -204,7 +205,21 @@ type Window struct {
 	mu       sync.RWMutex
 	updateMu sync.Mutex
 
-	hwnd windows.Handle
+	hwnd            windows.Handle
+	gameWindow      windows.Handle
+	panelOpen       bool
+	panelRepository *enemies.Repository
+	panelWorld      string
+	panelEnemies    []enemies.WorldEnemy
+	panelStatus     string
+	panelLoadFailed bool
+	panelPage       int
+	worldRepository *zones.Repository
+	panelWorlds     []zones.WorldInfo
+	worldMenuOpen   bool
+	worldMenuStatus string
+	worldHeader     widget.Rect
+	panelZone       string
 
 	width  int32
 	height int32
@@ -312,8 +327,9 @@ var activeWindow *Window
 // über eine eigene Widget-Registry dem Manager hinzugefügt.
 func New(
 	enemyRepository *enemies.Repository,
+	worldRepository *zones.Repository,
 ) *Window {
-	w := &Window{}
+	w := &Window{panelRepository: enemyRepository, worldRepository: worldRepository}
 
 	round :=
 		widgets.NewRound()
@@ -358,6 +374,7 @@ func (w *Window) Update(
 	manager := w.manager
 
 	w.mu.Unlock()
+	w.updatePanelWorld(snapshot.Game.ZoneKey)
 
 	if manager != nil {
 		manager.Update(
@@ -421,7 +438,9 @@ func (w *Window) Run(
 		return err
 	}
 
+	arrowCursor, _, _ := user32.NewProc("LoadCursorW").Call(0, 32512) // IDC_ARROW
 	class := wndClassEx{
+		Cursor: windows.Handle(arrowCursor),
 		Size: uint32(
 			unsafe.Sizeof(
 				wndClassEx{},
@@ -551,6 +570,7 @@ func (w *Window) Run(
 	go w.trackCursor(
 		ctx,
 	)
+	go w.loadPanelWorlds(ctx)
 
 	// Context-Abbruch zerstört das Overlay-Fenster.
 	go func() {
@@ -633,6 +653,39 @@ func windowProc(
 	lParam uintptr,
 ) uintptr {
 	switch message {
+	case 0x0020: // WM_SETCURSOR
+		if activeWindow != nil && uint16(lParam) == 1 {
+			activeWindow.updateCursor()
+			activeWindow.mu.RLock()
+			isHeader := activeWindow.panelOpen && activeWindow.worldHeader.Contains(activeWindow.cursor)
+			activeWindow.mu.RUnlock()
+			cursorID := uintptr(32512) // IDC_ARROW
+			if isHeader {
+				cursorID = 32649
+			} // IDC_HAND
+			cursor, _, _ := user32.NewProc("LoadCursorW").Call(0, cursorID)
+			user32.NewProc("SetCursor").Call(cursor)
+			return 1
+		}
+	case 0x0021: // WM_MOUSEACTIVATE: keep keyboard focus in Wizard101.
+		return 3 // MA_NOACTIVATE
+	case 0x0084: // WM_NCHITTEST
+		if activeWindow != nil {
+			p := point{X: int32(int16(lParam & 0xffff)), Y: int32(int16((lParam >> 16) & 0xffff))}
+			procScreenToClient.Call(hwnd, uintptr(unsafe.Pointer(&p)))
+			activeWindow.mu.RLock()
+			inside := activeWindow.panelOpen && panelBounds(activeWindow.width, activeWindow.height).Contains(widget.Point{X: p.X, Y: p.Y})
+			activeWindow.mu.RUnlock()
+			if inside {
+				return 1
+			}
+			return ^uintptr(0) // HTTRANSPARENT
+		}
+	case 0x0201: // WM_LBUTTONDOWN
+		if activeWindow != nil {
+			activeWindow.clickPanel(widget.Point{X: int32(int16(lParam & 0xffff)), Y: int32(int16((lParam >> 16) & 0xffff))})
+		}
+		return 0
 	case wmDestroy:
 		if activeWindow != nil {
 			activeWindow.mu.Lock()

@@ -4,6 +4,8 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+
+	"gopkg.in/yaml.v3"
 )
 
 type FileReader interface {
@@ -110,7 +112,7 @@ func (l *RemoteLoader) LoadWorldZones(
 ) {
 	corePath :=
 		fmt.Sprintf(
-			"core/zones/%s.json",
+			"core/zones/%s.yaml",
 			worldKey,
 		)
 
@@ -155,7 +157,7 @@ func (l *RemoteLoader) LoadWorldZones(
 
 	var coreFile coreZoneFile
 
-	if err := json.Unmarshal(
+	if err := yaml.Unmarshal(
 		coreRaw,
 		&coreFile,
 	); err != nil {

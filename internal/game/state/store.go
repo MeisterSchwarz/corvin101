@@ -44,7 +44,10 @@ func (s *Store) HandleEvent(event events.Event) {
 		}
 
 		s.game.ZoneKey = event.Zone.ZoneKey
-		s.game.Mode = ModeRoaming
+		// ZoneLoaded can occur while a duel is still active.
+		if !s.combat.Active {
+			s.game.Mode = ModeRoaming
+		}
 
 	case events.CharacterSelected:
 		s.game.Mode = ModeCharacterSelect
@@ -52,6 +55,21 @@ func (s *Store) HandleEvent(event events.Event) {
 
 	case events.CombatJoined:
 		s.game.Mode = ModeBattle
+
+	case events.CombatPhaseChanged:
+		if event.Combat != nil && event.Combat.Phase == events.PhaseEnded {
+			// Nur die Phase des aktuell verfolgten Kampfes auswerten.
+			if event.Combat.ClientDuelID == "" ||
+				s.combat.ClientDuelID == "" ||
+				event.Combat.ClientDuelID == s.combat.ClientDuelID {
+				s.game.Mode = ModeRoaming
+			}
+		}
+
+	case events.ParticipantRemoved:
+		if event.Participant != nil && event.Participant.RawName == "Local Player" {
+			s.game.Mode = ModeRoaming
+		}
 
 	case events.CombatFled,
 		events.CombatLeft:

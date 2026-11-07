@@ -3,7 +3,9 @@ package enemies
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
+	"io/fs"
 
 	"gopkg.in/yaml.v3"
 )
@@ -51,6 +53,10 @@ func (l *RemoteLoader) LoadEnemies(
 		ctx,
 		corePath,
 	)
+	if errors.Is(err, fs.ErrNotExist) {
+		corePath = fmt.Sprintf("core/enemies/%s.json", worldKey)
+		coreRaw, err = l.files.ReadFile(ctx, corePath)
+	}
 	if err != nil {
 		return nil, nil, fmt.Errorf(
 			"load %s: %w",
@@ -63,7 +69,7 @@ func (l *RemoteLoader) LoadEnemies(
 		ctx,
 		translationPath,
 	)
-	if err != nil {
+	if err != nil && !errors.Is(err, fs.ErrNotExist) {
 		return nil, nil, fmt.Errorf(
 			"load %s: %w",
 			translationPath,
@@ -85,6 +91,9 @@ func (l *RemoteLoader) LoadEnemies(
 	}
 
 	var translations translatedEnemyFile
+	if errors.Is(err, fs.ErrNotExist) {
+		return coreFile, translations, nil
+	}
 
 	if err := json.Unmarshal(
 		translationRaw,

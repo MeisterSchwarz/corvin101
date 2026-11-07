@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"sort"
 	"strings"
 	"sync"
 )
@@ -30,6 +31,35 @@ type Repository struct {
 type worldLoad struct {
 	once sync.Once
 	err  error
+}
+
+type WorldInfo struct {
+	Key   string
+	Name  string
+	Order int
+}
+
+func (r *Repository) ListWorlds(ctx context.Context) ([]WorldInfo, error) {
+	if err := r.ensureMetadata(ctx); err != nil {
+		return nil, err
+	}
+	r.mu.RLock()
+	defer r.mu.RUnlock()
+	result := make([]WorldInfo, 0, len(r.coreWorlds))
+	for key, core := range r.coreWorlds {
+		name := r.translatedWorlds[key].Name
+		if name == "" {
+			name = key
+		}
+		result = append(result, WorldInfo{Key: key, Name: name, Order: core.Order})
+	}
+	sort.Slice(result, func(i, j int) bool {
+		if result[i].Order == result[j].Order {
+			return result[i].Key < result[j].Key
+		}
+		return result[i].Order < result[j].Order
+	})
+	return result, nil
 }
 
 func NewRepository(
@@ -278,10 +308,10 @@ func (r *Repository) loadWorld(
 	worldZones :=
 		make(
 			map[string]ZoneInfo,
-			len(coreFile.Zones),
+			len(coreFile),
 		)
 
-	for zoneKey, coreData := range coreFile.Zones {
+	for zoneKey, coreData := range coreFile {
 
 		translation, translated :=
 			translations[zoneKey]
@@ -328,9 +358,9 @@ func (r *Repository) loadWorld(
 	for zoneKey := range translations {
 
 		if _, exists :=
-			coreFile.Zones[zoneKey]; !exists {
+			coreFile[zoneKey]; !exists {
 
-			for coreKey := range coreFile.Zones {
+			for coreKey := range coreFile {
 				if strings.Contains(coreKey, "PageEvent") {
 					log.Printf(
 						"[zones] CORE KEY: %q bytes=% x",

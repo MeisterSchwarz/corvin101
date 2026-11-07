@@ -7,46 +7,32 @@ import (
 	"os"
 )
 
-// Replay liest eine bestehende Wizard101-Logdatei vollständig
-// von Anfang bis Ende.
-//
-// Wir verwenden absichtlich bufio.Reader statt bufio.Scanner.
-// Wizard101 kann sehr große einzelne Logzeilen erzeugen.
-// Scanner besitzt dagegen ein Token-Limit und kann deshalb mit
-//
-//	bufio.Scanner: token too long
-//
-// abbrechen.
-func Replay(
-	path string,
-	handler LineHandler,
-) error {
+// Replay keeps the original API for other callers.
+func Replay(path string, handler LineHandler) error {
+	_, err := ReplayWithOffset(path, handler)
+	return err
+}
+
+// ReplayWithOffset returns the last complete-line byte offset.
+// The trailing partial line is left for the live reader.
+func ReplayWithOffset(path string, handler LineHandler) (int64, error) {
 	file, err := os.Open(path)
 	if err != nil {
-		return err
+		return 0, err
 	}
 	defer file.Close()
-
 	reader := bufio.NewReader(file)
-
+	var offset int64
 	for {
-		line, err := reader.ReadString('\n')
-
-		// ReadString kann gleichzeitig Daten UND io.EOF
-		// zurückgeben. Deshalb die letzte unvollständige
-		// Zeile trotzdem noch verarbeiten.
-		if len(line) > 0 {
+		line, readErr := reader.ReadString('\n')
+		if readErr == nil {
+			offset += int64(len(line))
 			handler(line)
-		}
-
-		if err == nil {
 			continue
 		}
-
-		if errors.Is(err, io.EOF) {
-			return nil
+		if errors.Is(readErr, io.EOF) {
+			return offset, nil
 		}
-
-		return err
+		return offset, readErr
 	}
 }

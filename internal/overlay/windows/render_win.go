@@ -39,6 +39,7 @@ func (w *Window) render() {
 	cursor := w.cursor
 	cursorKnown := w.cursorKnown
 	manager := w.manager
+	panelOpen := w.panelOpen
 
 	var entries []widget.Entry
 
@@ -173,6 +174,10 @@ func (w *Window) render() {
 				cursorKnown,
 			)
 		}
+	}
+
+	if panelOpen {
+		w.drawEnemyPanel(memoryDC, pixels, width, height)
 	}
 
 	source := point{

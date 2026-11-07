@@ -433,8 +433,11 @@ func (p *Parser) parseCombatAdd(
 			match[2],
 		)
 
-	p.currentClientDuelID =
-		clientDuelID
+	if p.currentClientDuelID != "" && p.currentClientDuelID != clientDuelID {
+		p.pendingParticipant = nil
+		p.unmappedParticipants = nil
+	}
+	p.currentClientDuelID = clientDuelID
 
 	kind :=
 		events.ParticipantUnknown
@@ -445,6 +448,9 @@ func (p *Parser) parseCombatAdd(
 	case "Local Player":
 		kind =
 			events.ParticipantLocalPlayer
+
+	case "Non-local Player":
+		kind = events.ParticipantOtherPlayer
 
 	default:
 		kind =
@@ -541,7 +547,7 @@ func (p *Parser) parseSubCircle(
 	//
 	// Wir tun das nur, wenn genau ein ungelöster Participant
 	// existiert. Dadurch vermeiden wir Mehrdeutigkeiten.
-	if len(p.unmappedParticipants) == 1 {
+	if len(p.unmappedParticipants) == 1 && p.unmappedParticipants[0].clientDuelID == p.currentClientDuelID {
 		unmapped :=
 			p.unmappedParticipants[0]
 
@@ -612,7 +618,7 @@ func (p *Parser) parseParticipantAdded(
 
 	rawName := ""
 
-	if p.pendingParticipant != nil {
+	if p.pendingParticipant != nil && p.pendingParticipant.clientDuelID == clientDuelID {
 		rawName =
 			p.pendingParticipant.rawName
 

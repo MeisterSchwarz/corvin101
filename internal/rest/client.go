@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"io/fs"
 	"net/http"
 	"strings"
 	"time"
@@ -77,6 +78,9 @@ func (c *Client) ReadFile(
 	}
 
 	defer resp.Body.Close()
+	if resp.StatusCode == http.StatusNotFound {
+		return nil, fmt.Errorf("download %s: %w", filePath, fs.ErrNotExist)
+	}
 
 	if resp.StatusCode !=
 		http.StatusOK {
