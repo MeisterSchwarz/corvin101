@@ -32,6 +32,23 @@ const (
 
 func (w *Window) render() {
 	w.mu.RLock()
+	hwnd := w.hwnd
+	w.mu.RUnlock()
+	if hwnd == 0 || !w.renderPending.CompareAndSwap(false, true) {
+		return
+	}
+	result, _, _ := user32.NewProc("PostMessageW").Call(uintptr(hwnd), wmRender, 0, 0)
+	if result == 0 {
+		w.renderPending.Store(false)
+	}
+}
+
+// Render only on the window thread. Widget updates cannot mutate a frame
+// while it is being drawn, and concurrent requests share one queued frame.
+func (w *Window) renderFrame() {
+	w.updateMu.Lock()
+	defer w.updateMu.Unlock()
+	w.mu.RLock()
 
 	hwnd := w.hwnd
 	width := w.width

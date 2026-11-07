@@ -34,7 +34,6 @@ func (w *Window) trackCursor(
 	// Track the physical key edge so holding Tab only toggles once.
 	keyState, _, _ := procGetAsyncKeyState.Call(0x09)
 	tabWasDown := keyState&0x8000 != 0
-	pageWasDown := map[uintptr]bool{}
 
 	for {
 		select {
@@ -55,12 +54,13 @@ func (w *Window) trackCursor(
 					w.worldMenuOpen = false
 					if opened {
 						w.panelPage = 0
+						w.panelWheelDelta = 0
 					}
 					changed = true
 				}
 				w.mu.Unlock()
 				if changed {
-					w.setPanelMouseInput(opened)
+					w.setPanelMouseInput()
 					if opened {
 						w.mu.RLock()
 						zone := w.panelZone
@@ -70,26 +70,6 @@ func (w *Window) trackCursor(
 				}
 			}
 			tabWasDown = tabDown
-			for _, key := range []uintptr{0x21, 0x22} {
-				state, _, _ := procGetAsyncKeyState.Call(key)
-				down := state&0x8000 != 0
-				if down && !pageWasDown[key] {
-					foreground, _, _ := procGetForegroundWindow.Call()
-					w.mu.Lock()
-					if w.panelOpen && w.gameWindow != 0 && foreground == uintptr(w.gameWindow) {
-						pages := max(1, (len(w.panelEnemies)+panelRows(w.height)-1)/panelRows(w.height))
-						if key == 0x21 {
-							w.panelPage--
-						} else {
-							w.panelPage++
-						}
-						w.panelPage = max(0, min(w.panelPage, pages-1))
-						changed = true
-					}
-					w.mu.Unlock()
-				}
-				pageWasDown[key] = down
-			}
 			if w.updateCursor() || changed {
 				w.render()
 			}

@@ -5,7 +5,9 @@ package windows
 import (
 	"context"
 	"fmt"
+	"runtime"
 	"sync"
+	"sync/atomic"
 	"syscall"
 	"unsafe"
 
@@ -22,7 +24,9 @@ const (
 	overlayClassName = "CorvinOverlayWindow"
 	overlayTitle     = "Corvin Overlay"
 
-	wmDestroy = 0x0002
+	wmDestroy    = 0x0002
+	wmRender     = 0x8001
+	wmPanelInput = 0x8002
 
 	wsPopup = 0x80000000
 
@@ -202,8 +206,9 @@ var (
 //   - Rendering
 //   - Wizard101 Window Tracking
 type Window struct {
-	mu       sync.RWMutex
-	updateMu sync.Mutex
+	renderPending atomic.Bool
+	mu            sync.RWMutex
+	updateMu      sync.Mutex
 
 	hwnd            windows.Handle
 	gameWindow      windows.Handle
@@ -214,12 +219,15 @@ type Window struct {
 	panelStatus     string
 	panelLoadFailed bool
 	panelPage       int
+	panelWheelDelta int
 	worldRepository *zones.Repository
 	panelWorlds     []zones.WorldInfo
 	worldMenuOpen   bool
 	worldMenuStatus string
 	worldHeader     widget.Rect
 	panelZone       string
+	selectedEnemy   string
+	panelCombatIDs  map[string]bool
 
 	width  int32
 	height int32
@@ -375,6 +383,7 @@ func (w *Window) Update(
 
 	w.mu.Unlock()
 	w.updatePanelWorld(snapshot.Game.ZoneKey)
+	w.updatePanelCombat(snapshot)
 
 	if manager != nil {
 		manager.Update(
@@ -423,6 +432,9 @@ func (w *Window) invalidate() {
 func (w *Window) Run(
 	ctx context.Context,
 ) error {
+	// HWND creation and its message loop must stay on the same OS thread.
+	runtime.LockOSThread()
+	defer runtime.UnlockOSThread()
 	loadOverlayFonts()
 	activeWindow = w
 
@@ -584,10 +596,11 @@ func (w *Window) Run(
 		w.mu.RUnlock()
 
 		if currentHWND != 0 {
-			procDestroyWindow.Call(
+			user32.NewProc("PostMessageW").Call(
 				uintptr(
 					currentHWND,
 				),
+				0x0010, 0, 0, // WM_CLOSE, handled by the owning thread.
 			)
 		}
 	}()
@@ -653,14 +666,28 @@ func windowProc(
 	lParam uintptr,
 ) uintptr {
 	switch message {
+	case wmRender:
+		if activeWindow != nil {
+			activeWindow.renderPending.Store(false)
+			activeWindow.renderFrame()
+		}
+		return 0
+	case wmPanelInput:
+		if activeWindow != nil {
+			activeWindow.applyPanelMouseInput()
+		}
+		return 0
 	case 0x0020: // WM_SETCURSOR
 		if activeWindow != nil && uint16(lParam) == 1 {
 			activeWindow.updateCursor()
 			activeWindow.mu.RLock()
 			isHeader := activeWindow.panelOpen && activeWindow.worldHeader.Contains(activeWindow.cursor)
+			previous, next, _ := pageControls(activeWindow.width, activeWindow.height)
+			pages := max(1, (len(activeWindow.panelEnemies)+panelRows(activeWindow.height)-1)/panelRows(activeWindow.height))
+			isPaging := activeWindow.panelOpen && !activeWindow.worldMenuOpen && ((activeWindow.panelPage > 0 && previous.Contains(activeWindow.cursor)) || (activeWindow.panelPage < pages-1 && next.Contains(activeWindow.cursor)))
 			activeWindow.mu.RUnlock()
 			cursorID := uintptr(32512) // IDC_ARROW
-			if isHeader {
+			if isHeader || isPaging {
 				cursorID = 32649
 			} // IDC_HAND
 			cursor, _, _ := user32.NewProc("LoadCursorW").Call(0, cursorID)
@@ -686,6 +713,21 @@ func windowProc(
 			activeWindow.clickPanel(widget.Point{X: int32(int16(lParam & 0xffff)), Y: int32(int16((lParam >> 16) & 0xffff))})
 		}
 		return 0
+	case 0x020A: // WM_MOUSEWHEEL uses screen coordinates and a signed delta.
+		if activeWindow != nil {
+			p := point{X: int32(int16(lParam & 0xffff)), Y: int32(int16((lParam >> 16) & 0xffff))}
+			procScreenToClient.Call(hwnd, uintptr(unsafe.Pointer(&p)))
+			if activeWindow.wheelPanel(widget.Point{X: p.X, Y: p.Y}, int(int16((wParam>>16)&0xffff))) {
+				return 0
+			}
+			activeWindow.mu.RLock()
+			game := activeWindow.gameWindow
+			activeWindow.mu.RUnlock()
+			if game != 0 {
+				user32.NewProc("PostMessageW").Call(uintptr(game), uintptr(message), wParam, lParam)
+				return 0
+			}
+		}
 	case wmDestroy:
 		if activeWindow != nil {
 			activeWindow.mu.Lock()

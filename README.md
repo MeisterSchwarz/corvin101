@@ -3,11 +3,7 @@
 <p><strong>Meet Corvin, your little companion for Wizard101</strong></p>
 
 <p>
-Corvin quietly follows your adventures through the Spiral and keeps your Discord Rich Presence up to date with where you are and what you're doing.
-</p>
-
-<p>
-No interaction required — start Corvin, launch Wizard101, and let him do the rest.
+Corvin follows your adventures through the Spiral with Discord Rich Presence, a combat overlay and an in-game bestiary.
 </p>
 
 <br clear="left">
@@ -38,52 +34,38 @@ Currently displayed:
 - Character selection
 - World-specific artwork
 
-### 🌍 Localized Game Data
+### ⚔️ Battle Overlay
 
-World and zone information is loaded from the separate **RavenDex** repository.
+See the current combat round and known enemy affinities during the planning phase.
 
-Corvin:
+<p align="center">
+  <img src="public/preview_battle.png" width="100%" alt="Battle overlay showing enemy affinities and the current combat round">
+</p>
 
-- Downloads world and zone data only when needed
-- Uses German translations
-- Caches visited worlds for the current session
-- Reuses cached data when you return to a world
+### 📖 Bestiary
+
+Browse enemies by world and click an entry to view its affinities. Current combat enemies are highlighted and listed first.
+
+Open or close with **Tab**, select a world from the title, and turn pages with the **mouse wheel over the list** or the **page buttons**.
+
+<p align="center">
+  <img src="public/preview_bestiary.png" width="100%" alt="Bestiary overlay with the Novus enemy list and selected enemy affinities">
+</p>
 
 ---
 
 ## 🚧 Planned
 
-### 🪄 In-Game Overlay
-
-A lightweight Windows overlay is planned to provide useful information without leaving the game.
-
-Planned features include:
-
-- Current combat round
 - Active buffs and debuffs
 - Enemy drop information
 - Cheat and mechanic information
-
-
-### 🌐 Multi-Language Support
-
-Support for additional languages is planned, allowing Corvin's game data and Rich Presence to match your preferred language.
+- Additional languages
 
 ---
 
 ## 🖥️ Supported Platforms
 
 - Windows
-
----
-
-## 📂 Game Data
-
-Game data is **not bundled** with Corvin.
-
-World metadata, zone information and translations are downloaded as needed from the separate **[RavenDex](https://github.com/MeisterSchwarz/RavenDex)** repository.
-
-Loaded worlds are kept in memory for the duration of the session, avoiding unnecessary network requests.
 
 ---
 

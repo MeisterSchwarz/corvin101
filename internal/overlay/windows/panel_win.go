@@ -9,6 +9,7 @@ import (
 	"io/fs"
 	"log"
 	"sort"
+	"time"
 	"unsafe"
 
 	"corvin101/internal/data/enemies"
@@ -40,6 +41,9 @@ func (w *Window) selectPanelWorld(world string) {
 		return
 	}
 	w.panelWorld, w.panelPage = world, 0
+	w.panelWheelDelta = 0
+	w.panelCombatIDs = combatEnemyIDs(w.lastSnapshot, world)
+	w.selectedEnemy = ""
 	w.panelLoadFailed = false
 	w.panelEnemies = nil
 	w.panelStatus = "Warte auf die aktuelle Welt ..."
@@ -79,23 +83,17 @@ func panelRows(height int32) int {
 func (w *Window) drawEnemyPanel(hdc uintptr, pixels unsafe.Pointer, width, height int32) {
 	w.mu.RLock()
 	world, entries, status, page := w.panelWorld, w.panelEnemies, w.panelStatus, w.panelPage
+	entries = orderedPanelEnemies(entries, w.panelCombatIDs)
+	selected, cursor := w.selectedEnemy, w.cursor
+	combatIDs := w.panelCombatIDs
 	w.mu.RUnlock()
 	if world == "" {
 		world = "Unbekannte Welt"
 		status = "Warte auf die aktuelle Welt ..."
 	}
 	bounds := panelBounds(width, height)
-	buffer := unsafe.Slice((*uint32)(pixels), int(width*height))
 	border := max(int32(2), min(width, height)/360)
-	for y := bounds.Top; y < bounds.Bottom; y++ {
-		for x := bounds.Left; x < bounds.Right; x++ {
-			color := uint32(0xFF201D30)
-			if x < bounds.Left+border || x >= bounds.Right-border || y < bounds.Top+border || y >= bounds.Bottom-border {
-				color = 0xFFDBB965
-			}
-			buffer[int(y)*int(width)+int(x)] = color
-		}
-	}
+	drawBestiaryFrame(pixels, width, height, bounds)
 	scale := float64(min(width, height)) / 1080
 	header := bounds
 	header.Bottom = header.Top + height/12
@@ -134,27 +132,38 @@ func (w *Window) drawEnemyPanel(hdc uintptr, pixels unsafe.Pointer, width, heigh
 	rows := panelRows(height)
 	pages := max(1, (len(entries)+rows-1)/rows)
 	page = min(page, pages-1)
-	top := header.Bottom
-	rowHeight := max(int32(44), height/20)
-	padding := max(int32(10), width/80)
+	list, details := enemyPanelColumns(width, height)
+	card := details
+	panelGradient(pixels, width, height, card, [3]int32{34, 29, 42}, 9, true)
+	panelRule(pixels, width, height, card, 0xff69533c)
+	details = panelInset(details, max(10, height/60))
 	if len(entries) == 0 {
 		body := bounds
 		body.Top = header.Bottom
 		body.Bottom -= height / 12
 		drawOutlinedText(hdc, pixels, width, height, body, status, max(14, int32(24*scale)), scale, 0)
 	}
+	now := time.Now()
 	for i := page * rows; i < min(len(entries), (page+1)*rows); i++ {
-		row := widget.Rect{Left: bounds.Left + padding, Top: top, Right: bounds.Right - padding, Bottom: top + rowHeight/2}
-		drawPanelLine(hdc, pixels, width, height, row, entries[i].Name, max(12, int32(21*scale)))
-		row.Top = row.Bottom
-		row.Bottom = top + rowHeight
-		drawPanelAffinities(hdc, pixels, width, height, row, entries[i].Affinities, max(11, int32(16*scale)))
-		top += rowHeight
+		row := enemyPanelRow(list, height, i-page*rows)
+		if combatIDs[entries[i].Key] {
+			drawCombatBestiaryRow(pixels, width, height, row, entries[i].Key == selected, row.Contains(cursor), now)
+		} else {
+			drawBestiaryRow(pixels, width, height, row, entries[i].Key == selected, row.Contains(cursor))
+		}
+		row.Left += 10
+		name := entries[i].Name
+		if combatIDs[entries[i].Key] {
+			name = "⚔ " + name
+		}
+		drawPanelLine(hdc, pixels, width, height, row, name, max(12, int32(21*scale)))
 	}
-	footer := bounds
-	footer.Top = bounds.Bottom - height/12
-	text := fmt.Sprintf("Seite %d/%d · Bild ↑/↓ blättern · Tab schließen", page+1, pages)
-	drawPanelLine(hdc, pixels, width, height, footer, text, max(11, int32(18*scale)))
+	separator := details
+	separator.Left -= 8
+	separator.Right = separator.Left + 1
+	fillPanelRect(pixels, width, height, separator, 0xFF65536A)
+	w.drawEnemyDetails(hdc, pixels, width, height, details, entries, selected)
+	w.drawPageControls(hdc, pixels, width, height, page, pages, cursor)
 }
 
 func drawPanelAffinities(hdc uintptr, pixels unsafe.Pointer, width, height int32, bounds widget.Rect, affinities map[enemies.School]int, fontSize int32) {
@@ -182,7 +191,11 @@ func drawPanelAffinities(hdc uintptr, pixels unsafe.Pointer, width, height int32
 }
 
 func drawPanelLine(hdc uintptr, pixels unsafe.Pointer, width, height int32, bounds widget.Rect, text string, fontSize int32) {
-	name, _ := windows.UTF16PtrFromString(theme.UIFontFamily)
+	drawPanelText(hdc, pixels, width, height, bounds, text, fontSize, theme.UIFontFamily)
+}
+
+func drawPanelText(hdc uintptr, pixels unsafe.Pointer, width, height int32, bounds widget.Rect, text string, fontSize int32, family string) {
+	name, _ := windows.UTF16PtrFromString(family)
 	font, _, _ := procCreateFontW.Call(uintptr(-fontSize), 0, 0, 0, 400, 0, 0, 0, 1, 0, 0, 5, 0, uintptr(unsafe.Pointer(name)))
 	if font == 0 {
 		return

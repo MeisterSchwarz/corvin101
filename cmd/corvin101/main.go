@@ -28,7 +28,12 @@ func main() {
 	// Single instance
 	// --------------------------------------------------------
 
-	if !system.Lock() {
+	locked, err := system.Lock()
+	if err != nil {
+		log.Printf("[main] Could not acquire instance lock: %v", err)
+		return
+	}
+	if !locked {
 		log.Println("[main] Corvin is already running")
 		return
 	}

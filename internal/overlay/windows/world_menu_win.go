@@ -56,18 +56,7 @@ func (w *Window) drawWorldMenu(hdc uintptr, pixels unsafe.Pointer, width, height
 	fontSize := max(int32(12), min(width, height)/48)
 	for i, world := range worlds {
 		cell := worldCell(bounds, top, len(worlds), i)
-		if world.Key == selected || cell.Contains(cursor) {
-			buffer := unsafe.Slice((*uint32)(pixels), int(width*height))
-			color := uint32(0xFF3C324B)
-			if cell.Contains(cursor) {
-				color = 0xFF51405F
-			}
-			for y := cell.Top; y < cell.Bottom; y++ {
-				for x := cell.Left; x < cell.Right; x++ {
-					buffer[int(y)*int(width)+int(x)] = color
-				}
-			}
-		}
+		drawBestiaryRow(pixels, width, height, cell, world.Key == selected, cell.Contains(cursor))
 		label := world.Name
 		if world.Key == selected {
 			label = "✓ " + label
@@ -99,6 +88,28 @@ func (w *Window) clickPanel(p widget.Point) {
 			}
 		}
 		w.worldMenuOpen = false
+	} else {
+		previous, next, _ := pageControls(w.width, w.height)
+		if previous.Contains(p) || next.Contains(p) {
+			step := 1
+			if previous.Contains(p) {
+				step = -1
+			}
+			w.changePanelPageLocked(step)
+			w.mu.Unlock()
+			w.render()
+			return
+		}
+		entries := orderedPanelEnemies(w.panelEnemies, w.panelCombatIDs)
+		rows := panelRows(w.height)
+		page := min(w.panelPage, max(0, (len(entries)-1)/rows))
+		list, _ := enemyPanelColumns(w.width, w.height)
+		for i := page * rows; i < min(len(entries), (page+1)*rows); i++ {
+			if enemyPanelRow(list, w.height, i-page*rows).Contains(p) {
+				w.selectedEnemy = entries[i].Key
+				break
+			}
+		}
 	}
 	w.mu.Unlock()
 	if selected != "" {
@@ -108,9 +119,19 @@ func (w *Window) clickPanel(p widget.Point) {
 }
 
 // Only the open panel receives mouse clicks. Keep the game focused.
-func (w *Window) setPanelMouseInput(open bool) {
+func (w *Window) setPanelMouseInput() {
 	w.mu.RLock()
 	hwnd := w.hwnd
+	w.mu.RUnlock()
+	if hwnd != 0 {
+		user32.NewProc("PostMessageW").Call(uintptr(hwnd), wmPanelInput, 0, 0)
+	}
+}
+
+func (w *Window) applyPanelMouseInput() {
+	w.mu.RLock()
+	hwnd := w.hwnd
+	open := w.panelOpen
 	w.mu.RUnlock()
 	style := uintptr(wsExToolWindow | wsExLayered | wsExNoActivate)
 	if !open {
