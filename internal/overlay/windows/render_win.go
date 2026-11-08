@@ -409,6 +409,9 @@ func drawAffinityValue(
 			value,
 		)
 
+	if value == 0 {
+		text = "0%"
+	}
 	textUTF16, err :=
 		windows.UTF16FromString(
 			text,

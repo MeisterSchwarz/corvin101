@@ -324,10 +324,6 @@ func groupAffinities(
 	)
 
 	for school, value := range affinities {
-		if value == 0 {
-			continue
-		}
-
 		byValue[value] = append(
 			byValue[value],
 			school,

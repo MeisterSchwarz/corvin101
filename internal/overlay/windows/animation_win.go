@@ -30,13 +30,18 @@ func (w *Window) runAnimationLoop(ctx context.Context) {
 					}
 				}
 			}
-			panelAnimating := combatRows > w.panelPage*panelRows(w.height)
+			panelAnimating := combatRows > w.panelPage*panelRows(w.height) || (w.panelOpen && !w.worldMenuOpen && w.panelLoading)
+			loading := w.panelOpen && !w.worldMenuOpen && w.panelLoading
 			w.mu.RUnlock()
 
 			w.updateMu.Lock()
 			animating := manager != nil && manager.Animating()
 			w.updateMu.Unlock()
-			panelFrame := panelAnimating && time.Since(lastPanelFrame) >= time.Second/30
+			interval := time.Second / 30
+			if loading {
+				interval = time.Second / 60
+			}
+			panelFrame := panelAnimating && time.Since(lastPanelFrame) >= interval
 			if !animating && !panelFrame {
 				continue
 			}

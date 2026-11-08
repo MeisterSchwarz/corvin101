@@ -1,6 +1,7 @@
 package enemies
 
 import (
+	"corvin101/internal/data/drops"
 	"encoding/json"
 	"fmt"
 )
@@ -23,13 +24,20 @@ const (
 )
 
 type EnemyInfo struct {
-	Name       string
-	Affinities map[School]int
+	Name             string
+	Schools          []School
+	Locations        []int
+	LocationNames    []string
+	DropCategories   []drops.Category
+	DropsUnavailable bool
+	Affinities       map[School]int
 }
 
 type coreEnemyFile map[string]coreEnemy
 
 type coreEnemy struct {
+	Locations  []int          `yaml:"locations,omitempty"`
+	Schools    []School       `yaml:"schools,omitempty"`
 	Affinities map[School]int `yaml:"affinities,omitempty"`
 }
 

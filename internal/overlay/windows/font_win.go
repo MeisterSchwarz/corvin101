@@ -3,57 +3,29 @@
 package windows
 
 import (
-	"path/filepath"
+	"log"
 	"sync"
 	"unsafe"
 
-	"golang.org/x/sys/windows"
-)
-
-const (
-	frPrivate = 0x10
+	"corvin101/assets"
 )
 
 var (
-	gdi32Fonts = windows.NewLazySystemDLL(
-		"gdi32.dll",
-	)
-
-	procAddFontResourceExW = gdi32Fonts.NewProc(
-		"AddFontResourceExW",
-	)
-
-	fontLoadOnce sync.Once
+	fontLoadOnce      sync.Once
+	overlayFontHandle uintptr
 )
 
 func loadOverlayFonts() {
-	fontLoadOnce.Do(
-		func() {
-			path :=
-				filepath.Join(
-					"assets",
-					"fonts",
-					"shermlock.ttf",
-				)
-
-			pathUTF16, err :=
-				windows.UTF16PtrFromString(
-					path,
-				)
-
-			if err != nil {
-				return
-			}
-
-			procAddFontResourceExW.Call(
-				uintptr(
-					unsafe.Pointer(
-						pathUTF16,
-					),
-				),
-				frPrivate,
-				0,
-			)
-		},
-	)
+	fontLoadOnce.Do(func() {
+		var count uint32
+		handle, _, err := gdi32.NewProc("AddFontMemResourceEx").Call(
+			uintptr(unsafe.Pointer(&assets.DisplayFont[0])), uintptr(len(assets.DisplayFont)), 0, uintptr(unsafe.Pointer(&count)),
+		)
+		if handle == 0 || count == 0 {
+			log.Printf("[overlay] load embedded font: %v", err)
+			return
+		}
+		// Keep the private font registered for the process lifetime.
+		overlayFontHandle = handle
+	})
 }

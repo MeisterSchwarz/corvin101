@@ -27,7 +27,7 @@ func TestResolveFlatYAMLZones(t *testing.T) {
 	if err != nil || !found {
 		t.Fatalf("resolve: found=%v err=%v", found, err)
 	}
-	if info.Name != "Testgebiet" || info.Sub != "Untertitel" || info.World != "Zauberstadt" || info.Image != "wizardcity" || info.Type != "dungeon" || info.Parent != "WizardCity/Hub" || !info.Instance || !info.Repeatable {
+	if info.Name != "Testgebiet" || info.Sub != "Untertitel" || info.World != "Zauberstadt" || info.Image != "wizardcity" || info.Type != "dungeon" || info.Parent != "" || !info.Instance || !info.Repeatable {
 		t.Fatalf("lost data: %+v", info)
 	}
 	hub, found, err := repo.Resolve(context.Background(), "WizardCity/Hub")
@@ -47,5 +47,25 @@ func TestListWorldsOrderAndFallback(t *testing.T) {
 	}
 	if len(worlds) != 3 || worlds[0].Key != "WizardCity" || worlds[0].Name != "Wizard City" || worlds[1].Key != "Avalon" || worlds[2].Name != "Unknown" {
 		t.Fatalf("unexpected catalog: %+v", worlds)
+	}
+}
+
+func TestZoneIDsAreWorldScopedAndParentIgnored(t *testing.T) {
+	repo := NewRepository("de", NewRemoteLoader(zoneTestFiles{
+		"core/worlds.json":          `{"Avalon":{},"Novus":{}}`,
+		"i18n/de/worlds.json":       "{}",
+		"core/zones/Avalon.yaml":    "Avalon/A:\n  id: 500\n  parent: 400\nAvalon/NoID: {}\n",
+		"i18n/de/zones/Avalon.json": `{"Avalon/A":"Gebiet A"}`,
+		"core/zones/Novus.yaml":     "Novus/B:\n  id: 500\n",
+		"i18n/de/zones/Novus.json":  `{"Novus/B":"Gebiet B"}`,
+	}))
+	for world, want := range map[string]string{"Avalon": "Gebiet A", "Novus": "Gebiet B"} {
+		info, found, err := repo.ResolveID(context.Background(), world, 500)
+		if err != nil || !found || info.Name != want || info.Parent != "" {
+			t.Fatalf("%s: %+v %v %v", world, info, found, err)
+		}
+	}
+	if _, found, err := repo.ResolveID(context.Background(), "Avalon", 0); err != nil || found {
+		t.Fatal("zone without ID matched zero")
 	}
 }

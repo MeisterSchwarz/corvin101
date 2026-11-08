@@ -5,6 +5,7 @@ package system
 import (
 	"context"
 	"fmt"
+	"runtime"
 	"syscall"
 	"unsafe"
 
@@ -31,10 +32,6 @@ const (
 	tpmRightBtn = 0x0002
 
 	trayExitID = 1001
-
-	imageIcon      = 1
-	lrLoadFromFile = 0x0010
-	lrDefaultSize  = 0x0040
 )
 
 var (
@@ -71,8 +68,6 @@ var (
 	procTrayGetCursorPos = trayUser32.NewProc("GetCursorPos")
 
 	procTraySetForegroundWindow = trayUser32.NewProc("SetForegroundWindow")
-
-	procTrayLoadImageW = trayUser32.NewProc("LoadImageW")
 
 	procTrayShellNotifyIconW = trayShell32.NewProc("Shell_NotifyIconW")
 
@@ -145,8 +140,9 @@ func NewTray(
 
 func (t *Tray) Run(
 	ctx context.Context,
-	iconPath string,
 ) error {
+	runtime.LockOSThread()
+	defer runtime.UnlockOSThread()
 	activeTray = t
 
 	instance, _, _ :=
@@ -235,12 +231,11 @@ func (t *Tray) Run(
 	t.hwnd =
 		windows.Handle(hwnd)
 
-	if err := t.loadIcon(
-		iconPath,
-	); err != nil {
+	if err := t.loadIcon(); err != nil {
 		procTrayDestroyWindow.Call(hwnd)
 		return err
 	}
+	defer trayUser32.NewProc("DestroyIcon").Call(uintptr(t.icon))
 
 	if err := t.addIcon(); err != nil {
 		procTrayDestroyWindow.Call(hwnd)
@@ -250,11 +245,7 @@ func (t *Tray) Run(
 	go func() {
 		<-ctx.Done()
 
-		if t.hwnd != 0 {
-			procTrayDestroyWindow.Call(
-				uintptr(t.hwnd),
-			)
-		}
+		trayUser32.NewProc("PostMessageW").Call(hwnd, 0x0010, 0, 0) // WM_CLOSE
 	}()
 
 	var message trayMessage
@@ -294,47 +285,6 @@ func (t *Tray) Run(
 	}
 
 	t.removeIcon()
-
-	return nil
-}
-
-func (t *Tray) loadIcon(
-	path string,
-) error {
-	iconPath, err :=
-		windows.UTF16PtrFromString(
-			path,
-		)
-
-	if err != nil {
-		return err
-	}
-
-	icon, _, loadErr :=
-		procTrayLoadImageW.Call(
-			0,
-			uintptr(
-				unsafe.Pointer(
-					iconPath,
-				),
-			),
-			imageIcon,
-			0,
-			0,
-			lrLoadFromFile|
-				lrDefaultSize,
-		)
-
-	if icon == 0 {
-		return fmt.Errorf(
-			"load tray icon %q: %v",
-			path,
-			loadErr,
-		)
-	}
-
-	t.icon =
-		windows.Handle(icon)
 
 	return nil
 }

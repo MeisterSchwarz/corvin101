@@ -3,9 +3,10 @@
 package windows
 
 import (
+	"corvin101/assets"
+	"image/color"
 	"image/png"
-	"os"
-	"path/filepath"
+	"io"
 	"sync"
 	"unsafe"
 
@@ -13,9 +14,10 @@ import (
 )
 
 type schoolIcon struct {
-	width  int
-	height int
-	pixels []uint32
+	width   int
+	height  int
+	pixels  []uint32
+	resized sync.Map
 }
 
 var schoolIcons struct {
@@ -51,11 +53,7 @@ func loadSchoolIcons() {
 
 				icon, err :=
 					readSchoolIcon(
-						filepath.Join(
-							"assets",
-							"schools",
-							filename,
-						),
+						"schools/" + filename,
 					)
 
 				if err != nil {
@@ -72,12 +70,15 @@ func loadSchoolIcons() {
 func readSchoolIcon(
 	path string,
 ) (*schoolIcon, error) {
-	file, err := os.Open(path)
+	file, err := assets.Schools.Open(path)
 	if err != nil {
 		return nil, err
 	}
 	defer file.Close()
+	return decodeIcon(file)
+}
 
+func decodeIcon(file io.Reader) (*schoolIcon, error) {
 	source, err := png.Decode(file)
 	if err != nil {
 		return nil, err
@@ -95,16 +96,15 @@ func readSchoolIcon(
 
 	for y := 0; y < height; y++ {
 		for x := 0; x < width; x++ {
-			red, green, blue, alpha :=
-				source.At(
-					bounds.Min.X+x,
-					bounds.Min.Y+y,
-				).RGBA()
+			pixel := color.NRGBAModel.Convert(source.At(
+				bounds.Min.X+x,
+				bounds.Min.Y+y,
+			)).(color.NRGBA)
 
-			a := uint32(alpha >> 8)
-			r := uint32(red >> 8)
-			g := uint32(green >> 8)
-			b := uint32(blue >> 8)
+			a := uint32(pixel.A)
+			r := uint32(pixel.R)
+			g := uint32(pixel.G)
+			b := uint32(pixel.B)
 
 			// Unser DIB-Buffer ist BGRA.
 			pixels[y*width+x] =
@@ -139,6 +139,10 @@ func drawSchoolIcon(
 	top int32,
 	size int32,
 ) {
+	drawIconImage(target, targetWidth, targetHeight, getSchoolIcon(school), centerX, top, size)
+}
+
+func drawIconImage(target unsafe.Pointer, targetWidth, targetHeight int32, icon *schoolIcon, centerX, top, size int32) {
 	if target == nil ||
 		targetWidth <= 0 ||
 		targetHeight <= 0 ||
@@ -147,16 +151,13 @@ func drawSchoolIcon(
 		return
 	}
 
-	icon := getSchoolIcon(
-		school,
-	)
-
 	if icon == nil ||
 		icon.width <= 0 ||
 		icon.height <= 0 {
 
 		return
 	}
+	icon = smoothIcon(icon, int(size))
 
 	buffer := unsafe.Slice(
 		(*uint32)(target),

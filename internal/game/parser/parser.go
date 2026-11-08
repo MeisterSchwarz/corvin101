@@ -33,6 +33,8 @@ type Parser struct {
 	duelDump *duelDumpBuilder
 
 	currentClientDuelID string
+	pendingFleeDuel     string
+	pendingFleeAt       time.Time
 
 	// Informationen zwischen
 	//
@@ -55,6 +57,8 @@ func New() *Parser {
 }
 
 func (p *Parser) Reset() {
+	p.pendingFleeDuel = ""
+	p.pendingFleeAt = time.Time{}
 	p.duelDump = nil
 
 	p.currentClientDuelID = ""
@@ -151,6 +155,8 @@ func (p *Parser) Feed(line string) []events.Event {
 
 		if event.Combat != nil &&
 			event.Combat.ClientDuelID != "" {
+			p.pendingFleeDuel = ""
+			p.pendingFleeAt = time.Time{}
 
 			p.currentClientDuelID =
 				event.Combat.ClientDuelID

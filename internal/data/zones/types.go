@@ -6,6 +6,7 @@ import (
 )
 
 type ZoneInfo struct {
+	ID    *int   `json:"id,omitempty"`
 	Name  string `json:"name"`
 	Sub   string `json:"sub,omitempty"`
 	World string `json:"world"`
@@ -30,8 +31,8 @@ type translatedWorld struct {
 type coreZoneFile map[string]coreZone
 
 type coreZone struct {
+	ID         *int   `yaml:"id,omitempty"`
 	Type       string `yaml:"type,omitempty"`
-	Parent     string `yaml:"parent,omitempty"`
 	Instance   bool   `yaml:"instance,omitempty"`
 	Repeatable bool   `yaml:"repeatable,omitempty"`
 }

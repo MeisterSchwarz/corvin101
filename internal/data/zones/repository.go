@@ -311,12 +311,19 @@ func (r *Repository) loadWorld(
 			len(coreFile),
 		)
 
+	ids := make(map[int]string)
 	for zoneKey, coreData := range coreFile {
+		if coreData.ID != nil {
+			if other, exists := ids[*coreData.ID]; exists {
+				return fmt.Errorf("duplicate zone id %d in %s: %s and %s", *coreData.ID, worldKey, other, zoneKey)
+			}
+			ids[*coreData.ID] = zoneKey
+		}
 
 		translation, translated :=
 			translations[zoneKey]
 
-		name := "???"
+		name := zoneKey
 		sub := ""
 
 		if translated {
@@ -337,6 +344,7 @@ func (r *Repository) loadWorld(
 
 		worldZones[zoneKey] =
 			ZoneInfo{
+				ID:   coreData.ID,
 				Name: name,
 
 				Sub: sub,
@@ -346,8 +354,6 @@ func (r *Repository) loadWorld(
 				Image: worldCore.Image,
 
 				Type: coreData.Type,
-
-				Parent: coreData.Parent,
 
 				Instance: coreData.Instance,
 
@@ -468,4 +474,19 @@ func WorldKey(
 	default:
 		return base
 	}
+}
+
+// ResolveID is scoped to a world; parent metadata is intentionally ignored.
+func (r *Repository) ResolveID(ctx context.Context, worldKey string, id int) (ZoneInfo, bool, error) {
+	if err := r.ensureWorld(ctx, worldKey); err != nil {
+		return ZoneInfo{}, false, err
+	}
+	r.mu.RLock()
+	defer r.mu.RUnlock()
+	for _, info := range r.worlds[worldKey] {
+		if info.ID != nil && *info.ID == id {
+			return info, true, nil
+		}
+	}
+	return ZoneInfo{}, false, nil
 }

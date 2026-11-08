@@ -4,8 +4,10 @@ package windows
 
 import (
 	"context"
+	"slices"
 	"unsafe"
 
+	"corvin101/internal/data/zones"
 	"corvin101/internal/overlay/theme"
 	"corvin101/internal/overlay/widget"
 	"golang.org/x/sys/windows"
@@ -23,6 +25,9 @@ func (w *Window) loadPanelWorlds(ctx context.Context) {
 	w.worldMenuStatus = "Welten werden geladen ..."
 	w.mu.Unlock()
 	worlds, err := w.worldRepository.ListWorlds(ctx)
+	worlds = slices.DeleteFunc(worlds, func(world zones.WorldInfo) bool {
+		return world.Key == "Housing" || world.Key == "Minigames"
+	})
 	w.mu.Lock()
 	w.panelWorlds = worlds
 	w.worldMenuStatus = "Keine Welten vorhanden."
@@ -89,7 +94,17 @@ func (w *Window) clickPanel(p widget.Point) {
 		}
 		w.worldMenuOpen = false
 	} else {
+		if w.panelLoading {
+			w.mu.Unlock()
+			return
+		}
 		previous, next, _ := pageControls(w.width, w.height)
+		if w.selectedEnemy != "" && detailToggleRect(w.width, w.height, w.detailDrops).Contains(p) {
+			w.detailDrops = !w.detailDrops
+			w.mu.Unlock()
+			w.render()
+			return
+		}
 		if previous.Contains(p) || next.Contains(p) {
 			step := 1
 			if previous.Contains(p) {
@@ -106,6 +121,9 @@ func (w *Window) clickPanel(p widget.Point) {
 		list, _ := enemyPanelColumns(w.width, w.height)
 		for i := page * rows; i < min(len(entries), (page+1)*rows); i++ {
 			if enemyPanelRow(list, w.height, i-page*rows).Contains(p) {
+				if w.selectedEnemy != entries[i].Key {
+					w.detailDrops = false
+				}
 				w.selectedEnemy = entries[i].Key
 				break
 			}
@@ -142,7 +160,11 @@ func (w *Window) applyPanelMouseInput() {
 }
 
 func panelTextWidth(hdc uintptr, text string, fontSize int32) int32 {
-	name, _ := windows.UTF16PtrFromString(theme.UIFontFamily)
+	return panelFontTextWidth(hdc, text, fontSize, theme.UIFontFamily)
+}
+
+func panelFontTextWidth(hdc uintptr, text string, fontSize int32, family string) int32 {
+	name, _ := windows.UTF16PtrFromString(family)
 	font, _, _ := procCreateFontW.Call(uintptr(-fontSize), 0, 0, 0, 400, 0, 0, 0, 1, 0, 0, 5, 0, uintptr(unsafe.Pointer(name)))
 	if font == 0 {
 		return int32(len([]rune(text))) * fontSize / 2

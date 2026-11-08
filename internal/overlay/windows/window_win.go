@@ -9,6 +9,7 @@ import (
 	"sync"
 	"sync/atomic"
 	"syscall"
+	"time"
 	"unsafe"
 
 	"golang.org/x/sys/windows"
@@ -210,24 +211,28 @@ type Window struct {
 	mu            sync.RWMutex
 	updateMu      sync.Mutex
 
-	hwnd            windows.Handle
-	gameWindow      windows.Handle
-	panelOpen       bool
-	panelRepository *enemies.Repository
-	panelWorld      string
-	panelEnemies    []enemies.WorldEnemy
-	panelStatus     string
-	panelLoadFailed bool
-	panelPage       int
-	panelWheelDelta int
-	worldRepository *zones.Repository
-	panelWorlds     []zones.WorldInfo
-	worldMenuOpen   bool
-	worldMenuStatus string
-	worldHeader     widget.Rect
-	panelZone       string
-	selectedEnemy   string
-	panelCombatIDs  map[string]bool
+	hwnd                windows.Handle
+	gameWindow          windows.Handle
+	panelOpen           bool
+	panelRepository     *enemies.Repository
+	panelWorld          string
+	panelEnemies        []enemies.WorldEnemy
+	panelStatus         string
+	panelLoadFailed     bool
+	panelLoading        bool
+	panelLoadStarted    time.Time
+	panelLoadGeneration uint64
+	panelPage           int
+	panelWheelDelta     int
+	worldRepository     *zones.Repository
+	panelWorlds         []zones.WorldInfo
+	worldMenuOpen       bool
+	worldMenuStatus     string
+	worldHeader         widget.Rect
+	panelZone           string
+	selectedEnemy       string
+	detailDrops         bool
+	panelCombatIDs      map[string]bool
 
 	width  int32
 	height int32
@@ -679,15 +684,18 @@ func windowProc(
 		return 0
 	case 0x0020: // WM_SETCURSOR
 		if activeWindow != nil && uint16(lParam) == 1 {
-			activeWindow.updateCursor()
+			if activeWindow.updateCursor() {
+				activeWindow.render()
+			}
 			activeWindow.mu.RLock()
 			isHeader := activeWindow.panelOpen && activeWindow.worldHeader.Contains(activeWindow.cursor)
+			isDetailToggle := activeWindow.panelOpen && !activeWindow.worldMenuOpen && !activeWindow.panelLoading && activeWindow.selectedEnemy != "" && detailToggleRect(activeWindow.width, activeWindow.height, activeWindow.detailDrops).Contains(activeWindow.cursor)
 			previous, next, _ := pageControls(activeWindow.width, activeWindow.height)
 			pages := max(1, (len(activeWindow.panelEnemies)+panelRows(activeWindow.height)-1)/panelRows(activeWindow.height))
 			isPaging := activeWindow.panelOpen && !activeWindow.worldMenuOpen && ((activeWindow.panelPage > 0 && previous.Contains(activeWindow.cursor)) || (activeWindow.panelPage < pages-1 && next.Contains(activeWindow.cursor)))
 			activeWindow.mu.RUnlock()
 			cursorID := uintptr(32512) // IDC_ARROW
-			if isHeader || isPaging {
+			if isHeader || isPaging || isDetailToggle {
 				cursorID = 32649
 			} // IDC_HAND
 			cursor, _, _ := user32.NewProc("LoadCursorW").Call(0, cursorID)

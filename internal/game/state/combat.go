@@ -22,11 +22,18 @@ type CombatState struct {
 
 	// SubCircle -> Participant ID
 	ParticipantBySubCircle map[int]string
+	removedIdentities      map[string]participantIdentity
 
 	LastSpell *SpellState
 
 	// Nur Event-Historie / Debugging.
 	RecentEffects []EffectState
+}
+
+type participantIdentity struct {
+	SubCircle int
+	Kind      events.ParticipantKind
+	MobID     string
 }
 
 type ParticipantState struct {
@@ -85,6 +92,7 @@ func newCombatState() CombatState {
 	return CombatState{
 		Participants:           make(map[string]*ParticipantState),
 		ParticipantBySubCircle: make(map[int]string),
+		removedIdentities:      make(map[string]participantIdentity),
 		RecentEffects:          make([]EffectState, 0, 32),
 	}
 }
@@ -317,7 +325,7 @@ func (s *Store) handleParticipantAdded(event events.Event) {
 
 	participant, ok := s.combat.Participants[incoming.ID]
 	if !ok {
-		participant = newParticipantState(incoming.ID)
+		participant = s.newDuelParticipant(incoming.ID)
 		s.combat.Participants[incoming.ID] = participant
 	}
 
@@ -352,7 +360,7 @@ func (s *Store) handleParticipantMapped(event events.Event) {
 
 	participant, ok := s.combat.Participants[mapping.ParticipantID]
 	if !ok {
-		participant = newParticipantState(mapping.ParticipantID)
+		participant = s.newDuelParticipant(mapping.ParticipantID)
 		s.combat.Participants[mapping.ParticipantID] = participant
 	}
 
@@ -403,6 +411,7 @@ func (s *Store) handleParticipantRemoved(event events.Event) {
 	if match == nil {
 		return
 	}
+	s.combat.removedIdentities[match.ID] = participantIdentity{SubCircle: match.SubCircle, Kind: match.Kind, MobID: match.MobID}
 	delete(s.combat.Participants, match.ID)
 	if match.SubCircle >= 0 {
 		if s.combat.ParticipantBySubCircle[match.SubCircle] == match.ID {
@@ -577,7 +586,7 @@ func (s *Store) applyDuelSnapshot(
 
 		if !ok {
 			participant =
-				newParticipantState(incoming.ID)
+				s.newDuelParticipant(incoming.ID)
 
 			s.combat.Participants[incoming.ID] =
 				participant
@@ -693,4 +702,22 @@ func cloneBool(
 	result := *value
 
 	return &result
+}
+
+// A removed participant can reappear after resurrection without another full
+// identity message. Restore only the same ID in the same duel; never steal a
+// slot that has since been assigned to a different participant.
+func (s *Store) newDuelParticipant(id string) *ParticipantState {
+	participant := newParticipantState(id)
+	if identity, ok := s.combat.removedIdentities[id]; ok {
+		participant.Kind = identity.Kind
+		participant.MobID = identity.MobID
+		if identity.SubCircle >= 0 {
+			occupant, occupied := s.combat.ParticipantBySubCircle[identity.SubCircle]
+			if !occupied || occupant == id {
+				s.assignSubCircle(participant, identity.SubCircle)
+			}
+		}
+	}
+	return participant
 }

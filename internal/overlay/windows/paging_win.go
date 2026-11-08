@@ -28,7 +28,7 @@ func (w *Window) changePanelPageLocked(step int) {
 func (w *Window) wheelPanel(p widget.Point, delta int) bool {
 	w.mu.Lock()
 	list, _ := enemyPanelColumns(w.width, w.height)
-	if !w.panelOpen || w.worldMenuOpen || !list.Contains(p) {
+	if !w.panelOpen || w.worldMenuOpen || w.panelLoading || !list.Contains(p) {
 		w.panelWheelDelta = 0
 		w.mu.Unlock()
 		return false

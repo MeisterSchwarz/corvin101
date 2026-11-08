@@ -40,15 +40,11 @@ func (p *Parser) parseCombatFled(
 		return events.Event{}, false
 	}
 
-	return events.Event{
-		Type:      events.CombatFled,
-		Timestamp: timestamp,
-		Raw:       line,
-
-		Combat: &events.CombatEvent{
-			ClientDuelID: p.currentClientDuelID,
-		},
-	}, true
+	// This message is also logged when another player flees. Wait for the
+	// following CombatRemove to identify who actually left the duel.
+	p.pendingFleeDuel = p.currentClientDuelID
+	p.pendingFleeAt = timestamp
+	return events.Event{}, true
 }
 
 func (p *Parser) parseCombatLeft(

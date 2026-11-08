@@ -67,7 +67,7 @@ func enemyPanelColumns(width, height int32) (widget.Rect, widget.Rect) {
 	padding := max(int32(10), width/80)
 	list := bounds
 	list.Left += padding
-	list.Right = bounds.Left + bounds.Width()*46/100
+	list.Right = bounds.Left + bounds.Width()*30/100
 	list.Top += height / 12
 	list.Bottom -= height / 12
 	details := list
@@ -110,36 +110,55 @@ func (w *Window) drawEnemyDetails(hdc uintptr, pixels unsafe.Pointer, width, hei
 		drawPanelLine(hdc, pixels, width, height, line, "Wähle links einen Gegner aus.", fontSize)
 		return
 	}
-	drawPanelText(hdc, pixels, width, height, line, enemy.Name, fontSize+6, theme.DisplayFontFamily)
+	w.mu.RLock()
+	dropsView, cursor := w.detailDrops, w.cursor
+	w.mu.RUnlock()
+	title := line
+	title.Right = detailToggleRect(width, height, dropsView).Left - 12
+	drawEnemyDetailTitle(hdc, pixels, width, height, title, enemy.Name, enemy.Schools, fontSize+6)
+	debugSize := max(int32(10), fontSize-4)
+	debugLine := bounds
+	debugLine.Top = bounds.Bottom - debugSize*2
+	debugLine.Left = max(bounds.Left, bounds.Right-panelTextWidth(hdc, enemy.Key, debugSize))
+	drawPanelLine(hdc, pixels, width, height, debugLine, enemy.Key, debugSize)
+	// Reserve the bottom corner for the temporary debug identifier.
+	bounds.Bottom = debugLine.Top - 6
 	line.Top = line.Bottom
 	line.Bottom += fontSize * 2
-	drawPanelLine(hdc, pixels, width, height, line, enemy.Key, max(11, fontSize-3))
+	if len(enemy.LocationNames) > 0 {
+		location := line
+		location.Right = title.Right
+		drawPanelTextColor(hdc, pixels, width, height, location, strings.Join(enemy.LocationNames, ", "), max(14, fontSize), theme.UIFontFamily, theme.RGB{R: 210, G: 207, B: 201})
+	}
+	if dropsView {
+		drawDetailToggle(hdc, pixels, width, height, true, cursor)
+		drawEnemyDrops(hdc, pixels, width, height, bounds, line.Bottom+fontSize, fontSize, enemy.EnemyInfo)
+		return
+	}
 	line.Top = line.Bottom + fontSize
 	line.Bottom = line.Top + fontSize*2
-	drawPanelLine(hdc, pixels, width, height, line, "Affinitäten", fontSize)
+	drawPanelText(hdc, pixels, width, height, line, "Schaden (+/-)", fontSize+2, theme.DisplayFontFamily)
 	rule := line
 	rule.Top = rule.Bottom - 1
 	fillPanelRect(pixels, width, height, rule, 0xff6f563a)
-	top := line.Bottom
-	keys := make([]string, 0, len(enemy.Affinities))
-	for school := range enemy.Affinities {
-		keys = append(keys, string(school))
+	drawDetailToggle(hdc, pixels, width, height, false, cursor)
+	drawDamageColumns(hdc, pixels, width, height, bounds, line.Bottom+6, fontSize, enemy.Affinities)
+}
+
+func drawEnemyDetailTitle(hdc uintptr, pixels unsafe.Pointer, width, height int32, bounds widget.Rect, name string, schools []enemies.School, fontSize int32) {
+	iconSize := min(bounds.Height()-2, fontSize+8)
+	gap := int32(5)
+	text := bounds
+	if len(schools) > 0 {
+		text.Right = max(text.Left, bounds.Right-int32(len(schools))*(iconSize+gap)-8)
 	}
-	sort.Strings(keys)
-	if len(keys) == 0 {
-		line.Top = top
-		line.Bottom = top + fontSize*2
-		drawPanelLine(hdc, pixels, width, height, line, "Keine Affinitäten hinterlegt", fontSize)
-	}
-	columns := max(1, min(3, int(bounds.Width()/(fontSize*7))))
-	cellWidth := bounds.Width() / int32(columns)
-	rowHeight := max(int32(28), fontSize*2)
-	for i, key := range keys {
-		cell := widget.Rect{Left: bounds.Left + int32(i%columns)*cellWidth, Top: top + int32(i/columns)*rowHeight, Right: bounds.Left + int32(i%columns+1)*cellWidth, Bottom: top + int32(i/columns+1)*rowHeight}
-		if cell.Bottom > bounds.Bottom {
+	drawBestiaryText(hdc, pixels, width, height, text, name, fontSize, true)
+	left := min(text.Right, bounds.Left+panelFontTextWidth(hdc, name, fontSize, theme.DisplayFontFamily)) + 8
+	for _, school := range schools {
+		if left+iconSize > bounds.Right {
 			break
 		}
-		school := enemies.School(key)
-		drawPanelAffinities(hdc, pixels, width, height, cell, map[enemies.School]int{school: enemy.Affinities[school]}, fontSize)
+		drawSchoolIcon(pixels, width, height, school, left+iconSize/2, bounds.Top+(bounds.Height()-iconSize)/2, iconSize)
+		left += iconSize + gap
 	}
 }

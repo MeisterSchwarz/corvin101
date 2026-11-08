@@ -41,9 +41,13 @@ func (w *Window) selectPanelWorld(world string) {
 		return
 	}
 	w.panelWorld, w.panelPage = world, 0
+	w.panelLoadGeneration++
+	generation := w.panelLoadGeneration
+	w.panelLoading = false
 	w.panelWheelDelta = 0
 	w.panelCombatIDs = combatEnemyIDs(w.lastSnapshot, world)
 	w.selectedEnemy = ""
+	w.detailDrops = false
 	w.panelLoadFailed = false
 	w.panelEnemies = nil
 	w.panelStatus = "Warte auf die aktuelle Welt ..."
@@ -51,16 +55,30 @@ func (w *Window) selectPanelWorld(world string) {
 		w.mu.Unlock()
 		return
 	}
+	if entries, cached := w.panelRepository.CachedWorld(world); cached {
+		w.panelEnemies = entries
+		w.panelStatus = "Keine Gegner für diese Welt registriert."
+		w.mu.Unlock()
+		w.render()
+		return
+	}
 	w.panelStatus = "Gegner werden geladen ..."
+	w.panelLoading = true
+	w.panelLoadStarted = time.Now()
+	started := w.panelLoadStarted
 	w.mu.Unlock()
 	go func() {
 		entries, err := w.panelRepository.ListWorld(context.Background(), world)
+		if remaining := 3*time.Second - time.Since(started); remaining > 0 {
+			<-time.After(remaining)
+		}
 		w.mu.Lock()
-		if w.panelWorld != world {
+		if w.panelWorld != world || w.panelLoadGeneration != generation {
 			w.mu.Unlock()
 			return
 		}
 		w.panelEnemies = entries
+		w.panelLoading = false
 		w.panelLoadFailed = err != nil
 		w.panelStatus = "Keine Gegner für diese Welt registriert."
 		if err != nil {
@@ -86,6 +104,7 @@ func (w *Window) drawEnemyPanel(hdc uintptr, pixels unsafe.Pointer, width, heigh
 	entries = orderedPanelEnemies(entries, w.panelCombatIDs)
 	selected, cursor := w.selectedEnemy, w.cursor
 	combatIDs := w.panelCombatIDs
+	loading, started := w.panelLoading, w.panelLoadStarted
 	w.mu.RUnlock()
 	if world == "" {
 		world = "Unbekannte Welt"
@@ -98,12 +117,12 @@ func (w *Window) drawEnemyPanel(hdc uintptr, pixels unsafe.Pointer, width, heigh
 	header := bounds
 	header.Bottom = header.Top + height/12
 	titleSize := max(int32(18), int32(36*scale))
-	titlePadding := max(int32(8), int32(10*scale))
+	titlePadding := max(int32(14), int32(18*scale))
 	title := bounds
 	title.Left += border + titlePadding
 	title.Right -= border + titlePadding
-	title.Top += border + titlePadding
-	title.Bottom = title.Top + titleSize + 6
+	title.Top += border + 4
+	title.Bottom = header.Bottom - 4
 	w.mu.RLock()
 	menuOpen := w.worldMenuOpen
 	for _, option := range w.panelWorlds {
@@ -115,18 +134,21 @@ func (w *Window) drawEnemyPanel(hdc uintptr, pixels unsafe.Pointer, width, heigh
 	w.mu.RUnlock()
 	label := fmt.Sprintf("%s (%d)", world, len(entries))
 	// Measure with the same font used by drawPanelLine so the arrow follows the count.
-	textWidth := panelTextWidth(hdc, label, titleSize)
+	textWidth := panelFontTextWidth(hdc, label, titleSize, theme.DisplayFontFamily)
 	title.Right = min(title.Right, title.Left+textWidth+titleSize+16)
-	arrow := "▾"
-	if menuOpen {
-		arrow = "▴"
-	}
-	drawPanelLine(hdc, pixels, width, height, title, label+"  "+arrow, titleSize)
+	textBounds := title
+	textBounds.Right -= titleSize + 12
+	drawBestiaryText(hdc, pixels, width, height, textBounds, label, titleSize, true)
+	drawWorldArrow(pixels, width, height, textBounds.Right+10, (title.Top+title.Bottom)/2-titleSize/8, max(8, titleSize/3), menuOpen)
 	w.mu.Lock()
 	w.worldHeader = title
 	w.mu.Unlock()
 	if menuOpen {
 		w.drawWorldMenu(hdc, pixels, width, height, bounds, header.Bottom)
+		return
+	}
+	if loading {
+		drawEnemyLoading(hdc, pixels, width, height, bounds, started)
 		return
 	}
 	rows := panelRows(height)
@@ -156,7 +178,7 @@ func (w *Window) drawEnemyPanel(hdc uintptr, pixels unsafe.Pointer, width, heigh
 		if combatIDs[entries[i].Key] {
 			name = "⚔ " + name
 		}
-		drawPanelLine(hdc, pixels, width, height, row, name, max(12, int32(21*scale)))
+		drawEnemyListName(hdc, pixels, width, height, row, name, entries[i].Schools, max(12, int32(18*scale)))
 	}
 	separator := details
 	separator.Left -= 8
@@ -164,6 +186,27 @@ func (w *Window) drawEnemyPanel(hdc uintptr, pixels unsafe.Pointer, width, heigh
 	fillPanelRect(pixels, width, height, separator, 0xFF65536A)
 	w.drawEnemyDetails(hdc, pixels, width, height, details, entries, selected)
 	w.drawPageControls(hdc, pixels, width, height, page, pages, cursor)
+}
+
+func drawEnemyListName(hdc uintptr, pixels unsafe.Pointer, width, height int32, bounds widget.Rect, name string, schools []enemies.School, fontSize int32) {
+	if len(schools) == 0 {
+		drawBestiaryText(hdc, pixels, width, height, bounds, name, fontSize, false)
+		return
+	}
+	iconSize := min(bounds.Height()-8, max(int32(20), fontSize+6))
+	gap := int32(4)
+	iconWidth := int32(len(schools)) * (iconSize + gap)
+	textBounds := bounds
+	textBounds.Right = max(bounds.Left, bounds.Right-iconWidth-8)
+	drawBestiaryText(hdc, pixels, width, height, textBounds, name, fontSize, false)
+	left := min(textBounds.Right, bounds.Left+panelFontTextWidth(hdc, name, fontSize, theme.DisplayFontFamily)) + 8
+	for _, school := range schools {
+		if left+iconSize > bounds.Right {
+			break
+		}
+		drawSchoolIcon(pixels, width, height, school, left+iconSize/2, bounds.Top+(bounds.Height()-iconSize)/2, iconSize)
+		left += iconSize + gap
+	}
 }
 
 func drawPanelAffinities(hdc uintptr, pixels unsafe.Pointer, width, height int32, bounds widget.Rect, affinities map[enemies.School]int, fontSize int32) {
@@ -195,6 +238,10 @@ func drawPanelLine(hdc uintptr, pixels unsafe.Pointer, width, height int32, boun
 }
 
 func drawPanelText(hdc uintptr, pixels unsafe.Pointer, width, height int32, bounds widget.Rect, text string, fontSize int32, family string) {
+	drawPanelTextColor(hdc, pixels, width, height, bounds, text, fontSize, family, theme.RGB{R: 245, G: 220, B: 160})
+}
+
+func drawPanelTextColor(hdc uintptr, pixels unsafe.Pointer, width, height int32, bounds widget.Rect, text string, fontSize int32, family string, color theme.RGB) {
 	name, _ := windows.UTF16PtrFromString(family)
 	font, _, _ := procCreateFontW.Call(uintptr(-fontSize), 0, 0, 0, 400, 0, 0, 0, 1, 0, 0, 5, 0, uintptr(unsafe.Pointer(name)))
 	if font == 0 {
@@ -204,7 +251,7 @@ func drawPanelText(hdc uintptr, pixels unsafe.Pointer, width, height int32, boun
 	old, _, _ := procSelectObject.Call(hdc, font)
 	defer procSelectObject.Call(hdc, old)
 	procSetBkMode.Call(hdc, transparentBackground)
-	procSetTextColor.Call(hdc, rgb(245, 220, 160))
+	procSetTextColor.Call(hdc, rgb(color.R, color.G, color.B))
 	value, err := windows.UTF16FromString(text)
 	if err != nil {
 		return

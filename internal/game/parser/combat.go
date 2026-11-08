@@ -723,6 +723,15 @@ func (p *Parser) parseParticipantRemoved(
 		strings.TrimSpace(
 			match[2],
 		)
+	if name == "Local Player" || name == "Non-local Player" {
+		confirmed := name == "Local Player" && p.pendingFleeDuel != "" &&
+			p.pendingFleeDuel == match[1] && !timestamp.Before(p.pendingFleeAt) && timestamp.Sub(p.pendingFleeAt) <= 5*time.Second
+		p.pendingFleeDuel = ""
+		p.pendingFleeAt = time.Time{}
+		if confirmed {
+			return events.Event{Type: events.CombatFled, Timestamp: timestamp, Raw: line, Combat: &events.CombatEvent{ClientDuelID: match[1]}}, true
+		}
+	}
 
 	return events.Event{
 		Type:      events.ParticipantRemoved,

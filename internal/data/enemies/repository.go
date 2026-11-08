@@ -2,11 +2,14 @@ package enemies
 
 import (
 	"context"
+	"fmt"
 	"log"
+	"slices"
 	"sort"
 	"strings"
 	"sync"
 
+	"corvin101/internal/data/drops"
 	"corvin101/internal/data/zones"
 )
 
@@ -20,6 +23,8 @@ type Repository struct {
 
 	language string
 	loader   *RemoteLoader
+	zones    *zones.Repository
+	drops    *drops.Repository
 
 	enemies map[string]EnemyInfo
 	worlds  map[string]map[string]EnemyInfo
@@ -30,10 +35,17 @@ type Repository struct {
 func NewRepository(
 	language string,
 	loader *RemoteLoader,
+	zoneRepositories ...*zones.Repository,
 ) *Repository {
+	zoneRepository := zones.NewRepository(language, zones.NewRemoteLoader(loader.files))
+	if len(zoneRepositories) > 0 && zoneRepositories[0] != nil {
+		zoneRepository = zoneRepositories[0]
+	}
 	return &Repository{
 		language: language,
 		loader:   loader,
+		zones:    zoneRepository,
+		drops:    drops.NewRepository(loader.files, language),
 		worlds:   make(map[string]map[string]EnemyInfo),
 
 		enemies: make(
@@ -76,6 +88,10 @@ func (r *Repository) Resolve(
 
 	info, exists :=
 		r.enemies[mobID]
+	info.Schools = slices.Clone(info.Schools)
+	info.Locations = slices.Clone(info.Locations)
+	info.LocationNames = slices.Clone(info.LocationNames)
+	info.DropCategories = drops.Clone(info.DropCategories)
 
 	r.mu.RUnlock()
 
@@ -137,6 +153,10 @@ func (r *Repository) loadWorld(
 		map[string]EnemyInfo,
 		len(coreFile),
 	)
+	worldDrops, dropErr := r.drops.LoadWorld(ctx, worldKey)
+	if dropErr != nil {
+		log.Printf("[drops] load %s: %v", worldKey, dropErr)
+	}
 
 	for mobID, coreData := range coreFile {
 
@@ -159,7 +179,12 @@ func (r *Repository) loadWorld(
 
 		enemyInfos[mobID] =
 			EnemyInfo{
-				Name: name,
+				Name:             name,
+				Schools:          slices.Clone(coreData.Schools),
+				Locations:        slices.Clone(coreData.Locations),
+				LocationNames:    r.locationNames(ctx, worldKey, coreData.Locations),
+				DropCategories:   drops.Clone(worldDrops[mobID]),
+				DropsUnavailable: dropErr != nil,
 
 				Affinities: cloneEnemyAffinities(
 					coreData.Affinities,
@@ -210,9 +235,23 @@ func (r *Repository) ListWorld(ctx context.Context, worldKey string) ([]WorldEne
 	if err := r.ensureWorld(ctx, worldKey); err != nil {
 		return nil, err
 	}
+	result, _ := r.CachedWorld(worldKey)
+	return result, nil
+}
+
+// CachedWorld never performs network I/O. A cached empty world is also a hit.
+func (r *Repository) CachedWorld(worldKey string) ([]WorldEnemy, bool) {
 	r.mu.RLock()
+	if _, ok := r.worlds[worldKey]; !ok {
+		r.mu.RUnlock()
+		return nil, false
+	}
 	result := make([]WorldEnemy, 0, len(r.worlds[worldKey]))
 	for key, info := range r.worlds[worldKey] {
+		info.Schools = slices.Clone(info.Schools)
+		info.Locations = slices.Clone(info.Locations)
+		info.LocationNames = slices.Clone(info.LocationNames)
+		info.DropCategories = drops.Clone(info.DropCategories)
 		info.Affinities = cloneEnemyAffinities(info.Affinities)
 		result = append(result, WorldEnemy{Key: key, EnemyInfo: info})
 	}
@@ -224,7 +263,7 @@ func (r *Repository) ListWorld(ctx context.Context, worldKey string) ([]WorldEne
 		}
 		return a < b
 	})
-	return result, nil
+	return result, true
 }
 
 func cloneEnemyAffinities(
@@ -244,4 +283,23 @@ func cloneEnemyAffinities(
 	}
 
 	return result
+}
+
+func (r *Repository) locationNames(ctx context.Context, world string, ids []int) []string {
+	names := make([]string, 0, len(ids))
+	for _, id := range ids {
+		info, found, err := r.zones.ResolveID(ctx, world, id)
+		name := fmt.Sprintf("Gebiet %d", id)
+		if err != nil {
+			log.Printf("[enemies] resolve location %s/%d: %v", world, id, err)
+		}
+		if found && err == nil {
+			name = info.Name
+			if info.Sub != "" && info.Sub != info.Name {
+				name += " – " + info.Sub
+			}
+		}
+		names = append(names, name)
+	}
+	return names
 }

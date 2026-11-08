@@ -61,7 +61,6 @@ func main() {
 	go func() {
 		if err := tray.Run(
 			ctx,
-			"public/corvin.ico",
 		); err != nil &&
 			ctx.Err() == nil {
 
@@ -106,6 +105,7 @@ func main() {
 	enemyRepository := enemies.NewRepository(
 		"de",
 		enemyLoader,
+		zoneRepository,
 	)
 
 	// --------------------------------------------------------
