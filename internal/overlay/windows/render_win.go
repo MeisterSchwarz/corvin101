@@ -274,7 +274,7 @@ func drawEnemyAffinitiesARGB(
 				windowWidth,
 				windowHeight,
 				slot,
-				len(enemy.Groups),
+				enemy.Groups,
 				uiScale,
 			)
 
@@ -294,104 +294,6 @@ func drawEnemyAffinitiesARGB(
 			uiScale,
 		)
 	}
-}
-
-func drawEnemyAffinityGroups(
-	hdc uintptr,
-	pixels unsafe.Pointer,
-	windowWidth int32,
-	windowHeight int32,
-	bounds widget.Rect,
-	groups []widgets.EnemyAffinityGroup,
-	scale float64,
-) {
-	if len(groups) == 0 {
-		return
-	}
-
-	groupCount := int32(len(groups))
-
-	availableWidth :=
-		bounds.Right -
-			bounds.Left
-
-	if availableWidth <= 0 {
-		return
-	}
-
-	columnWidth := int32(52.0 * scale)
-	contentWidth := columnWidth * groupCount
-
-	if contentWidth > availableWidth {
-		columnWidth =
-			availableWidth /
-				groupCount
-
-		contentWidth =
-			columnWidth *
-				groupCount
-	}
-
-	startX :=
-		bounds.Left +
-			(availableWidth-contentWidth)/2
-
-	valueHeight := int32(22.0 * scale)
-	iconSize := int32(32.0 * scale)
-	iconGap := int32(-6.0 * scale)
-
-	for index, group := range groups {
-		columnLeft :=
-			startX +
-				int32(index)*
-					columnWidth
-
-		columnRight :=
-			columnLeft +
-				columnWidth
-
-		centerX :=
-			columnLeft +
-				columnWidth/2
-
-		valueBounds := widget.Rect{
-			Left:   columnLeft,
-			Top:    bounds.Top,
-			Right:  columnRight,
-			Bottom: bounds.Top + valueHeight,
-		}
-
-		drawAffinityValue(
-			hdc,
-			pixels,
-			windowWidth,
-			windowHeight,
-			valueBounds,
-			group.Value,
-			scale,
-		)
-
-		iconTop :=
-			valueBounds.Bottom -
-				int32(2.0*scale)
-
-		for _, school := range group.Schools {
-			drawSchoolIcon(
-				pixels,
-				windowWidth,
-				windowHeight,
-				school,
-				centerX,
-				iconTop,
-				iconSize,
-			)
-
-			iconTop +=
-				iconSize +
-					iconGap
-		}
-	}
-
 }
 
 func drawAffinityValue(
@@ -514,109 +416,27 @@ func drawAffinityValue(
 				bounds,
 				x,
 				y,
-				theme.AffinityOutlineColor,
+				theme.RGB{R: 255, G: 235, B: 180},
 			)
 		}
 	}
 
+	color := theme.RGB{R: 63, G: 37, B: 20}
 	drawTextPass(
 		hdc,
 		textUTF16,
 		bounds,
 		0,
 		0,
-		theme.AffinityResistColor,
+		color,
 	)
 
-	ensureTextAlpha(
+	ensureAffinityTextAlpha(
 		pixels,
 		windowWidth,
 		windowHeight,
 		bounds,
 	)
-}
-
-func enemyAffinitySlotBounds(
-	width int32,
-	height int32,
-	slot int,
-	groupCount int,
-	scale float64,
-) widget.Rect {
-	if slot < 0 ||
-		slot >= 4 ||
-		groupCount <= 0 {
-
-		return widget.Rect{}
-	}
-
-	// Kalibrierung des Wizard101 Enemy-HUDs.
-	//
-	// firstHPRight:
-	// rechte Kante der ersten Enemy-Healthbar.
-	//
-	// enemySpacing:
-	// horizontaler Abstand von einer Healthbar
-	// zur nächsten.
-	//
-	// gap:
-	// Abstand zwischen Healthbar und Affinity-Block.
-	const (
-		firstHPRight = 0.156
-		enemySpacing = 0.223
-	)
-
-	gap := 8.0 * scale
-
-	hpRight :=
-		float64(width) *
-			(firstHPRight +
-				float64(slot)*enemySpacing)
-
-	left :=
-		int32(hpRight + gap)
-
-	top :=
-		int32(
-			float64(height) *
-				0.018,
-		)
-
-	columnWidth :=
-		int32(
-			42.0 *
-				scale,
-		)
-
-	padding :=
-		int32(
-			5.0 *
-				scale,
-		)
-
-	contentWidth :=
-		int32(groupCount) *
-			columnWidth
-
-	slotHeight :=
-		int32(
-			145.0 *
-				scale,
-		)
-
-	return widget.Rect{
-		Left: left -
-			padding,
-
-		Top: top,
-
-		Right: left +
-			contentWidth +
-			padding,
-
-		Bottom: top +
-			slotHeight,
-	}
 }
 
 func drawRoundWidgetARGB(

@@ -77,4 +77,5 @@ func (s *Store) HandleEvent(event events.Event) {
 	}
 
 	s.handleCombatEvent(event)
+	s.recoverRosterIdentities()
 }

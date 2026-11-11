@@ -72,6 +72,10 @@ func (w *Window) drawWorldMenu(hdc uintptr, pixels unsafe.Pointer, width, height
 }
 
 func (w *Window) clickPanel(p widget.Point) {
+	if w.clickSearch(p) {
+		return
+	}
+	w.deactivateSearch(true)
 	w.mu.Lock()
 	if !w.panelOpen {
 		w.mu.Unlock()
@@ -115,7 +119,7 @@ func (w *Window) clickPanel(p widget.Point) {
 			w.render()
 			return
 		}
-		entries := orderedPanelEnemies(w.panelEnemies, w.panelCombatIDs)
+		entries := w.panelEntriesLocked()
 		rows := panelRows(w.height)
 		page := min(w.panelPage, max(0, (len(entries)-1)/rows))
 		list, _ := enemyPanelColumns(w.width, w.height)
@@ -150,8 +154,12 @@ func (w *Window) applyPanelMouseInput() {
 	w.mu.RLock()
 	hwnd := w.hwnd
 	open := w.panelOpen
+	searchActive := w.searchActive
 	w.mu.RUnlock()
 	style := uintptr(wsExToolWindow | wsExLayered | wsExNoActivate)
+	if searchActive {
+		style &^= wsExNoActivate
+	}
 	if !open {
 		style |= wsExTransparent
 	}

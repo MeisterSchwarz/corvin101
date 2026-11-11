@@ -32,10 +32,13 @@ const (
 	HangingEffectAdded
 	HangingEffectRemoved
 	AuraEffectAdded
+	DuelRosterReceived
 )
 
 func (t Type) String() string {
 	switch t {
+	case DuelRosterReceived:
+		return "DuelRosterReceived"
 	case ZoneLoaded:
 		return "ZoneLoaded"
 
@@ -107,4 +110,5 @@ type Event struct {
 	ParticipantMapping *ParticipantMappingEvent
 
 	Snapshot *DuelSnapshot
+	Roster   *DuelRoster
 }

@@ -107,6 +107,12 @@ func main() {
 		enemyLoader,
 		zoneRepository,
 	)
+	// Warm the bestiary cache immediately, even before Wizard101 is running.
+	go func() {
+		if err := enemyRepository.Preload(ctx); err != nil && ctx.Err() == nil {
+			log.Printf("[bestiary] preload: %v", err)
+		}
+	}()
 
 	// --------------------------------------------------------
 	// Discord Rich Presence

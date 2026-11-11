@@ -21,7 +21,7 @@ func pageControls(width, height int32) (previous, next, label widget.Rect) {
 
 // Caller holds w.mu. The selected enemy is independent of page navigation.
 func (w *Window) changePanelPageLocked(step int) {
-	pages := max(1, (len(w.panelEnemies)+panelRows(w.height)-1)/panelRows(w.height))
+	pages := max(1, (len(w.panelEntriesLocked())+panelRows(w.height)-1)/panelRows(w.height))
 	w.panelPage = max(0, min(w.panelPage+step, pages-1))
 }
 

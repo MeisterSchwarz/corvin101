@@ -27,7 +27,7 @@ var (
 	RoundOutlineColor   = RGB{R: 20, G: 15, B: 6}
 	RoundShadowColor    = RGB{R: 4, G: 3, B: 2}
 
-	AffinityResistColor  = RGB{R: 245, G: 220, B: 105}
-	AffinityBoostColor   = RGB{R: 235, G: 235, B: 235}
+	AffinityResistColor  = RGB{R: 128, G: 224, B: 220}
+	AffinityBoostColor   = RGB{R: 255, G: 190, B: 102}
 	AffinityOutlineColor = RGB{R: 12, G: 10, B: 7}
 )

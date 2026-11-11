@@ -23,6 +23,10 @@ type CombatState struct {
 	// SubCircle -> Participant ID
 	ParticipantBySubCircle map[int]string
 	removedIdentities      map[string]participantIdentity
+	rosterNames            []string
+	rosterAt               time.Time
+	snapshotAt             time.Time
+	snapshotIDs            []string
 
 	LastSpell *SpellState
 
@@ -110,6 +114,12 @@ func newParticipantState(id string) *ParticipantState {
 
 func (s *Store) handleCombatEvent(event events.Event) {
 	switch event.Type {
+	case events.DuelRosterReceived:
+		if event.Roster != nil {
+			s.ensureCombatDuel(event.Roster.ClientDuelID)
+			s.combat.rosterNames = append([]string(nil), event.Roster.Names...)
+			s.combat.rosterAt = event.Timestamp
+		}
 	case events.CombatJoined:
 		s.handleCombatJoined(event)
 
@@ -146,6 +156,7 @@ func (s *Store) handleCombatEvent(event events.Event) {
 	case events.DuelSnapshotReceived:
 		if event.Snapshot != nil {
 			s.applyDuelSnapshot(*event.Snapshot)
+			s.combat.snapshotAt = event.Timestamp
 		}
 
 	case events.CombatFled, events.CombatLeft:
@@ -318,6 +329,9 @@ func (s *Store) handleParticipantAdded(event events.Event) {
 
 	s.ensureCombatDuel(event.Participant.ClientDuelID)
 	incoming := event.Participant.Participant
+	if incoming.Kind != events.ParticipantLocalPlayer {
+		s.combat.rosterNames = nil
+	}
 
 	if incoming.ID == "" {
 		return
@@ -386,6 +400,7 @@ func (s *Store) handleParticipantRemoved(event events.Event) {
 		return
 	}
 	s.ensureCombatDuel(event.Participant.ClientDuelID)
+	s.combat.rosterNames = nil
 	name := event.Participant.RawName
 	if name == "" {
 		return
@@ -571,6 +586,12 @@ func (s *Store) applyDuelSnapshot(
 	snapshot events.DuelSnapshot,
 ) {
 	s.ensureCombatDuel(snapshot.ClientDuelID)
+	s.combat.snapshotIDs = nil
+	for _, participant := range snapshot.Participants {
+		if participant.ID != "" {
+			s.combat.snapshotIDs = append(s.combat.snapshotIDs, participant.ID)
+		}
+	}
 	if snapshot.ClientDuelID != "" {
 		s.combat.ClientDuelID =
 			snapshot.ClientDuelID

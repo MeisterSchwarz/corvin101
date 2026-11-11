@@ -4,6 +4,7 @@ package windows
 
 import (
 	"maps"
+	"slices"
 	"sort"
 	"strings"
 	"unsafe"
@@ -46,12 +47,19 @@ func (w *Window) updatePanelCombat(snapshot state.Snapshot) {
 	w.panelCombatIDs = ids
 }
 
-func orderedPanelEnemies(source []enemies.WorldEnemy, combat map[string]bool) []enemies.WorldEnemy {
+func orderedPanelEnemies(source []enemies.WorldEnemy, combat map[string]bool, locationIDs ...*int) []enemies.WorldEnemy {
+	var location *int
+	if len(locationIDs) > 0 {
+		location = locationIDs[0]
+	}
 	result := append([]enemies.WorldEnemy(nil), source...)
 	sort.Slice(result, func(i, j int) bool {
 		a, b := result[i], result[j]
-		if combat[a.Key] != combat[b.Key] {
-			return combat[a.Key]
+		if a.InCombat(combat) != b.InCombat(combat) {
+			return a.InCombat(combat)
+		}
+		if !a.InCombat(combat) && enemyInLocation(a, location) != enemyInLocation(b, location) {
+			return enemyInLocation(a, location)
 		}
 		an, bn := strings.ToLower(a.Name), strings.ToLower(b.Name)
 		if an == bn {
@@ -60,6 +68,21 @@ func orderedPanelEnemies(source []enemies.WorldEnemy, combat map[string]bool) []
 		return an < bn
 	})
 	return result
+}
+
+func enemyInLocation(enemy enemies.WorldEnemy, location *int) bool {
+	return location != nil && slices.Contains(enemy.Locations, *location)
+}
+
+// Caller holds w.mu. A different browsed world never receives zone priority.
+func (w *Window) currentPanelLocationLocked() *int {
+	if w.worldRepository == nil || w.panelWorld != zones.WorldKey(w.panelZone) {
+		return nil
+	}
+	if id, found := w.worldRepository.CachedZoneID(w.panelZone); found {
+		return &id
+	}
+	return nil
 }
 
 func enemyPanelColumns(width, height int32) (widget.Rect, widget.Rect) {
@@ -73,6 +96,8 @@ func enemyPanelColumns(width, height int32) (widget.Rect, widget.Rect) {
 	details := list
 	details.Left = list.Right + padding
 	details.Right = bounds.Right - padding
+	list.Top += searchHeight(height) + 6
+	list.Bottom += height / 40
 	return list, details
 }
 

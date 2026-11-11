@@ -35,6 +35,12 @@ type Parser struct {
 	currentClientDuelID string
 	pendingFleeDuel     string
 	pendingFleeAt       time.Time
+	statsDuel           string
+	statsNames          []string
+	statsAt             time.Time
+	castPosition        *int
+	castPositionDuel    string
+	castPositionAt      time.Time
 
 	// Informationen zwischen
 	//
@@ -57,6 +63,7 @@ func New() *Parser {
 }
 
 func (p *Parser) Reset() {
+	p.resetRecovery()
 	p.pendingFleeDuel = ""
 	p.pendingFleeAt = time.Time{}
 	p.duelDump = nil
@@ -83,6 +90,11 @@ func (p *Parser) Feed(line string) []events.Event {
 	}
 
 	timestamp := parseTimestamp(line)
+	if p.duelDump == nil {
+		if recovered, handled := p.parseRecovery(line, timestamp); handled {
+			return recovered
+		}
+	}
 
 	// ------------------------------------------------------------
 	// Multiline duel dump

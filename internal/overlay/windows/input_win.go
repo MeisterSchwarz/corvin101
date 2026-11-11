@@ -48,11 +48,12 @@ func (w *Window) trackCursor(
 				opened := false
 				foreground, _, _ := procGetForegroundWindow.Call()
 				w.mu.Lock()
-				if w.gameWindow != 0 && foreground == uintptr(w.gameWindow) {
+				if w.gameWindow != 0 && (foreground == uintptr(w.gameWindow) || (w.searchActive && foreground == uintptr(w.hwnd))) {
 					w.panelOpen = !w.panelOpen
 					opened = w.panelOpen
 					w.worldMenuOpen = false
 					if opened {
+						w.searchQuery = ""
 						w.panelPage = 0
 						w.panelWheelDelta = 0
 					}
@@ -60,6 +61,7 @@ func (w *Window) trackCursor(
 				}
 				w.mu.Unlock()
 				if changed {
+					w.deactivateSearch(true)
 					w.setPanelMouseInput()
 					if opened {
 						w.mu.RLock()

@@ -24,6 +24,7 @@ const (
 )
 
 type EnemyInfo struct {
+	GameIDs          []string
 	Name             string
 	Schools          []School
 	Locations        []int
@@ -36,6 +37,7 @@ type EnemyInfo struct {
 type coreEnemyFile map[string]coreEnemy
 
 type coreEnemy struct {
+	Ref        string         `yaml:"ref,omitempty"`
 	Locations  []int          `yaml:"locations,omitempty"`
 	Schools    []School       `yaml:"schools,omitempty"`
 	Affinities map[School]int `yaml:"affinities,omitempty"`

@@ -23,9 +23,10 @@ func (w *Window) runAnimationLoop(ctx context.Context) {
 			w.mu.RLock()
 			manager := w.manager
 			combatRows := 0
+			location := w.currentPanelLocationLocked()
 			if w.panelOpen && !w.worldMenuOpen {
-				for _, enemy := range w.panelEnemies {
-					if w.panelCombatIDs[enemy.Key] {
+				for _, enemy := range w.panelEntriesLocked() {
+					if enemy.InCombat(w.panelCombatIDs) || enemyInLocation(enemy, location) {
 						combatRows++
 					}
 				}

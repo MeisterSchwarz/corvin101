@@ -86,6 +86,11 @@ type DuelSnapshot struct {
 	Participants []Participant
 }
 
+type DuelRoster struct {
+	ClientDuelID string
+	Names        []string
+}
+
 type ZoneEvent struct {
 	ZoneKey string
 }

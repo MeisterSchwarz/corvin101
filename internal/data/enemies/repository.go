@@ -2,7 +2,9 @@ package enemies
 
 import (
 	"context"
+	"errors"
 	"fmt"
+	"io/fs"
 	"log"
 	"slices"
 	"sort"
@@ -26,8 +28,8 @@ type Repository struct {
 	zones    *zones.Repository
 	drops    *drops.Repository
 
-	enemies map[string]EnemyInfo
-	worlds  map[string]map[string]EnemyInfo
+	variants map[string]map[string]EnemyInfo
+	worlds   map[string]map[string]EnemyInfo
 
 	worldLoads map[string]*worldLoad
 }
@@ -48,9 +50,7 @@ func NewRepository(
 		drops:    drops.NewRepository(loader.files, language),
 		worlds:   make(map[string]map[string]EnemyInfo),
 
-		enemies: make(
-			map[string]EnemyInfo,
-		),
+		variants: make(map[string]map[string]EnemyInfo),
 
 		worldLoads: make(
 			map[string]*worldLoad,
@@ -87,8 +87,9 @@ func (r *Repository) Resolve(
 	r.mu.RLock()
 
 	info, exists :=
-		r.enemies[mobID]
+		r.variants[worldKey][mobID]
 	info.Schools = slices.Clone(info.Schools)
+	info.GameIDs = slices.Clone(info.GameIDs)
 	info.Locations = slices.Clone(info.Locations)
 	info.LocationNames = slices.Clone(info.LocationNames)
 	info.DropCategories = drops.Clone(info.DropCategories)
@@ -145,8 +146,19 @@ func (r *Repository) loadWorld(
 			worldKey,
 		)
 
+	// Not every world has enemy data yet. Cache this as an empty catalog.
+	if errors.Is(err, fs.ErrNotExist) {
+		r.mu.Lock()
+		r.worlds[worldKey] = make(map[string]EnemyInfo)
+		r.variants[worldKey] = make(map[string]EnemyInfo)
+		r.mu.Unlock()
+		return nil
+	}
 	if err != nil {
 		return err
+	}
+	if err := validateEnemyReferences(coreFile); err != nil {
+		return fmt.Errorf("enemies %s: %w", worldKey, err)
 	}
 
 	enemyInfos := make(
@@ -159,11 +171,16 @@ func (r *Repository) loadWorld(
 	}
 
 	for mobID, coreData := range coreFile {
+		root := mobID
+		if coreData.Ref != "" {
+			root = coreData.Ref
+		}
+		base := coreFile[root]
 
 		translation, translated :=
-			translations[mobID]
+			translations[root]
 
-		name := mobID
+		name := root
 
 		if translated &&
 			translation.Name != "" {
@@ -179,17 +196,23 @@ func (r *Repository) loadWorld(
 
 		enemyInfos[mobID] =
 			EnemyInfo{
+				GameIDs:          []string{mobID},
 				Name:             name,
-				Schools:          slices.Clone(coreData.Schools),
+				Schools:          slices.Clone(base.Schools),
 				Locations:        slices.Clone(coreData.Locations),
 				LocationNames:    r.locationNames(ctx, worldKey, coreData.Locations),
 				DropCategories:   drops.Clone(worldDrops[mobID]),
 				DropsUnavailable: dropErr != nil,
 
 				Affinities: cloneEnemyAffinities(
-					coreData.Affinities,
+					base.Affinities,
 				),
 			}
+	}
+	catalog := buildEnemyCatalog(coreFile, enemyInfos)
+	for key, info := range catalog {
+		info.LocationNames = r.locationNames(ctx, worldKey, info.Locations)
+		catalog[key] = info
 	}
 
 	for mobID := range translations {
@@ -205,17 +228,15 @@ func (r *Repository) loadWorld(
 	}
 
 	r.mu.Lock()
-	r.worlds[worldKey] = enemyInfos
+	r.worlds[worldKey] = catalog
 
-	for mobID, info := range enemyInfos {
-		r.enemies[mobID] = info
-	}
+	r.variants[worldKey] = enemyInfos
 
 	r.mu.Unlock()
 
 	log.Printf(
 		"[enemies] loaded %d enemies from %s",
-		len(enemyInfos),
+		len(catalog),
 		worldKey,
 	)
 
@@ -248,6 +269,7 @@ func (r *Repository) CachedWorld(worldKey string) ([]WorldEnemy, bool) {
 	}
 	result := make([]WorldEnemy, 0, len(r.worlds[worldKey]))
 	for key, info := range r.worlds[worldKey] {
+		info.GameIDs = slices.Clone(info.GameIDs)
 		info.Schools = slices.Clone(info.Schools)
 		info.Locations = slices.Clone(info.Locations)
 		info.LocationNames = slices.Clone(info.LocationNames)

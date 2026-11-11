@@ -109,3 +109,25 @@ func drawCombatBestiaryRow(pixels unsafe.Pointer, width, height int32, row widge
 		fillPanelRect(pixels, width, height, marker, 0xffefd084)
 	}
 }
+
+func drawLocationBestiaryRow(pixels unsafe.Pointer, width, height int32, row widget.Rect, selected, hovered bool, now time.Time) {
+	row.Bottom -= 2
+	pulse := (1 + math.Sin(float64(now.UnixMilli()%2800)*2*math.Pi/2800)) / 2
+	base := [3]int32{30, 48, 78}
+	if hovered {
+		base = [3]int32{39, 64, 100}
+	}
+	if selected {
+		base = [3]int32{48, 73, 110}
+	}
+	panelGradient(pixels, width, height, row, base, 9, false)
+	color := uint32(0xff000000) | uint32(65+20*pulse)<<16 | uint32(110+30*pulse)<<8 | uint32(166+35*pulse)
+	panelRule(pixels, width, height, row, color)
+	marker := row
+	marker.Right = marker.Left + 3
+	fillPanelRect(pixels, width, height, marker, 0xff000000|uint32(95+30*pulse)<<16|uint32(156+30*pulse)<<8|uint32(215+25*pulse))
+	if selected {
+		panelRule(pixels, width, height, panelInset(row, 2), 0xffcda75c)
+		fillPanelRect(pixels, width, height, marker, 0xffefd084)
+	}
+}

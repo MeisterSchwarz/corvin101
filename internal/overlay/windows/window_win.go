@@ -25,9 +25,10 @@ const (
 	overlayClassName = "CorvinOverlayWindow"
 	overlayTitle     = "Corvin Overlay"
 
-	wmDestroy    = 0x0002
-	wmRender     = 0x8001
-	wmPanelInput = 0x8002
+	wmDestroy     = 0x0002
+	wmRender      = 0x8001
+	wmPanelInput  = 0x8002
+	wmSearchFocus = 0x8003
 
 	wsPopup = 0x80000000
 
@@ -231,6 +232,8 @@ type Window struct {
 	worldHeader         widget.Rect
 	panelZone           string
 	selectedEnemy       string
+	searchQuery         string
+	searchActive        bool
 	detailDrops         bool
 	panelCombatIDs      map[string]bool
 
@@ -671,6 +674,20 @@ func windowProc(
 	lParam uintptr,
 ) uintptr {
 	switch message {
+	case wmSearchFocus:
+		if activeWindow != nil {
+			activeWindow.applySearchFocus(wParam != 0)
+		}
+		return 0
+	case 0x0102: // WM_CHAR, only received while the search owns focus.
+		if activeWindow != nil {
+			activeWindow.searchCharacter(rune(wParam))
+		}
+		return 0
+	case 0x0008: // WM_KILLFOCUS
+		if activeWindow != nil {
+			activeWindow.deactivateSearch(false)
+		}
 	case wmRender:
 		if activeWindow != nil {
 			activeWindow.renderPending.Store(false)
@@ -691,13 +708,18 @@ func windowProc(
 			isHeader := activeWindow.panelOpen && activeWindow.worldHeader.Contains(activeWindow.cursor)
 			isDetailToggle := activeWindow.panelOpen && !activeWindow.worldMenuOpen && !activeWindow.panelLoading && activeWindow.selectedEnemy != "" && detailToggleRect(activeWindow.width, activeWindow.height, activeWindow.detailDrops).Contains(activeWindow.cursor)
 			previous, next, _ := pageControls(activeWindow.width, activeWindow.height)
-			pages := max(1, (len(activeWindow.panelEnemies)+panelRows(activeWindow.height)-1)/panelRows(activeWindow.height))
+			pages := max(1, (len(activeWindow.panelEntriesLocked())+panelRows(activeWindow.height)-1)/panelRows(activeWindow.height))
 			isPaging := activeWindow.panelOpen && !activeWindow.worldMenuOpen && ((activeWindow.panelPage > 0 && previous.Contains(activeWindow.cursor)) || (activeWindow.panelPage < pages-1 && next.Contains(activeWindow.cursor)))
 			activeWindow.mu.RUnlock()
 			cursorID := uintptr(32512) // IDC_ARROW
 			if isHeader || isPaging || isDetailToggle {
 				cursorID = 32649
 			} // IDC_HAND
+			activeWindow.mu.RLock()
+			if activeWindow.panelOpen && !activeWindow.worldMenuOpen && searchBounds(activeWindow.width, activeWindow.height).Contains(activeWindow.cursor) {
+				cursorID = 32513
+			}
+			activeWindow.mu.RUnlock()
 			cursor, _, _ := user32.NewProc("LoadCursorW").Call(0, cursorID)
 			user32.NewProc("SetCursor").Call(cursor)
 			return 1

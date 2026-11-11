@@ -74,3 +74,25 @@ func TestEnemyClickUsesDisplayedOrder(t *testing.T) {
 		t.Fatal("detail click changed selection")
 	}
 }
+
+func TestBattleThenLocationThenRestAlphabetically(t *testing.T) {
+	zone := 202
+	source := []enemies.WorldEnemy{
+		{Key: "rest-z", EnemyInfo: enemies.EnemyInfo{Name: "Zulu"}},
+		{Key: "local-z", EnemyInfo: enemies.EnemyInfo{Name: "Zulu", Locations: []int{202}}},
+		{Key: "battle-z", EnemyInfo: enemies.EnemyInfo{Name: "Zulu", Locations: []int{202}}},
+		{Key: "rest-a", EnemyInfo: enemies.EnemyInfo{Name: "Alpha"}},
+		{Key: "local-a", EnemyInfo: enemies.EnemyInfo{Name: "Alpha", Locations: []int{201, 202}}},
+		{Key: "battle-a", EnemyInfo: enemies.EnemyInfo{Name: "Alpha", GameIDs: []string{"alias"}, Locations: []int{999}}},
+	}
+	ordered := orderedPanelEnemies(source, map[string]bool{"battle-z": true, "alias": true}, &zone)
+	want := []string{"battle-a", "battle-z", "local-a", "local-z", "rest-a", "rest-z"}
+	for i, key := range want {
+		if ordered[i].Key != key {
+			t.Fatalf("position %d: got %s, want %s", i, ordered[i].Key, key)
+		}
+	}
+	if enemyInLocation(source[0], &zone) || enemyInLocation(source[1], nil) {
+		t.Fatal("unknown location was prioritized")
+	}
+}

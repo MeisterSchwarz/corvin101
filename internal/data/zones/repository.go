@@ -490,3 +490,14 @@ func (r *Repository) ResolveID(ctx context.Context, worldKey string, id int) (Zo
 	}
 	return ZoneInfo{}, false, nil
 }
+
+// CachedZoneID resolves the current game's zone without network I/O.
+func (r *Repository) CachedZoneID(zoneKey string) (int, bool) {
+	r.mu.RLock()
+	defer r.mu.RUnlock()
+	info, exists := r.worlds[WorldKey(zoneKey)][zoneKey]
+	if !exists || info.ID == nil {
+		return 0, false
+	}
+	return *info.ID, true
+}

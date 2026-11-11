@@ -25,6 +25,9 @@ func (w *Window) updatePanelWorld(zoneKey string) {
 	previous := zones.WorldKey(w.panelZone)
 	w.mu.RUnlock()
 	w.mu.Lock()
+	if w.panelZone != zoneKey {
+		w.panelPage = 0
+	}
 	w.panelZone = zoneKey
 	w.mu.Unlock()
 	if previous == world {
@@ -34,6 +37,7 @@ func (w *Window) updatePanelWorld(zoneKey string) {
 }
 
 func (w *Window) selectPanelWorld(world string) {
+	w.deactivateSearch(true)
 	w.mu.Lock()
 	w.worldMenuOpen = false
 	if world == w.panelWorld && !w.panelLoadFailed {
@@ -48,6 +52,7 @@ func (w *Window) selectPanelWorld(world string) {
 	w.panelCombatIDs = combatEnemyIDs(w.lastSnapshot, world)
 	w.selectedEnemy = ""
 	w.detailDrops = false
+	w.searchQuery = ""
 	w.panelLoadFailed = false
 	w.panelEnemies = nil
 	w.panelStatus = "Warte auf die aktuelle Welt ..."
@@ -65,13 +70,9 @@ func (w *Window) selectPanelWorld(world string) {
 	w.panelStatus = "Gegner werden geladen ..."
 	w.panelLoading = true
 	w.panelLoadStarted = time.Now()
-	started := w.panelLoadStarted
 	w.mu.Unlock()
 	go func() {
 		entries, err := w.panelRepository.ListWorld(context.Background(), world)
-		if remaining := 3*time.Second - time.Since(started); remaining > 0 {
-			<-time.After(remaining)
-		}
 		w.mu.Lock()
 		if w.panelWorld != world || w.panelLoadGeneration != generation {
 			w.mu.Unlock()
@@ -95,13 +96,15 @@ func (w *Window) selectPanelWorld(world string) {
 }
 
 func panelRows(height int32) int {
-	return max(1, int((height*7/10-height/6)/max(44, height/20)))
+	return max(1, int((height*7/10-height/6-searchHeight(height)-6+height/40)/max(44, height/20)))
 }
 
 func (w *Window) drawEnemyPanel(hdc uintptr, pixels unsafe.Pointer, width, height int32) {
 	w.mu.RLock()
 	world, entries, status, page := w.panelWorld, w.panelEnemies, w.panelStatus, w.panelPage
-	entries = orderedPanelEnemies(entries, w.panelCombatIDs)
+	total := len(w.panelEnemies)
+	location := w.currentPanelLocationLocked()
+	entries = w.panelEntriesLocked()
 	selected, cursor := w.selectedEnemy, w.cursor
 	combatIDs := w.panelCombatIDs
 	loading, started := w.panelLoading, w.panelLoadStarted
@@ -132,7 +135,7 @@ func (w *Window) drawEnemyPanel(hdc uintptr, pixels unsafe.Pointer, width, heigh
 		}
 	}
 	w.mu.RUnlock()
-	label := fmt.Sprintf("%s (%d)", world, len(entries))
+	label := fmt.Sprintf("%s (%d)", world, total)
 	// Measure with the same font used by drawPanelLine so the arrow follows the count.
 	textWidth := panelFontTextWidth(hdc, label, titleSize, theme.DisplayFontFamily)
 	title.Right = min(title.Right, title.Left+textWidth+titleSize+16)
@@ -151,6 +154,7 @@ func (w *Window) drawEnemyPanel(hdc uintptr, pixels unsafe.Pointer, width, heigh
 		drawEnemyLoading(hdc, pixels, width, height, bounds, started)
 		return
 	}
+	w.drawSearch(hdc, pixels, width, height)
 	rows := panelRows(height)
 	pages := max(1, (len(entries)+rows-1)/rows)
 	page = min(page, pages-1)
@@ -160,22 +164,26 @@ func (w *Window) drawEnemyPanel(hdc uintptr, pixels unsafe.Pointer, width, heigh
 	panelRule(pixels, width, height, card, 0xff69533c)
 	details = panelInset(details, max(10, height/60))
 	if len(entries) == 0 {
-		body := bounds
-		body.Top = header.Bottom
-		body.Bottom -= height / 12
-		drawOutlinedText(hdc, pixels, width, height, body, status, max(14, int32(24*scale)), scale, 0)
+		body := list
+		body.Bottom = body.Top + max(32, height/20)
+		if total > 0 {
+			status = "Keine Treffer"
+		}
+		drawPanelLine(hdc, pixels, width, height, body, status, max(12, height/60))
 	}
 	now := time.Now()
 	for i := page * rows; i < min(len(entries), (page+1)*rows); i++ {
 		row := enemyPanelRow(list, height, i-page*rows)
-		if combatIDs[entries[i].Key] {
+		if entries[i].InCombat(combatIDs) {
 			drawCombatBestiaryRow(pixels, width, height, row, entries[i].Key == selected, row.Contains(cursor), now)
+		} else if enemyInLocation(entries[i], location) {
+			drawLocationBestiaryRow(pixels, width, height, row, entries[i].Key == selected, row.Contains(cursor), now)
 		} else {
 			drawBestiaryRow(pixels, width, height, row, entries[i].Key == selected, row.Contains(cursor))
 		}
 		row.Left += 10
 		name := entries[i].Name
-		if combatIDs[entries[i].Key] {
+		if entries[i].InCombat(combatIDs) {
 			name = "⚔ " + name
 		}
 		drawEnemyListName(hdc, pixels, width, height, row, name, entries[i].Schools, max(12, int32(18*scale)))
