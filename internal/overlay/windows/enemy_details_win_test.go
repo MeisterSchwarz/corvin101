@@ -76,14 +76,14 @@ func TestEnemyClickUsesDisplayedOrder(t *testing.T) {
 }
 
 func TestBattleThenLocationThenRestAlphabetically(t *testing.T) {
-	zone := 202
+	zone := "Arcanum/Interior"
 	source := []enemies.WorldEnemy{
 		{Key: "rest-z", EnemyInfo: enemies.EnemyInfo{Name: "Zulu"}},
-		{Key: "local-z", EnemyInfo: enemies.EnemyInfo{Name: "Zulu", Locations: []int{202}}},
-		{Key: "battle-z", EnemyInfo: enemies.EnemyInfo{Name: "Zulu", Locations: []int{202}}},
+		{Key: "local-z", EnemyInfo: enemies.EnemyInfo{Name: "Zulu", Locations: []string{"Arcanum/Interior"}}},
+		{Key: "battle-z", EnemyInfo: enemies.EnemyInfo{Name: "Zulu", Locations: []string{"Arcanum/Interior"}}},
 		{Key: "rest-a", EnemyInfo: enemies.EnemyInfo{Name: "Alpha"}},
-		{Key: "local-a", EnemyInfo: enemies.EnemyInfo{Name: "Alpha", Locations: []int{201, 202}}},
-		{Key: "battle-a", EnemyInfo: enemies.EnemyInfo{Name: "Alpha", GameIDs: []string{"alias"}, Locations: []int{999}}},
+		{Key: "local-a", EnemyInfo: enemies.EnemyInfo{Name: "Alpha", Locations: []string{"Arcanum/Other", "Arcanum/Interior"}}},
+		{Key: "battle-a", EnemyInfo: enemies.EnemyInfo{Name: "Alpha", GameIDs: []string{"alias"}, Locations: []string{"Arcanum/Unknown"}}},
 	}
 	ordered := orderedPanelEnemies(source, map[string]bool{"battle-z": true, "alias": true}, &zone)
 	want := []string{"battle-a", "battle-z", "local-a", "local-z", "rest-a", "rest-z"}

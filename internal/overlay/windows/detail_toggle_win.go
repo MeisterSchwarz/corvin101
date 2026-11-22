@@ -12,13 +12,31 @@ import (
 )
 
 var detailToggleIcons struct {
-	once            sync.Once
-	backpack, enemy *schoolIcon
+	once                         sync.Once
+	backpack, resistance, cheats *schoolIcon
+}
+
+// Caller holds w.mu; hit testing shares the exact drawing layout.
+func (w *Window) detailTabAtLocked(p widget.Point) int {
+	if !w.panelOpen || w.worldMenuOpen || w.panelLoading || w.selectedEnemy == "" {
+		return -1
+	}
+	hasCheats := w.hasSelectedCheatsLocked()
+	count := 2
+	if hasCheats {
+		count = 3
+	}
+	for i := 0; i < count; i++ {
+		if detailTabRect(w.width, w.height, i, hasCheats).Contains(p) {
+			return i
+		}
+	}
+	return -1
 }
 
 func detailToggleIcon(dropsView bool) *schoolIcon {
 	detailToggleIcons.once.Do(func() {
-		for path, target := range map[string]**schoolIcon{"items/backpack.png": &detailToggleIcons.backpack, "items/enemy.png": &detailToggleIcons.enemy} {
+		for path, target := range map[string]**schoolIcon{"items/backpack.png": &detailToggleIcons.backpack, "items/resistance.png": &detailToggleIcons.resistance, "items/cheats.png": &detailToggleIcons.cheats} {
 			file, err := assets.Items.Open(path)
 			if err != nil {
 				log.Printf("[overlay] button icon %s: %v", path, err)
@@ -34,27 +52,52 @@ func detailToggleIcon(dropsView bool) *schoolIcon {
 		}
 	})
 	if dropsView {
-		return detailToggleIcons.enemy
+		return detailToggleIcons.resistance
 	}
 	return detailToggleIcons.backpack
 }
 
 func detailToggleRect(width, height int32, dropsView bool) widget.Rect {
+	index := 0
+	if dropsView {
+		index = 1
+	}
+	return detailTabRect(width, height, index, false)
+}
+
+func detailTabRect(width, height int32, index int, hasCheats bool) widget.Rect {
 	_, bounds := enemyPanelColumns(width, height)
 	bounds = panelInset(bounds, max(10, height/60))
 	fontSize := max(int32(12), min(width, height)/50)
 	top := bounds.Top
 	size := max(int32(44), fontSize*3)
-	return widget.Rect{Left: bounds.Right - size, Top: top, Right: bounds.Right, Bottom: top + size}
+	count := int32(2)
+	if hasCheats {
+		count = 3
+		if index == 2 {
+			index = 0
+		} else {
+			index++
+		}
+	}
+	left := bounds.Right - count*size - (count-1)*8 + int32(index)*(size+8)
+	return widget.Rect{Left: left, Top: top, Right: left + size, Bottom: top + size}
 }
 
-func drawDetailToggle(hdc uintptr, pixels unsafe.Pointer, width, height int32, dropsView bool, cursor widget.Point) {
-	button := detailToggleRect(width, height, dropsView)
-	size := button.Width() * 86 / 100
-	if button.Contains(cursor) {
-		size = button.Width()
+func drawDetailTabs(pixels unsafe.Pointer, width, height int32, dropsView, cheatsView, hasCheats bool, cursor widget.Point) {
+	detailToggleIcon(false)
+	icons := []*schoolIcon{detailToggleIcons.resistance, detailToggleIcons.backpack}
+	if hasCheats {
+		icons = append(icons, detailToggleIcons.cheats)
 	}
-	drawIconImage(pixels, width, height, detailToggleIcon(dropsView), (button.Left+button.Right)/2, button.Top+(button.Height()-size)/2, size)
+	for i, icon := range icons {
+		button := detailTabRect(width, height, i, hasCheats)
+		size := button.Width() * 86 / 100
+		if button.Contains(cursor) {
+			size = button.Width()
+		}
+		drawIconImage(pixels, width, height, icon, (button.Left+button.Right)/2, button.Top+(button.Height()-size)/2, size)
+	}
 }
 
 // Equalize the visible silhouettes rather than the transparent PNG canvases.

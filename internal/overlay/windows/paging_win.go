@@ -27,6 +27,18 @@ func (w *Window) changePanelPageLocked(step int) {
 
 func (w *Window) wheelPanel(p widget.Point, delta int) bool {
 	w.mu.Lock()
+	_, details := enemyPanelColumns(w.width, w.height)
+	if w.panelOpen && !w.worldMenuOpen && !w.panelLoading && w.detailCheats && details.Contains(p) {
+		w.cheatWheelDelta += delta
+		steps := w.cheatWheelDelta / 120
+		w.cheatWheelDelta %= 120
+		w.cheatScroll = max(0, min(w.cheatScroll-int32(steps)*max(int32(30), w.height/18), w.cheatScrollMax))
+		w.mu.Unlock()
+		if steps != 0 {
+			w.render()
+		}
+		return true
+	}
 	list, _ := enemyPanelColumns(w.width, w.height)
 	if !w.panelOpen || w.worldMenuOpen || w.panelLoading || !list.Contains(p) {
 		w.panelWheelDelta = 0

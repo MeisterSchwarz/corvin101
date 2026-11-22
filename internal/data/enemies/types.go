@@ -24,21 +24,32 @@ const (
 )
 
 type EnemyInfo struct {
+	Heads            []EncounterHead
+	Mode, VariantOf  string
+	Cheats           []CheatMechanic
+	Strategy         []CheatNote
 	GameIDs          []string
 	Name             string
 	Schools          []School
-	Locations        []int
+	Locations        []string
 	LocationNames    []string
 	DropCategories   []drops.Category
 	DropsUnavailable bool
 	Affinities       map[School]int
 }
 
+type EncounterHead struct {
+	Key string
+	EnemyInfo
+}
+
 type coreEnemyFile map[string]coreEnemy
 
 type coreEnemy struct {
+	Mode       string         `yaml:"mode,omitempty"`
+	VariantOf  string         `yaml:"variant_of,omitempty"`
 	Ref        string         `yaml:"ref,omitempty"`
-	Locations  []int          `yaml:"locations,omitempty"`
+	Locations  []string       `yaml:"locations,omitempty"`
 	Schools    []School       `yaml:"schools,omitempty"`
 	Affinities map[School]int `yaml:"affinities,omitempty"`
 }

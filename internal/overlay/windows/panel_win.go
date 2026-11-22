@@ -27,6 +27,10 @@ func (w *Window) updatePanelWorld(zoneKey string) {
 	w.mu.Lock()
 	if w.panelZone != zoneKey {
 		w.panelPage = 0
+		w.panelZone = zoneKey
+		if w.panelWorld == world {
+			w.autoPanelModeLocked()
+		}
 	}
 	w.panelZone = zoneKey
 	w.mu.Unlock()
@@ -41,6 +45,7 @@ func (w *Window) selectPanelWorld(world string) {
 	w.mu.Lock()
 	w.worldMenuOpen = false
 	if world == w.panelWorld && !w.panelLoadFailed {
+		w.autoPanelModeLocked()
 		w.mu.Unlock()
 		return
 	}
@@ -52,6 +57,10 @@ func (w *Window) selectPanelWorld(world string) {
 	w.panelCombatIDs = combatEnemyIDs(w.lastSnapshot, world)
 	w.selectedEnemy = ""
 	w.detailDrops = false
+	w.detailCheats = false
+	w.cheatScroll = 0
+	w.cheatScrollMax = 0
+	w.cheatWheelDelta = 0
 	w.searchQuery = ""
 	w.panelLoadFailed = false
 	w.panelEnemies = nil
@@ -62,6 +71,7 @@ func (w *Window) selectPanelWorld(world string) {
 	}
 	if entries, cached := w.panelRepository.CachedWorld(world); cached {
 		w.panelEnemies = entries
+		w.autoPanelModeLocked()
 		w.panelStatus = "Keine Gegner für diese Welt registriert."
 		w.mu.Unlock()
 		w.render()
@@ -79,6 +89,7 @@ func (w *Window) selectPanelWorld(world string) {
 			return
 		}
 		w.panelEnemies = entries
+		w.autoPanelModeLocked()
 		w.panelLoading = false
 		w.panelLoadFailed = err != nil
 		w.panelStatus = "Keine Gegner für diese Welt registriert."
@@ -102,7 +113,7 @@ func panelRows(height int32) int {
 func (w *Window) drawEnemyPanel(hdc uintptr, pixels unsafe.Pointer, width, height int32) {
 	w.mu.RLock()
 	world, entries, status, page := w.panelWorld, w.panelEnemies, w.panelStatus, w.panelPage
-	total := len(w.panelEnemies)
+	total := len(w.modeEntriesLocked())
 	location := w.currentPanelLocationLocked()
 	entries = w.panelEntriesLocked()
 	selected, cursor := w.selectedEnemy, w.cursor
@@ -171,15 +182,19 @@ func (w *Window) drawEnemyPanel(hdc uintptr, pixels unsafe.Pointer, width, heigh
 		}
 		drawPanelLine(hdc, pixels, width, height, body, status, max(12, height/60))
 	}
-	now := time.Now()
 	for i := page * rows; i < min(len(entries), (page+1)*rows); i++ {
 		row := enemyPanelRow(list, height, i-page*rows)
-		if entries[i].InCombat(combatIDs) {
-			drawCombatBestiaryRow(pixels, width, height, row, entries[i].Key == selected, row.Contains(cursor), now)
-		} else if enemyInLocation(entries[i], location) {
-			drawLocationBestiaryRow(pixels, width, height, row, entries[i].Key == selected, row.Contains(cursor), now)
-		} else {
-			drawBestiaryRow(pixels, width, height, row, entries[i].Key == selected, row.Contains(cursor))
+		drawBestiaryRow(pixels, width, height, row, entries[i].Key == selected, row.Contains(cursor))
+		if i+1 < len(entries) {
+			color := uint32(0)
+			if entries[i].InCombat(combatIDs) && !entries[i+1].InCombat(combatIDs) {
+				color = 0xffb96c50
+			} else if !entries[i].InCombat(combatIDs) && enemyInLocation(entries[i], location) && !entries[i+1].InCombat(combatIDs) && !enemyInLocation(entries[i+1], location) {
+				color = 0xff648bb3
+			}
+			if color != 0 {
+				fillPanelRect(pixels, width, height, widget.Rect{Left: row.Left, Right: row.Right, Top: row.Bottom - 2, Bottom: row.Bottom}, color)
+			}
 		}
 		row.Left += 10
 		name := entries[i].Name

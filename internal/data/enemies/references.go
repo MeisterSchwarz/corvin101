@@ -4,12 +4,22 @@ import (
 	"corvin101/internal/data/drops"
 	"corvin101/internal/data/items"
 	"fmt"
+	"reflect"
 	"slices"
 	"sort"
 )
 
 func validateEnemyReferences(core coreEnemyFile) error {
 	for id, enemy := range core {
+		if enemy.Mode != "" && enemy.Mode != "standard" && enemy.Mode != "challenge" {
+			return fmt.Errorf("%s: invalid mode %q", id, enemy.Mode)
+		}
+		if enemy.VariantOf != "" {
+			target, ok := core[enemy.VariantOf]
+			if !ok || enemy.VariantOf == id || target.VariantOf != "" || target.Ref != "" || enemyMode(target.Mode) == enemyMode(enemy.Mode) {
+				return fmt.Errorf("%s: invalid variant_of %s", id, enemy.VariantOf)
+			}
+		}
 		if enemy.Ref == "" {
 			continue
 		}
@@ -48,9 +58,21 @@ func buildEnemyCatalog(core coreEnemyFile, variants map[string]EnemyInfo) map[st
 			info.DropCategories = nil
 		}
 		variant := variants[id]
+		for _, paragraph := range variant.Strategy {
+			if !slices.ContainsFunc(info.Strategy, func(existing CheatNote) bool { return reflect.DeepEqual(existing, paragraph) }) {
+				info.Strategy = append(cloneCheatNotes(info.Strategy), cloneCheatNotes([]CheatNote{paragraph})[0])
+			}
+		}
 		info.GameIDs = append(info.GameIDs, id)
 		info.Locations = append(info.Locations, variant.Locations...)
 		info.DropCategories = mergeDropCategories(info.DropCategories, variant.DropCategories)
+		for _, note := range variant.Cheats {
+			if !slices.ContainsFunc(info.Cheats, func(existing CheatMechanic) bool {
+				return reflect.DeepEqual(existing, note)
+			}) {
+				info.Cheats = append(cloneCheats(info.Cheats), cloneCheats([]CheatMechanic{note})[0])
+			}
+		}
 		info.DropsUnavailable = info.DropsUnavailable || variant.DropsUnavailable
 		result[root] = info
 	}
@@ -69,6 +91,15 @@ func mergeDropCategories(target, source []drops.Category) []drops.Category {
 		if index < 0 {
 			result = append(result, drops.Clone([]drops.Category{category})[0])
 			continue
+		}
+		if category.Gold != nil {
+			if result[index].Gold == nil {
+				gold := *category.Gold
+				result[index].Gold = &gold
+			} else {
+				result[index].Gold.Min = min(result[index].Gold.Min, category.Gold.Min)
+				result[index].Gold.Max = max(result[index].Gold.Max, category.Gold.Max)
+			}
 		}
 		for _, item := range category.Items {
 			if !slices.ContainsFunc(result[index].Items, func(v items.Info) bool { return v.ID == item.ID }) {

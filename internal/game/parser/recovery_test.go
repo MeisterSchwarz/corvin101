@@ -4,8 +4,45 @@ import (
 	"corvin101/internal/game/events"
 	"corvin101/internal/game/parser"
 	"corvin101/internal/game/state"
+	"fmt"
 	"testing"
 )
+
+func TestMixedLateJoinRecoversExplicitActorIdentities(t *testing.T) {
+	p, s := parser.New(), state.New()
+	feed := func(line string) {
+		for _, ev := range p.Feed("11/14/26 13:16:12 " + line) {
+			s.HandleEvent(ev)
+		}
+	}
+	feed("Duel 1615861: MSG_CombatAdd(Local Player)")
+	feed("My SubCircle: 5, OtherPart's SubCircle: 0")
+	feed("Added participant 12593827 to duel 1615861")
+	// These explicit names arrive before the complete stats/snapshot pair.
+	for _, actor := range []struct{ global, name string }{
+		{"2889340635936499830", "DM_Vampire_BaseMasked_A_02"},
+		{"2889340635936499833", "DM_Vampire_BaseMasked_A_01"},
+		{"2889340635936499827", "DM_Vampire_BaseMasked_A_03"},
+	} {
+		feed(fmt.Sprintf("AnimationBehavior OwnerID:%s [templateID:2199024954439  Debug Name:%s]", actor.global, actor.name))
+		feed("Duel 1615861: MSG_CombatStats(" + actor.name + ")")
+	}
+	feed("Duel 1615861: MSG_CombatStats(Local Player)")
+	feed("Duel 1615861: MSG_CombatPips()")
+	feed("---BEGIN DEBUGDUMPDUEL---")
+	feed("Participant: ID 12593827, Team 0, Health 10017 Pips 1 PPips 1")
+	for _, id := range []string{"1615990", "1615993", "1615987"} {
+		feed("Participant: ID " + id + ", Team 1, Health 6050 Pips 2 PPips 0")
+	}
+	feed("---END DEBUGDUMPDUEL---")
+	feed("CombatResolver::ResolveCombatRound. Duel ID:2889340635936499701 Round:2 Caster:5 Spell:Fire Dragon")
+	want := map[string]string{"1615990": "DM_Vampire_BaseMasked_A_02", "1615993": "DM_Vampire_BaseMasked_A_01", "1615987": "DM_Vampire_BaseMasked_A_03"}
+	for _, participant := range s.Snapshot().Combat.Participants {
+		if name, ok := want[participant.ID]; ok && (participant.Kind != events.ParticipantMob || participant.MobID != name) {
+			t.Fatalf("incorrect explicit identity: %+v", participant)
+		}
+	}
+}
 
 func TestLateJoinStatsAndCastRecoverEnemyWithoutOriginalAdd(t *testing.T) {
 	p, s := parser.New(), state.New()

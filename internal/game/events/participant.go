@@ -69,6 +69,8 @@ type ParticipantEvent struct {
 }
 
 type ParticipantMappingEvent struct {
+	// Global actor ID from an explicit OwnerID/Debug Name pair, if present.
+	GlobalID     string
 	ClientDuelID string
 
 	ParticipantID string

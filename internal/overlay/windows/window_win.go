@@ -232,9 +232,18 @@ type Window struct {
 	worldHeader         widget.Rect
 	panelZone           string
 	selectedEnemy       string
+	enemyModes          map[string]string
+	encounterHeads      map[string]string
 	searchQuery         string
 	searchActive        bool
 	detailDrops         bool
+	detailCheats        bool
+	cheatScroll         int32
+	cheatScrollMax      int32
+	cheatWheelDelta     int
+	strategyLinks       []strategyEnemyLink
+	strategyLinksEnemy  string
+	dropCategory        string
 	panelCombatIDs      map[string]bool
 
 	width  int32
@@ -706,13 +715,20 @@ func windowProc(
 			}
 			activeWindow.mu.RLock()
 			isHeader := activeWindow.panelOpen && activeWindow.worldHeader.Contains(activeWindow.cursor)
-			isDetailToggle := activeWindow.panelOpen && !activeWindow.worldMenuOpen && !activeWindow.panelLoading && activeWindow.selectedEnemy != "" && detailToggleRect(activeWindow.width, activeWindow.height, activeWindow.detailDrops).Contains(activeWindow.cursor)
+			isDetailToggle := activeWindow.panelOpen && !activeWindow.worldMenuOpen && !activeWindow.panelLoading && activeWindow.selectedEnemy != "" && activeWindow.detailTabAtLocked(activeWindow.cursor) >= 0
 			previous, next, _ := pageControls(activeWindow.width, activeWindow.height)
 			pages := max(1, (len(activeWindow.panelEntriesLocked())+panelRows(activeWindow.height)-1)/panelRows(activeWindow.height))
 			isPaging := activeWindow.panelOpen && !activeWindow.worldMenuOpen && ((activeWindow.panelPage > 0 && previous.Contains(activeWindow.cursor)) || (activeWindow.panelPage < pages-1 && next.Contains(activeWindow.cursor)))
 			activeWindow.mu.RUnlock()
 			cursorID := uintptr(32512) // IDC_ARROW
-			if isHeader || isPaging || isDetailToggle {
+			activeWindow.mu.RLock()
+			isDropCategory := activeWindow.panelOpen && !activeWindow.worldMenuOpen && !activeWindow.panelLoading && activeWindow.dropCategoryAtLocked(activeWindow.cursor) != ""
+			isModeButton := activeWindow.modeButtonAtLocked(activeWindow.cursor) >= 0
+			isStrategyLink := activeWindow.strategyLinkAtLocked(activeWindow.cursor) != nil
+			isHeadButton := activeWindow.headButtonAtLocked(activeWindow.cursor) != ""
+			isCheatButton := activeWindow.hasSelectedCheatsLocked() && cheatButtonRect(activeWindow.width, activeWindow.height).Contains(activeWindow.cursor)
+			activeWindow.mu.RUnlock()
+			if isHeader || isPaging || isDetailToggle || isDropCategory || isCheatButton || isModeButton || isStrategyLink || isHeadButton {
 				cursorID = 32649
 			} // IDC_HAND
 			activeWindow.mu.RLock()

@@ -5,6 +5,43 @@ import (
 	"testing"
 )
 
+func TestFleeRejoinRetainsOnlyIdentityInSameDuel(t *testing.T) {
+	for _, duel := range []string{"1497718", "another-duel"} {
+		t.Run(duel, func(t *testing.T) {
+			s := New()
+			s.HandleEvent(events.Event{Type: events.ParticipantMapped, ParticipantMapping: &events.ParticipantMappingEvent{ClientDuelID: "1497718", ParticipantID: "1497734", SubCircle: 0, Kind: events.ParticipantMob, MobID: "DM_Player_BranchBoss_A_05"}})
+			p := s.combat.Participants["1497734"]
+			p.Health = 16080
+			p.Effects.Hanging = append(p.Effects.Hanging, ActiveEffect{RawEffect: "old-effect"})
+			s.HandleEvent(events.Event{Type: events.CombatFled})
+			if len(s.combat.Participants) != 0 || s.combat.Active {
+				t.Fatal("flee left combat active")
+			}
+			s.HandleEvent(events.Event{Type: events.DuelSnapshotReceived, Snapshot: &events.DuelSnapshot{ClientDuelID: duel, Participants: []events.Participant{{ID: "1497734", SubCircle: -1, Team: 1, Health: 2944}, {ID: "new-enemy", SubCircle: -1, Team: 1}}}})
+			p = s.combat.Participants["1497734"]
+			if duel == "1497718" {
+				if p.Kind != events.ParticipantMob || p.MobID != "DM_Player_BranchBoss_A_05" {
+					t.Fatalf("identity lost: %+v", p)
+				}
+			} else if p.Kind != events.ParticipantUnknown || p.MobID != "" {
+				t.Fatal("identity crossed duels")
+			}
+			if p.Health != 2944 || len(p.Effects.Hanging) != 0 {
+				t.Fatal("stale combat values restored")
+			}
+			if duel == "1497718" && p.SubCircle != 0 {
+				t.Fatal("known enemy slot lost")
+			}
+			if duel != "1497718" && p.SubCircle != -1 {
+				t.Fatal("slot crossed duels")
+			}
+			if s.combat.Participants["new-enemy"].Kind != events.ParticipantUnknown {
+				t.Fatal("identity guessed for different ID")
+			}
+		})
+	}
+}
+
 func TestRosterRecoveryRejectsMixedAndIncompleteAssignments(t *testing.T) {
 	makeStore := func(names []string) *Store {
 		s := New()

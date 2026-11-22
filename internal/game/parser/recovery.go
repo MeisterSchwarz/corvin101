@@ -12,6 +12,7 @@ var statsNameRe = regexp.MustCompile(`Duel (\d+): MSG_CombatStats\(([^)]+)\)`)
 var statsEndRe = regexp.MustCompile(`Duel (\d+): MSG_CombatPips\(\)`)
 var castPositionRe = regexp.MustCompile(`\{IsSim:0\} Participant \(sc (\d+)\) cast spell `)
 var castPipsRe = regexp.MustCompile(`\{IsSim:0\} Processing spell pips - ID\((\d+)\)`)
+var actorIdentityRe = regexp.MustCompile(`OwnerID:(\d+)\s+\[templateID:\d+\s+Debug Name:([^\]\s]+)\]`)
 
 func (p *Parser) resetRecovery() {
 	p.statsDuel = ""
@@ -23,6 +24,12 @@ func (p *Parser) resetRecovery() {
 }
 
 func (p *Parser) parseRecovery(line string, at time.Time) ([]events.Event, bool) {
+	if match := actorIdentityRe.FindStringSubmatch(line); match != nil && p.currentClientDuelID != "" {
+		id, err := strconv.ParseUint(match[1], 10, 64)
+		if err == nil && id>>32 != 0 && uint32(id) != 0 {
+			return []events.Event{{Type: events.ParticipantMapped, Timestamp: at, Raw: line, ParticipantMapping: &events.ParticipantMappingEvent{ClientDuelID: p.currentClientDuelID, GlobalID: match[1], ParticipantID: strconv.FormatUint(uint64(uint32(id)), 10), SubCircle: -1, Kind: events.ParticipantMob, MobID: match[2]}}}, true
+		}
+	}
 	if match := statsNameRe.FindStringSubmatch(line); match != nil {
 		if p.statsDuel != match[1] || at.Sub(p.statsAt) > 5*time.Second || at.Before(p.statsAt) {
 			p.statsNames = nil

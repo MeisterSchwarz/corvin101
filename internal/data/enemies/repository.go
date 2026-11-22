@@ -89,6 +89,9 @@ func (r *Repository) Resolve(
 	info, exists :=
 		r.variants[worldKey][mobID]
 	info.Schools = slices.Clone(info.Schools)
+	info.Heads = cloneHeads(info.Heads)
+	info.Cheats = cloneCheats(info.Cheats)
+	info.Strategy = cloneCheatNotes(info.Strategy)
 	info.GameIDs = slices.Clone(info.GameIDs)
 	info.Locations = slices.Clone(info.Locations)
 	info.LocationNames = slices.Clone(info.LocationNames)
@@ -166,16 +169,38 @@ func (r *Repository) loadWorld(
 		len(coreFile),
 	)
 	worldDrops, dropErr := r.drops.LoadWorld(ctx, worldKey)
+	worldCheats, cheatErr := r.loadCheats(ctx, worldKey)
+	if cheatErr != nil {
+		log.Printf("[cheats] load %s: %v", worldKey, cheatErr)
+	}
 	if dropErr != nil {
 		log.Printf("[drops] load %s: %v", worldKey, dropErr)
 	}
 
+	encounters, err := r.loadEncounters(ctx, worldKey)
+	if err != nil {
+		return fmt.Errorf("encounters %s: %w", worldKey, err)
+	}
 	for mobID, coreData := range coreFile {
 		root := mobID
 		if coreData.Ref != "" {
 			root = coreData.Ref
 		}
 		base := coreFile[root]
+		cheats, ownCheats := worldCheats[mobID]
+		if !ownCheats {
+			cheats = worldCheats[root]
+		}
+		groupKey := encounterForEnemy(encounters, mobID)
+		if groupKey != "" {
+			if shared, ok := worldCheats[groupKey]; ok {
+				cheats = shared
+			}
+		}
+		enemyDrops := worldDrops[mobID]
+		if groupKey != "" {
+			enemyDrops = mergeDropCategories(enemyDrops, worldDrops[groupKey])
+		}
 
 		translation, translated :=
 			translations[root]
@@ -196,12 +221,16 @@ func (r *Repository) loadWorld(
 
 		enemyInfos[mobID] =
 			EnemyInfo{
+				Mode:             enemyMode(base.Mode),
+				VariantOf:        base.VariantOf,
+				Cheats:           cloneCheats(cheats.Mechanics),
+				Strategy:         cloneCheatNotes(cheats.Strategy),
 				GameIDs:          []string{mobID},
 				Name:             name,
 				Schools:          slices.Clone(base.Schools),
 				Locations:        slices.Clone(coreData.Locations),
-				LocationNames:    r.locationNames(ctx, worldKey, coreData.Locations),
-				DropCategories:   drops.Clone(worldDrops[mobID]),
+				LocationNames:    r.locationNames(ctx, coreData.Locations),
+				DropCategories:   drops.Clone(enemyDrops),
 				DropsUnavailable: dropErr != nil,
 
 				Affinities: cloneEnemyAffinities(
@@ -209,9 +238,54 @@ func (r *Repository) loadWorld(
 				),
 			}
 	}
+	for id, info := range enemyInfos {
+		referenceTexts := append([]CheatNote(nil), info.Strategy...)
+		for _, mechanic := range info.Cheats {
+			referenceTexts = append(referenceTexts, CheatNote{Enemies: mechanic.Enemies})
+		}
+		for i := range referenceTexts {
+			for j := range referenceTexts[i].Enemies {
+				ref := &referenceTexts[i].Enemies[j]
+				target, ok := enemyInfos[ref.EnemyID]
+				if !ok {
+					return fmt.Errorf("strategy %s/%s: unknown enemy %s", worldKey, id, ref.EnemyID)
+				}
+				family := ref.EnemyID
+				if target.VariantOf != "" {
+					family = target.VariantOf
+				}
+				if target.Mode != info.Mode {
+					for candidate, variant := range enemyInfos {
+						if (candidate == family || variant.VariantOf == family) && variant.Mode == info.Mode {
+							ref.EnemyID = candidate
+							target = variant
+							break
+						}
+					}
+				}
+				ref.FamilyID = family
+				if encounter := encounterForEnemy(encounters, ref.EnemyID); encounter != "" {
+					ref.HeadID = family
+					ref.FamilyID = encounter
+					if encounters[encounter].VariantOf != "" {
+						ref.FamilyID = encounters[encounter].VariantOf
+					}
+				}
+				ref.Mode = target.Mode
+				ref.Schools = slices.Clone(target.Schools)
+				if ref.Label == "" {
+					ref.Label = target.Name
+				}
+			}
+		}
+		enemyInfos[id] = info
+	}
 	catalog := buildEnemyCatalog(coreFile, enemyInfos)
+	if err := groupEncounters(encounters, catalog); err != nil {
+		return err
+	}
 	for key, info := range catalog {
-		info.LocationNames = r.locationNames(ctx, worldKey, info.Locations)
+		info.LocationNames = r.locationNames(ctx, info.Locations)
 		catalog[key] = info
 	}
 
@@ -244,7 +318,8 @@ func (r *Repository) loadWorld(
 }
 
 type WorldEnemy struct {
-	Key string
+	Key        string
+	VariantKey string
 	EnemyInfo
 }
 
@@ -269,6 +344,9 @@ func (r *Repository) CachedWorld(worldKey string) ([]WorldEnemy, bool) {
 	}
 	result := make([]WorldEnemy, 0, len(r.worlds[worldKey]))
 	for key, info := range r.worlds[worldKey] {
+		info.Heads = cloneHeads(info.Heads)
+		info.Cheats = cloneCheats(info.Cheats)
+		info.Strategy = cloneCheatNotes(info.Strategy)
 		info.GameIDs = slices.Clone(info.GameIDs)
 		info.Schools = slices.Clone(info.Schools)
 		info.Locations = slices.Clone(info.Locations)
@@ -307,13 +385,13 @@ func cloneEnemyAffinities(
 	return result
 }
 
-func (r *Repository) locationNames(ctx context.Context, world string, ids []int) []string {
-	names := make([]string, 0, len(ids))
-	for _, id := range ids {
-		info, found, err := r.zones.ResolveID(ctx, world, id)
-		name := fmt.Sprintf("Gebiet %d", id)
+func (r *Repository) locationNames(ctx context.Context, keys []string) []string {
+	names := make([]string, 0, len(keys))
+	for _, key := range keys {
+		info, found, err := r.zones.Resolve(ctx, key)
+		name := key
 		if err != nil {
-			log.Printf("[enemies] resolve location %s/%d: %v", world, id, err)
+			log.Printf("[enemies] resolve location %s: %v", key, err)
 		}
 		if found && err == nil {
 			name = info.Name

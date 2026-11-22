@@ -40,7 +40,7 @@ func filterPanelEnemies(source []enemies.WorldEnemy, query string) []enemies.Wor
 
 // Caller holds w.mu; rendering, clicks and pagination share this exact list.
 func (w *Window) panelEntriesLocked() []enemies.WorldEnemy {
-	return filterPanelEnemies(orderedPanelEnemies(w.panelEnemies, w.panelCombatIDs, w.currentPanelLocationLocked()), w.searchQuery)
+	return filterPanelEnemies(orderedPanelEnemies(w.modeEntriesLocked(), w.panelCombatIDs, w.currentPanelLocationLocked()), w.searchQuery)
 }
 
 func (w *Window) drawSearch(hdc uintptr, pixels unsafe.Pointer, width, height int32) {
@@ -171,6 +171,10 @@ func (w *Window) searchCharacter(character rune) {
 	if !visible {
 		w.selectedEnemy = ""
 		w.detailDrops = false
+		w.detailCheats = false
+		w.cheatScroll = 0
+		w.cheatScrollMax = 0
+		w.cheatWheelDelta = 0
 	}
 	w.mu.Unlock()
 	w.render()

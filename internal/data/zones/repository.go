@@ -344,8 +344,10 @@ func (r *Repository) loadWorld(
 
 		worldZones[zoneKey] =
 			ZoneInfo{
-				ID:   coreData.ID,
-				Name: name,
+				Mode:      coreData.Mode,
+				VariantOf: coreData.VariantOf,
+				ID:        coreData.ID,
+				Name:      name,
 
 				Sub: sub,
 
@@ -414,6 +416,17 @@ func (r *Repository) CachedWorldCount() int {
 	defer r.mu.RUnlock()
 
 	return len(r.worlds)
+}
+
+func (r *Repository) CachedZoneMode(key string) (string, bool) {
+	r.mu.RLock()
+	defer r.mu.RUnlock()
+	zone, ok := r.worlds[WorldKey(key)][key]
+	mode := zone.Mode
+	if mode == "" {
+		mode = "standard"
+	}
+	return mode, ok
 }
 
 func (r *Repository) Clear() {

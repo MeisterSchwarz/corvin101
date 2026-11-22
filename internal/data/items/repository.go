@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"gopkg.in/yaml.v3"
 	"io/fs"
 	"sync"
 )
@@ -36,12 +37,12 @@ func (r *Repository) Category(ctx context.Context, category string) (map[string]
 	if cached, ok := r.categories[category]; ok {
 		return clone(cached), nil
 	}
-	raw, err := r.files.ReadFile(ctx, "core/items/"+category+".json")
+	raw, err := r.files.ReadFile(ctx, "core/items/"+category+".yaml")
 	if err != nil {
 		return nil, err
 	}
-	var core map[string]json.RawMessage
-	if err = json.Unmarshal(raw, &core); err != nil {
+	var core map[string]yaml.Node
+	if err = yaml.Unmarshal(raw, &core); err != nil {
 		return nil, fmt.Errorf("parse items %s: %w", category, err)
 	}
 	raw, err = r.files.ReadFile(ctx, "i18n/"+r.language+"/items/"+category+".json")

@@ -9,10 +9,10 @@ import (
 )
 
 func TestSearchFiltersNamesOnlyAndKeepsPriority(t *testing.T) {
-	zone := 202
+	zone := "Arcanum/Interior"
 	entries := []enemies.WorldEnemy{
 		{Key: "rest", EnemyInfo: enemies.EnemyInfo{Name: "Krok Alpha"}},
-		{Key: "local", EnemyInfo: enemies.EnemyInfo{Name: "Krok Zulu", Locations: []int{202}}},
+		{Key: "local", EnemyInfo: enemies.EnemyInfo{Name: "Krok Zulu", Locations: []string{"Arcanum/Interior"}}},
 		{Key: "boss", EnemyInfo: enemies.EnemyInfo{Name: "Krok Boss", GameIDs: []string{"boss_alias"}}},
 	}
 	filtered := filterPanelEnemies(orderedPanelEnemies(entries, map[string]bool{"boss_alias": true}, &zone), "KROK")

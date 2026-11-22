@@ -43,12 +43,13 @@ func (w *Window) updatePanelCombat(snapshot state.Snapshot) {
 	ids := combatEnemyIDs(snapshot, w.panelWorld)
 	if !maps.Equal(ids, w.panelCombatIDs) {
 		w.panelPage = 0
+		w.enemyModes = nil
 	}
 	w.panelCombatIDs = ids
 }
 
-func orderedPanelEnemies(source []enemies.WorldEnemy, combat map[string]bool, locationIDs ...*int) []enemies.WorldEnemy {
-	var location *int
+func orderedPanelEnemies(source []enemies.WorldEnemy, combat map[string]bool, locationIDs ...*string) []enemies.WorldEnemy {
+	var location *string
 	if len(locationIDs) > 0 {
 		location = locationIDs[0]
 	}
@@ -70,19 +71,17 @@ func orderedPanelEnemies(source []enemies.WorldEnemy, combat map[string]bool, lo
 	return result
 }
 
-func enemyInLocation(enemy enemies.WorldEnemy, location *int) bool {
+func enemyInLocation(enemy enemies.WorldEnemy, location *string) bool {
 	return location != nil && slices.Contains(enemy.Locations, *location)
 }
 
 // Caller holds w.mu. A different browsed world never receives zone priority.
-func (w *Window) currentPanelLocationLocked() *int {
-	if w.worldRepository == nil || w.panelWorld != zones.WorldKey(w.panelZone) {
+func (w *Window) currentPanelLocationLocked() *string {
+	if w.panelZone == "" || w.panelWorld != zones.WorldKey(w.panelZone) {
 		return nil
 	}
-	if id, found := w.worldRepository.CachedZoneID(w.panelZone); found {
-		return &id
-	}
-	return nil
+	key := w.panelZone
+	return &key
 }
 
 func enemyPanelColumns(width, height int32) (widget.Rect, widget.Rect) {
@@ -137,15 +136,38 @@ func (w *Window) drawEnemyDetails(hdc uintptr, pixels unsafe.Pointer, width, hei
 	}
 	w.mu.RLock()
 	dropsView, cursor := w.detailDrops, w.cursor
+	hasSheet := w.hasSelectedCheatsLocked()
+	cheatsView := w.detailCheats
+	cheatScroll := w.cheatScroll
+	category := w.dropCategory
+	hasModes := w.hasChallengeLocked()
+	head := w.selectedHeadLocked(*enemy)
 	w.mu.RUnlock()
+	if head != nil && !dropsView && !cheatsView {
+		view := *enemy
+		view.Schools = head.Schools
+		view.Affinities = head.Affinities
+		view.VariantKey = head.Key
+		enemy = &view
+	}
 	title := line
-	title.Right = detailToggleRect(width, height, dropsView).Left - 12
+	title.Right = detailTabRect(width, height, 0, hasSheet).Left - 12
+	if hasSheet {
+		title.Right = cheatButtonRect(width, height).Left - 12
+	}
+	if hasModes {
+		title.Right = modeButtonRect(width, height, hasSheet).Left - 12
+	}
 	drawEnemyDetailTitle(hdc, pixels, width, height, title, enemy.Name, enemy.Schools, fontSize+6)
 	debugSize := max(int32(10), fontSize-4)
 	debugLine := bounds
 	debugLine.Top = bounds.Bottom - debugSize*2
-	debugLine.Left = max(bounds.Left, bounds.Right-panelTextWidth(hdc, enemy.Key, debugSize))
-	drawPanelLine(hdc, pixels, width, height, debugLine, enemy.Key, debugSize)
+	debugID := enemy.Key
+	if enemy.VariantKey != "" {
+		debugID = enemy.VariantKey
+	}
+	debugLine.Left = max(bounds.Left, bounds.Right-panelTextWidth(hdc, debugID, debugSize))
+	drawPanelLine(hdc, pixels, width, height, debugLine, debugID, debugSize)
 	// Reserve the bottom corner for the temporary debug identifier.
 	bounds.Bottom = debugLine.Top - 6
 	line.Top = line.Bottom
@@ -155,10 +177,27 @@ func (w *Window) drawEnemyDetails(hdc uintptr, pixels unsafe.Pointer, width, hei
 		location.Right = title.Right
 		drawPanelTextColor(hdc, pixels, width, height, location, strings.Join(enemy.LocationNames, ", "), max(14, fontSize), theme.UIFontFamily, theme.RGB{R: 210, G: 207, B: 201})
 	}
-	if dropsView {
-		drawDetailToggle(hdc, pixels, width, height, true, cursor)
-		drawEnemyDrops(hdc, pixels, width, height, bounds, line.Bottom+fontSize, fontSize, enemy.EnemyInfo)
+	if hasModes {
+		w.drawModeButtons(hdc, pixels, width, height)
+	}
+	drawDetailTabs(pixels, width, height, dropsView, cheatsView, hasSheet, cursor)
+	if cheatsView {
+		maxScroll, links := drawEnemyCheats(hdc, pixels, width, height, bounds, line.Bottom+fontSize, fontSize, enemy.Cheats, cheatScroll, enemy.Strategy)
+		w.mu.Lock()
+		w.cheatScrollMax = maxScroll
+		w.strategyLinks = links
+		w.strategyLinksEnemy = selected
+		w.cheatScroll = min(w.cheatScroll, maxScroll)
+		w.mu.Unlock()
 		return
+	}
+	if dropsView {
+		drawEnemyDrops(hdc, pixels, width, height, bounds, line.Bottom+fontSize, fontSize, enemy.EnemyInfo, category)
+		return
+	}
+	if head != nil {
+		drawHeadButtons(hdc, pixels, width, height, enemy.Heads, head.Key, cursor)
+		line.Bottom += max(int32(30), fontSize*2) + 8
 	}
 	line.Top = line.Bottom + fontSize
 	line.Bottom = line.Top + fontSize*2
@@ -166,7 +205,6 @@ func (w *Window) drawEnemyDetails(hdc uintptr, pixels unsafe.Pointer, width, hei
 	rule := line
 	rule.Top = rule.Bottom - 1
 	fillPanelRect(pixels, width, height, rule, 0xff6f563a)
-	drawDetailToggle(hdc, pixels, width, height, false, cursor)
 	drawDamageColumns(hdc, pixels, width, height, bounds, line.Bottom+6, fontSize, enemy.Affinities)
 }
 

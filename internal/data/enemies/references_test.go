@@ -8,10 +8,10 @@ import (
 
 func TestEnemyReferencesMergeCatalogButKeepVariantDrops(t *testing.T) {
 	repo := NewRepository("de", NewRemoteLoader(testFiles{
-		"core/enemies/Arcanum.yaml":     "main:\n  schools: [fire]\n  locations: [203]\n  affinities:\n    ice: 15\n    fire: -26\nalias:\n  ref: main\n  locations: [202, 203]\n",
+		"core/enemies/Arcanum.yaml":     "main:\n  schools: [fire]\n  locations:\n    - Arcanum/Room203\n  affinities:\n    ice: 15\n    fire: -26\nalias:\n  ref: main\n  locations:\n    - Arcanum/Room202\n    - Arcanum/Room203\n",
 		"i18n/de/enemies/Arcanum.json":  `{"main":"Gemeinsamer Gegner","alias":"Anderer Übersetzungstext"}`,
 		"core/drops/Arcanum.yaml":       "main:\n  treasurecards:\n    - item: shared\nalias:\n  treasurecards:\n    - item: shared\n    - item: extra\n",
-		"core/items/treasurecards.json": `{"shared":{},"extra":{}}`,
+		"core/items/treasurecards.yaml": `{"shared":{},"extra":{}}`,
 	}))
 	ctx := context.Background()
 	entries, err := repo.ListWorld(ctx, "Arcanum")
@@ -19,7 +19,7 @@ func TestEnemyReferencesMergeCatalogButKeepVariantDrops(t *testing.T) {
 		t.Fatalf("catalog: %+v, %v", entries, err)
 	}
 	entry := entries[0]
-	if entry.Key != "main" || entry.Name != "Gemeinsamer Gegner" || !reflect.DeepEqual(entry.Locations, []int{202, 203}) || len(entry.GameIDs) != 2 {
+	if entry.Key != "main" || entry.Name != "Gemeinsamer Gegner" || !reflect.DeepEqual(entry.Locations, []string{"Arcanum/Room202", "Arcanum/Room203"}) || len(entry.GameIDs) != 2 {
 		t.Fatalf("merge: %+v", entry)
 	}
 	if !entry.InCombat(map[string]bool{"alias": true}) || !entry.InCombat(map[string]bool{"main": true}) || entry.InCombat(map[string]bool{"other": true}) {

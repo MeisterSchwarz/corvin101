@@ -30,7 +30,12 @@ type unmappedParticipant struct {
 }
 
 type Parser struct {
-	duelDump *duelDumpBuilder
+	localDuelID     string
+	localResolverID string
+	localDuelEnded  bool
+	foreignCombat   bool
+	lastZoneKey     string
+	duelDump        *duelDumpBuilder
 
 	currentClientDuelID string
 	pendingFleeDuel     string
@@ -63,6 +68,11 @@ func New() *Parser {
 }
 
 func (p *Parser) Reset() {
+	p.lastZoneKey = ""
+	p.localDuelID = ""
+	p.localResolverID = ""
+	p.localDuelEnded = false
+	p.foreignCombat = false
 	p.resetRecovery()
 	p.pendingFleeDuel = ""
 	p.pendingFleeAt = time.Time{}
@@ -90,7 +100,21 @@ func (p *Parser) Feed(line string) []events.Event {
 	}
 
 	timestamp := parseTimestamp(line)
+	if !p.acceptCombatContext(line) {
+		// World/lifecycle events still matter while another nearby duel logs.
+		if event, ok := p.parseZoneLoaded(line, timestamp); ok {
+			return []events.Event{event}
+		}
+		if event, ok := p.parseCharacterSelected(line, timestamp); ok {
+			p.Reset()
+			return []events.Event{event}
+		}
+		return nil
+	}
 	if p.duelDump == nil {
+		if event, ok := p.parseResourceZone(line, timestamp); ok {
+			return []events.Event{event}
+		}
 		if recovered, handled := p.parseRecovery(line, timestamp); handled {
 			return recovered
 		}
@@ -172,6 +196,9 @@ func (p *Parser) Feed(line string) []events.Event {
 
 			p.currentClientDuelID =
 				event.Combat.ClientDuelID
+			if event.Combat.Phase == events.PhaseEnded && event.Combat.ClientDuelID == p.localDuelID {
+				p.localDuelEnded = true
+			}
 		}
 
 		return []events.Event{
@@ -272,6 +299,9 @@ func (p *Parser) Feed(line string) []events.Event {
 			line,
 			timestamp,
 		); ok {
+		if event.Type == events.CombatFled {
+			p.localDuelEnded = true
+		}
 
 		return []events.Event{
 			event,
@@ -320,6 +350,7 @@ func (p *Parser) Feed(line string) []events.Event {
 			line,
 			timestamp,
 		); ok {
+		p.Reset()
 
 		return []events.Event{
 			event,

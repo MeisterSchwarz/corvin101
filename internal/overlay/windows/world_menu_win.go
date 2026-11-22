@@ -87,6 +87,62 @@ func (w *Window) clickPanel(p widget.Point) {
 		w.render()
 		return
 	}
+	if index := w.modeButtonAtLocked(p); index >= 0 {
+		mode := "standard"
+		if index == 1 {
+			mode = "challenge"
+		}
+		w.setPanelModeLocked(mode)
+		w.mu.Unlock()
+		w.render()
+		return
+	}
+	if link := w.strategyLinkAtLocked(p); link != nil {
+		family, mode := link.Family, link.Mode
+		if link.Head != "" {
+			if w.encounterHeads == nil {
+				w.encounterHeads = map[string]string{}
+			}
+			w.encounterHeads[family] = link.Head
+		}
+		w.selectedEnemy = family
+		if w.enemyModes == nil {
+			w.enemyModes = map[string]string{}
+		}
+		w.enemyModes[family] = mode
+		w.searchQuery = ""
+		w.detailCheats = false
+		w.detailDrops = false
+		w.cheatScroll = 0
+		w.panelPage = 0
+		for i, e := range w.panelEntriesLocked() {
+			if e.Key == family {
+				w.panelPage = i / panelRows(w.height)
+				break
+			}
+		}
+		w.mu.Unlock()
+		w.render()
+		return
+	}
+	if head := w.headButtonAtLocked(p); head != "" {
+		if w.encounterHeads == nil {
+			w.encounterHeads = map[string]string{}
+		}
+		w.encounterHeads[w.selectedEnemy] = head
+		for _, entry := range w.modeEntriesLocked() {
+			if entry.Key == w.selectedEnemy {
+				for _, member := range entry.Heads {
+					if member.Key == head && member.VariantOf != "" {
+						w.encounterHeads[w.selectedEnemy] = member.VariantOf
+					}
+				}
+			}
+		}
+		w.mu.Unlock()
+		w.render()
+		return
+	}
 	selected := ""
 	if w.worldMenuOpen {
 		bounds := panelBounds(w.width, w.height)
@@ -103,8 +159,15 @@ func (w *Window) clickPanel(p widget.Point) {
 			return
 		}
 		previous, next, _ := pageControls(w.width, w.height)
-		if w.selectedEnemy != "" && detailToggleRect(w.width, w.height, w.detailDrops).Contains(p) {
-			w.detailDrops = !w.detailDrops
+		if tab := w.detailTabAtLocked(p); tab >= 0 {
+			w.detailDrops = tab == 1
+			w.detailCheats = tab == 2
+			w.mu.Unlock()
+			w.render()
+			return
+		}
+		if category := w.dropCategoryAtLocked(p); category != "" {
+			w.dropCategory = category
 			w.mu.Unlock()
 			w.render()
 			return
@@ -127,6 +190,11 @@ func (w *Window) clickPanel(p widget.Point) {
 			if enemyPanelRow(list, w.height, i-page*rows).Contains(p) {
 				if w.selectedEnemy != entries[i].Key {
 					w.detailDrops = false
+					w.detailCheats = false
+					w.cheatScroll = 0
+					w.cheatScrollMax = 0
+					w.cheatWheelDelta = 0
+					w.dropCategory = ""
 				}
 				w.selectedEnemy = entries[i].Key
 				break

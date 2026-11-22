@@ -1,6 +1,8 @@
 package state
 
 import (
+	"slices"
+	"strconv"
 	"time"
 
 	"corvin101/internal/game/events"
@@ -27,6 +29,7 @@ type CombatState struct {
 	rosterAt               time.Time
 	snapshotAt             time.Time
 	snapshotIDs            []string
+	actorIdentities        map[string]events.ParticipantMappingEvent
 
 	LastSpell *SpellState
 
@@ -97,6 +100,7 @@ func newCombatState() CombatState {
 		Participants:           make(map[string]*ParticipantState),
 		ParticipantBySubCircle: make(map[int]string),
 		removedIdentities:      make(map[string]participantIdentity),
+		actorIdentities:        make(map[string]events.ParticipantMappingEvent),
 		RecentEffects:          make([]EffectState, 0, 32),
 	}
 }
@@ -159,7 +163,23 @@ func (s *Store) handleCombatEvent(event events.Event) {
 			s.combat.snapshotAt = event.Timestamp
 		}
 
-	case events.CombatFled, events.CombatLeft:
+	case events.CombatFled:
+		// Keep identity only: rejoining the same ongoing duel does not always
+		// repeat CombatAdd for opponents. Never carry health or effects over.
+		s.fledDuel = s.combat.ClientDuelID
+		s.fledIdentities = make(map[string]participantIdentity)
+		for id, p := range s.combat.Participants {
+			if p.Kind != events.ParticipantUnknown {
+				position := -1
+				// Opponents stay in their duel slots; returning players may move.
+				if p.Kind == events.ParticipantMob {
+					position = p.SubCircle
+				}
+				s.fledIdentities[id] = participantIdentity{SubCircle: position, Kind: p.Kind, MobID: p.MobID}
+			}
+		}
+		s.resetCombat()
+	case events.CombatLeft:
 		s.resetCombat()
 	}
 }
@@ -172,6 +192,15 @@ func (s *Store) ensureCombatDuel(id string) {
 		s.resetCombat()
 	}
 	s.combat.ClientDuelID = id
+	if s.fledDuel != "" {
+		if s.fledDuel == id {
+			for participantID, identity := range s.fledIdentities {
+				s.combat.removedIdentities[participantID] = identity
+			}
+		}
+		s.fledDuel = ""
+		s.fledIdentities = nil
+	}
 }
 
 func (s *Store) handleCombatJoined(event events.Event) {
@@ -366,6 +395,12 @@ func (s *Store) handleParticipantMapped(event events.Event) {
 	}
 
 	mapping := event.ParticipantMapping
+	if mapping.GlobalID != "" {
+		if mapping.ClientDuelID == s.combat.ClientDuelID {
+			s.combat.actorIdentities[mapping.ParticipantID] = *mapping
+		}
+		return
+	}
 	s.ensureCombatDuel(mapping.ClientDuelID)
 
 	if mapping.ParticipantID == "" || mapping.SubCircle < 0 {
@@ -741,4 +776,39 @@ func (s *Store) newDuelParticipant(id string) *ParticipantState {
 		}
 	}
 	return participant
+}
+
+func (s *Store) recoverActorIdentities() {
+	for _, mapping := range s.combat.actorIdentities {
+		s.applyActorIdentity(mapping)
+	}
+}
+func (s *Store) applyActorIdentity(mapping events.ParticipantMappingEvent) {
+	// Global IDs include a namespace and a 32-bit client object ID. Only
+	// accept an explicit identity for an existing opponent in this duel,
+	// from its namespace and its completed stats roster.
+	actor, actorErr := strconv.ParseUint(mapping.GlobalID, 10, 64)
+	duel, duelErr := strconv.ParseUint(s.combat.ResolverDuelID, 10, 64)
+	p := s.combat.Participants[mapping.ParticipantID]
+	if actorErr != nil || duelErr != nil || actor>>32 == 0 || actor>>32 != duel>>32 ||
+		strconv.FormatUint(uint64(uint32(actor)), 10) != mapping.ParticipantID ||
+		mapping.ClientDuelID != s.combat.ClientDuelID || p == nil ||
+		!slices.Contains(s.combat.snapshotIDs, p.ID) || !slices.Contains(s.combat.rosterNames, mapping.MobID) ||
+		(p.Kind != events.ParticipantUnknown && (p.Kind != events.ParticipantMob || p.MobID != mapping.MobID)) {
+		return
+	}
+	// Team numbers are relative to the client; require a known local player
+	// on the opposing team rather than relying on the numeric team alone.
+	localKnown := false
+	for _, participant := range s.combat.Participants {
+		if participant.Kind == events.ParticipantLocalPlayer && participant.Team != p.Team {
+			localKnown = true
+		}
+	}
+	if !localKnown {
+		return
+	}
+	p.Kind, p.MobID = events.ParticipantMob, mapping.MobID
+	return
+
 }

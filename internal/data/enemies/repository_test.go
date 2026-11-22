@@ -109,7 +109,7 @@ func TestTreasureCardDropsResolveToEnemyAndKeepIDs(t *testing.T) {
 	files := testFiles{
 		"core/enemies/Selenopolis.yaml":    "KT_SE_Elemental_MudBall_A_01:\n  schools: [ice]\nKT_SE_Elemental_MudBall_A_02:\n  schools: [balance]\n",
 		"core/drops/Selenopolis.yaml":      "KT_SE_Elemental_MudBall_A_02:\n  treasurecards:\n    - item: tc_storm_trap\n    - item: tc_ice_trap\n",
-		"core/items/treasurecards.json":    `{"tc_storm_trap":{"school":"storm"},"tc_ice_trap":{"school":"ice"}}`,
+		"core/items/treasurecards.yaml":    `{"tc_storm_trap":{"school":"storm"},"tc_ice_trap":{"school":"ice"}}`,
 		"i18n/de/items/treasurecards.json": `{"tc_storm_trap":"Sturmfalle","tc_ice_trap":"Eisfalle"}`,
 	}
 	repo := NewRepository("de", NewRemoteLoader(files))
@@ -138,7 +138,7 @@ func TestDropFailureDoesNotHideEnemies(t *testing.T) {
 	files := testFiles{
 		"core/enemies/Selenopolis.yaml": "enemy: {}",
 		"core/drops/Selenopolis.yaml":   "enemy:\n  treasurecards:\n    - item: missing",
-		"core/items/treasurecards.json": "{}",
+		"core/items/treasurecards.yaml": "{}",
 	}
 	repo := NewRepository("de", NewRemoteLoader(files))
 	entries, err := repo.ListWorld(context.Background(), "Selenopolis")
@@ -149,10 +149,10 @@ func TestDropFailureDoesNotHideEnemies(t *testing.T) {
 
 func TestLocationsResolveWithinWorldAndIgnoreParent(t *testing.T) {
 	files := testFiles{
-		"core/enemies/Selenopolis.yaml":  "enemy:\n  locations: [501, 999]\n",
+		"core/enemies/Selenopolis.yaml":  "enemy:\n  locations:\n    - Krokotopia/KT_Selenopolis/Interior\n    - Krokotopia/KT_Selenopolis/Unknown\n",
 		"core/worlds.json":               `{"Selenopolis":{},"Novus":{}}`,
 		"i18n/de/worlds.json":            `{"Selenopolis":{"name":"Selenopolis"}}`,
-		"core/zones/Selenopolis.yaml":    "Krokotopia/KT_Selenopolis/Interior:\n  id: 501\n  parent: 500\nKrokotopia/KT_Selenopolis/Hub: {}\n",
+		"core/zones/Selenopolis.yaml":    "Krokotopia/KT_Selenopolis/Interior:\n  parent: Ignored/Parent\nKrokotopia/KT_Selenopolis/Hub: {}\n",
 		"i18n/de/zones/Selenopolis.json": `{"Krokotopia/KT_Selenopolis/Interior":["Marktplatz der Ideen","Halle des Vorwortes"]}`,
 	}
 	repo := NewRepository("de", NewRemoteLoader(files))
@@ -161,13 +161,13 @@ func TestLocationsResolveWithinWorldAndIgnoreParent(t *testing.T) {
 		t.Fatalf("load: %+v %v", entries, err)
 	}
 	info := entries[0]
-	if len(info.Locations) != 2 || info.Locations[0] != 501 || len(info.LocationNames) != 2 || info.LocationNames[0] != "Marktplatz der Ideen – Halle des Vorwortes" || info.LocationNames[1] != "Gebiet 999" {
+	if len(info.Locations) != 2 || info.Locations[0] != "Krokotopia/KT_Selenopolis/Interior" || len(info.LocationNames) != 2 || info.LocationNames[0] != "Marktplatz der Ideen – Halle des Vorwortes" || info.LocationNames[1] != "Krokotopia/KT_Selenopolis/Unknown" {
 		t.Fatalf("locations: %+v", info)
 	}
-	entries[0].Locations[0] = 0
+	entries[0].Locations[0] = "changed"
 	entries[0].LocationNames[0] = "changed"
 	again, _ := repo.CachedWorld("Selenopolis")
-	if again[0].Locations[0] != 501 || again[0].LocationNames[0] == "changed" {
+	if again[0].Locations[0] != "Krokotopia/KT_Selenopolis/Interior" || again[0].LocationNames[0] == "changed" {
 		t.Fatal("location cache mutated")
 	}
 }

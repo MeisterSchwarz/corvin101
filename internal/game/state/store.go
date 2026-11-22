@@ -10,8 +10,10 @@ import (
 type Store struct {
 	mu sync.RWMutex
 
-	game   GameState
-	combat CombatState
+	game           GameState
+	combat         CombatState
+	fledDuel       string
+	fledIdentities map[string]participantIdentity
 }
 
 func New() *Store {
@@ -31,6 +33,8 @@ func (s *Store) Reset() {
 	}
 
 	s.combat = newCombatState()
+	s.fledDuel = ""
+	s.fledIdentities = nil
 }
 
 func (s *Store) HandleEvent(event events.Event) {
@@ -50,6 +54,8 @@ func (s *Store) HandleEvent(event events.Event) {
 		}
 
 	case events.CharacterSelected:
+		s.fledDuel = ""
+		s.fledIdentities = nil
 		s.game.Mode = ModeCharacterSelect
 		s.resetCombat()
 
@@ -77,5 +83,6 @@ func (s *Store) HandleEvent(event events.Event) {
 	}
 
 	s.handleCombatEvent(event)
+	s.recoverActorIdentities()
 	s.recoverRosterIdentities()
 }

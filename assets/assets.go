@@ -9,5 +9,8 @@ var Schools embed.FS
 //go:embed items/*.png
 var Items embed.FS
 
+//go:embed challenge.png
+var Challenge []byte
+
 //go:embed Shermlock.ttf
 var DisplayFont []byte

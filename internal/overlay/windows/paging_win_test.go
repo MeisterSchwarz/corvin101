@@ -5,11 +5,15 @@ package windows
 import (
 	"corvin101/internal/data/enemies"
 	"corvin101/internal/overlay/widget"
+	"strconv"
 	"testing"
 )
 
 func TestPanelMousePaging(t *testing.T) {
 	w := &Window{panelOpen: true, width: 1280, height: 720, selectedEnemy: "keep", panelEnemies: make([]enemies.WorldEnemy, panelRows(720)*3)}
+	for i := range w.panelEnemies {
+		w.panelEnemies[i].Key = strconv.Itoa(i)
+	}
 	list, details := enemyPanelColumns(w.width, w.height)
 	p := widget.Point{X: list.Left + 10, Y: list.Top + 10}
 	if !w.wheelPanel(p, -60) || w.panelPage != 0 {

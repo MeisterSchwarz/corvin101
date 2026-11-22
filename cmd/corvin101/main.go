@@ -378,7 +378,11 @@ func runGameSession(
 
 	reader := logreader.New(
 		logPath,
-	).FromOffset(replayOffset)
+	).FromOffset(replayOffset).OnReset(func() {
+		log.Printf("[logreader] log replaced or rewritten; rebuilding game state")
+		gameParser.Reset()
+		gameState.Reset()
+	})
 
 	err = reader.Watch(
 		ctx,
