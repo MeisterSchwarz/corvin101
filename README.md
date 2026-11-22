@@ -44,12 +44,26 @@ See the current combat round and known enemy affinities during the planning phas
 
 ### 📖 Bestiary
 
-Browse enemies by world and click an entry to view its affinities. Current combat enemies are highlighted and listed first.
+Browse and search enemies by world to view their schools, damage modifiers and locations. Combat enemies appear first with crossed swords, followed by enemies in your current area.
+
+- Switch between stats, drops, and cheats with strategies
+- View known item drops and gold ranges
+- Read cheat mechanics, round cycles and strategy tips; click enemy references to open their entries
+- Toggle Standard and Challenge variants for individual enemies or entire boss groups
+- Browse multi-part bosses such as Balaur and the Tri-bunal Judges in one entry, with separate stats selected through school symbols
 
 Open or close with **Tab**, select a world from the title, and turn pages with the **mouse wheel over the list** or the **page buttons**.
 
 <p align="center">
-  <img src="public/preview_bestiary.png" width="100%" alt="Bestiary overlay with the Novus enemy list and selected enemy affinities">
+  <img src="public/preview_bestiary.png" width="100%" alt="Bestiary with enemy search, school symbols and damage modifiers">
+</p>
+
+<p align="center">
+  <img src="public/preview_drops.png" width="100%" alt="Enemy drops in the bestiary">
+</p>
+
+<p align="center">
+  <img src="public/preview_cheats_challenge.png" width="100%" alt="Cheat mechanics, strategies and Challenge mode in the bestiary">
 </p>
 
 ---
@@ -57,8 +71,6 @@ Open or close with **Tab**, select a world from the title, and turn pages with t
 ## 🚧 Planned
 
 - Active buffs and debuffs
-- Enemy drop information
-- Cheat and mechanic information
 - Additional languages
 
 ---
